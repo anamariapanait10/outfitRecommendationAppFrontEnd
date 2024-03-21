@@ -1,50 +1,52 @@
 import React, { useEffect, useState } from 'react';
 import { View, FlatList, Button, Alert, RefreshControl, Pressable, StyleSheet } from 'react-native';
-import ClothCard from './cloth_card';
-import { ClothingItem } from './cloth_card';
+import ClothCard, { ClothingItem } from './cloth_card';
+
 // import FilterBar from './filter_bar';
 
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { useAuth } from '@clerk/clerk-expo';
 import { Ionicons } from '@expo/vector-icons';
+import { DataStorageSingleton } from './data_storage_singleton';
+import { useIsFocused } from '@react-navigation/native';
 
 const WardrobeScreen = () => {
-    const clothingItems: ClothingItem[] = [];
-    const [clothes, setClothes] = useState(clothingItems);
-
+    
+    
     const { isLoaded, userId, sessionId, getToken } = useAuth();
     const [refreshing, setRefreshing] = useState(true);
-    // const [filteredClothes, setFilteredClothes] = useState(clothes);
+    const [filteredClothes, setFilteredClothes] = useState<ClothingItem[] | undefined>();
+    const isFocused = useIsFocused();
+    const [previousFocusState, setPreviousFocusState] = useState(false);
 
     const fetchClothesData = async () => {
-        if (!userId || !isLoaded) {
-            console.log('No authenticated user found.');
-            return;
-        }
-        try {
-            const token = await getToken();
-            setRefreshing(true);
-            const response = await fetch(process.env.EXPO_PUBLIC_BASE_API_URL + '/outfit-items/', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-            const data = await response.json();
-            setRefreshing(false);
-            // console.log(data);
-            setClothes(data); // Update the state with the fetched data
-            //     setFilteredClothes(clothes);
-        } catch (error: any) {
-            // Handle any errors, such as by displaying an alert
-            Alert.alert("Error fetching data", error.message);
-        }
+        setRefreshing(true);
+        await DataStorageSingleton.getInstance().fetchClothesData(await getToken(), userId, isLoaded);
+        setFilteredClothes(DataStorageSingleton.getInstance().clothingItems);
+
+        setRefreshing(false);
     };
 
     useEffect(() => {
         fetchClothesData(); // Call the function to fetch data
     }, []);
+
+    useFocusEffect(
+        React.useCallback(() => {
+          if (isFocused) {
+            // If gaining focus and was not previously focused, it's navigating to the page
+            setFilteredClothes(DataStorageSingleton.getInstance().clothingItems);
+          }
+          
+          // Update the previous focus state
+          setPreviousFocusState(isFocused);
+    
+          return () => {
+
+          };
+         
+        }, [isFocused])
+    );
 
     // const handleFilterChange = (filterType, value) => {
     //     const filtered = clothes.filter(cloth => cloth[filterType] === value);
@@ -56,7 +58,7 @@ const WardrobeScreen = () => {
             {/* <FilterBar onFilterChange={handleFilterChange} /> */}
             <FlatList
                 style={{ width: '100%' }}
-                data={clothes}
+                data={filteredClothes}
                 renderItem={({ item }) => <ClothCard {...item} />}
                 keyExtractor={item => item.id.toString()}
                 numColumns={3}

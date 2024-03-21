@@ -9,11 +9,16 @@ import {
   TouchableOpacity,
   Image,
   Pressable,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from "react-native";
 import ChooseImageModal from "./choose_image_modal";
 import * as ImagePicker from "expo-image-picker";
 import { Picker } from "@react-native-picker/picker";
 import { useAuth } from "@clerk/clerk-expo";
+import { DataStorageSingleton } from "./data_storage_singleton";
+import { router } from 'expo-router';
 
 const AddItemPage = () => {
   const [name, setName] = useState("");
@@ -49,7 +54,7 @@ const AddItemPage = () => {
         });
       }
       if (!result.canceled) {
-        console.log(result.assets[0].base64);
+        // console.log(result.assets[0].base64);
         saveImage('data:image/jpeg;base64,' + result.assets[0].base64);
       }
     } catch (error: any) {
@@ -97,14 +102,14 @@ const AddItemPage = () => {
         const requestBody = JSON.stringify({
           name: name,
           description: description || "",
-          size: size || "M",
-          color: color || "blue",
+          size: size || "",
+          color: color,
           image: image,
-          category: category || "shoes",
+          category: category || "",
           wardrobe_id: 1
         });
 
-        console.log("POST request body:", requestBody);
+        console.log("POST request body:" + requestBody);
 
         const response = await fetch(
           process.env.EXPO_PUBLIC_BASE_API_URL + "/outfit-items/",
@@ -123,7 +128,9 @@ const AddItemPage = () => {
         }
 
         const json = await response.json();
-        console.log("POST request response:", json);
+        // console.log("POST request response:", json);
+        DataStorageSingleton.getInstance().fetchClothesData(await getToken(), userId, isLoaded);
+        router.replace({pathname: '/(auth)/wardrobe'})
       } catch (error) {
         console.error("Error making POST request:", error);
       }
@@ -132,16 +139,20 @@ const AddItemPage = () => {
     makePostRequest();
 
     // Reset form fields
-    setName("");
-    setType("");
-    setSize("");
-    setColor("");
-    setImage("");
-    setDescription("");
+    // setName("");
+    // setType("");
+    // setSize("");
+    // setColor("");
+    // setImage("");
+    // setDescription("");
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+    >
+    <ScrollView style={styles.container} keyboardShouldPersistTaps='handled'>
       <View style={styles.chooseImageContainer}>
         <TouchableOpacity onPress={() => setModalVisible(true)} >
           {image ? (
@@ -204,19 +215,15 @@ const AddItemPage = () => {
         onCameraPress={() => uploadImage("camera")}
         onGalleryPress={() => uploadImage("gallery")}
       />
-      {/* <TouchableOpacity
-        onPress={() => setModalVisible(true)}
-        style={styles.chooseImageButton}
-      >
-        <Text style={{color:"#6c47ff"}}>Choose Image</Text>
-      </TouchableOpacity> */}
+      
       
       <View style={styles.buttonContainer}>
         <Pressable onPress={handleSubmit} style={styles.button}>
           <Text style={styles.buttonText}>Add Item</Text>
         </Pressable>
       </View>
-    </View>
+    </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
