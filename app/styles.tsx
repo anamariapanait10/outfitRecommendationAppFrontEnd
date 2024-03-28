@@ -83,7 +83,9 @@ export default StyleSheet.create({
       details_container: {
         flexGrow: 1,
         alignItems: 'center',
-        padding: 20,
+        marginTop: 10,
+        paddingLeft: 20,
+        paddingRight: 20,
       },
       details_image: {
         width: 300,

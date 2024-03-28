@@ -109,7 +109,7 @@ const AddItemPage = () => {
           wardrobe_id: 1
         });
 
-        console.log("POST request body:" + requestBody);
+        console.log("POST request body:", requestBody);
 
         const response = await fetch(
           process.env.EXPO_PUBLIC_BASE_API_URL + "/outfit-items/",
@@ -139,12 +139,12 @@ const AddItemPage = () => {
     makePostRequest();
 
     // Reset form fields
-    // setName("");
-    // setType("");
-    // setSize("");
-    // setColor("");
-    // setImage("");
-    // setDescription("");
+    setName("");
+    setType("");
+    setSize("");
+    setColor("");
+    setImage("");
+    setDescription("");
   };
 
   return (

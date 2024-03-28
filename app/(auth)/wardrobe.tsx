@@ -28,7 +28,7 @@ const WardrobeScreen = () => {
     };
 
     useEffect(() => {
-        fetchClothesData(); // Call the function to fetch data
+        fetchClothesData(); 
     }, []);
 
     useFocusEffect(
@@ -66,12 +66,10 @@ const WardrobeScreen = () => {
                     <RefreshControl refreshing={refreshing} onRefresh={fetchClothesData} />
                 }
             />
-            {/* <Button
-                onPress={() => router.replace({pathname: '/(auth)/add_item_page'})}
-                title="Add cloth item"
-                color="#7b68ee"
-            /> */}
-            <Pressable style={styles.button} onPress={() => router.replace({pathname: '/(auth)/add_item_page'})}>
+            {/* <Pressable style={styles.button} onPress={() => router.replace({pathname: '/(auth)/add_item_page'})}>
+                <Ionicons name="add" size={24} color="white" />
+            </Pressable> */}
+            <Pressable style={styles.button} onPress={() => router.replace({pathname: '/(auth)/add_cloth_item'})}>
                 <Ionicons name="add" size={24} color="white" />
             </Pressable>         
         </View>

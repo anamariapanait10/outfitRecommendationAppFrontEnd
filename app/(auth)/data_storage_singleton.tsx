@@ -1,12 +1,12 @@
 import { Alert } from "react-native";
 import { ClothingItem } from "./cloth_card";
-import { useAuth } from '@clerk/clerk-expo';
+import { WeatherItem } from "../../components/WeatherItem";
 
 export class DataStorageSingleton {
     static instance: DataStorageSingleton | null = null;
 
     public clothingItems: ClothingItem[] = [];
-    // public const [clothes, setClothes] = useState();
+    public weatherItems: WeatherItem[] = [];
 
     static getInstance() {
         if (DataStorageSingleton.instance === null) {
@@ -20,7 +20,6 @@ export class DataStorageSingleton {
             console.log('No authenticated user found.');
             return;
         }
-        console.log("making api call");
         try {
             const response = await fetch(process.env.EXPO_PUBLIC_BASE_API_URL + '/outfit-items/', {
                 method: 'GET',
@@ -30,14 +29,65 @@ export class DataStorageSingleton {
                 }
             });
             const data = await response.json();
-            // console.log(data);
-            // setClothes(data); // Update the state with the fetched data
             DataStorageSingleton.getInstance().clothingItems = data;
-            console.log("finished api call");
         } catch (error: any) {
             // Handle any errors, such as by displaying an alert
             Alert.alert("Error fetching data", error.message);
         }
     };
 
+    private processWeatherData = (data: any) => {
+        const currentTime = new Date().toLocaleTimeString("en-GB");
+        const forecastTime = ['00:00:00', '03:00:00', '06:00:00', '09:00:00', '12:00:00', '15:00:00', '18:00:00', '21:00:00'];
+        // get only the forecast that is after the current time
+        let chosenTime = '';
+        for(const time of forecastTime) {
+            if (currentTime > time) {
+                chosenTime = time;
+            } else {
+                chosenTime = time;
+                break;
+            }
+        }
+
+        for(var i = 0; i < data.list.length; i++) 
+        {
+            if (data.list[i].dt_txt.includes(chosenTime)){
+                var date = data.list[i].dt_txt;
+                var temperature = data.list[i].main.temp;
+                var weather = data.list[i].weather[0].description;
+                var icon = data.list[i].weather[0].icon;
+                this.weatherItems.push(new WeatherItem(date, temperature, weather, icon));
+            }
+           
+        }
+    };
+
+    public fetchWeatherData = async (latitude: number, longitude: number) => {
+        const weatherAPI = `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=metric&appid=${process.env.EXPO_PUBLIC_WEATHER_API_KEY}`;
+        try {
+          const response = await fetch(weatherAPI);
+          if (response.status !== '200') {
+            const data = await response.json();
+            this.processWeatherData(data);
+            // console.log("------------------------------");
+            // console.log(JSON.stringify(data.list, null, 2));
+            // console.log("------------------------------");
+            // console.log(data.list.length);
+            // for(var i = 0; i < data.list.length; i++) 
+            // {
+            //   var date = data.list[i].dt_txt;
+            //   var temperature = data.list[i].main.temp;
+            //   var weather = data.list[i].weather[0].description;
+            //   var icon = data.list[i].weather[0].icon;
+            //   this.weatherItems.push(new WeatherItem(date, temperature, weather, icon));
+            // }
+
+          } else {
+            console.log("Status code: " + response.status);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+    };
 }
