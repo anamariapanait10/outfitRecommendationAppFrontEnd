@@ -7,6 +7,7 @@ export class DataStorageSingleton {
 
     public clothingItems: ClothingItem[] = [];
     public weatherItems: WeatherItem[] = [];
+    public clothId: number = 0;
 
     static getInstance() {
         if (DataStorageSingleton.instance === null) {

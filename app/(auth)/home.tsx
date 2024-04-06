@@ -1,4 +1,4 @@
-import { Animated, View, Text, Alert, Image, StyleSheet, PanResponder } from 'react-native';
+import { Animated, View, Text, Alert, Image, StyleSheet, PanResponder, Dimensions } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useAuth, useUser } from '@clerk/clerk-expo';
 import Colors from "../../constants/Colors";
@@ -34,7 +34,14 @@ const Home = () => {
   const fetchClothesData = async () => {
     await DataStorageSingleton.getInstance().fetchClothesData(await getToken(), userId, isLoaded);
     let clothesItems = DataStorageSingleton.getInstance().clothingItems;
-    setClothes([clothesItems[0], clothesItems[1], clothesItems[2]]);
+    let len = clothesItems.length;
+    let topwearList = clothesItems.filter((item) => item.category == 'Topwear');
+    let topwear = topwearList[Math.floor(Math.random() * topwearList.length)];
+    let bottomwearList = clothesItems.filter((item) => item.category == 'Bottomwear');
+    let bottomwear = bottomwearList[Math.floor(Math.random() * bottomwearList.length)];
+    let footwearList = clothesItems.filter((item) => item.category == 'Footwear');
+    let footwear = footwearList[Math.floor(Math.random() * footwearList.length)];
+    setClothes([topwear, bottomwear, footwear]);
   };
 
   const fetchRadomOutfit = async () => {
@@ -98,7 +105,7 @@ const Home = () => {
           <Text style={styles.weatherText}>🌤️ 25°C</Text>
         </View> */}
 
-        <View style={{height: 80, width: 360}}>
+         <View style={{height: 80, width: 360}}>
            <WeatherDiv />
         </View>
       </View>

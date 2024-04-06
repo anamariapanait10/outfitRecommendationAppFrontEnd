@@ -1,10 +1,11 @@
-import { Tabs } from 'expo-router';
+import { Tabs, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable } from 'react-native';
 import { useAuth } from '@clerk/clerk-expo';
 import { TouchableOpacity } from 'react-native';
 import Colors from "../../constants/Colors";
 import { useRouter } from 'expo-router';
+import { DataStorageSingleton } from './data_storage_singleton';
 
 export const LogoutButton = () => {
   const { signOut } = useAuth();
@@ -24,6 +25,7 @@ const TabsPage = () => {
   const { isSignedIn } = useAuth();
   const { isLoaded, userId, getToken } = useAuth();
   const router = useRouter();
+  const { id } = useLocalSearchParams();
 
   const handleDeleteCloth = async () => {
     if (!userId || !isLoaded) {
@@ -32,7 +34,7 @@ const TabsPage = () => {
     }
     try {
       const token = await getToken();
-      const response = await fetch(`${process.env.EXPO_PUBLIC_BASE_API_URL}/outfit-items/${id}/`, {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_BASE_API_URL}/outfit-items/${DataStorageSingleton.getInstance().clothId}/`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

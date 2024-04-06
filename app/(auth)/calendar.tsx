@@ -44,7 +44,7 @@ const OutfitCalendar = () => {
 
   return (
     <GestureHandlerRootView style={styles.calendarContainer}>
-      {/* <Modal
+      <Modal
         animationType="slide"
         transparent={true}
         visible={isModalVisible}
@@ -59,7 +59,7 @@ const OutfitCalendar = () => {
             <Text>Close</Text>
           </TouchableOpacity>
         </View>
-      </Modal> */}
+      </Modal>
       <Calendar style={styles.calendar}
         dayComponent={({ date, state }) => {
           return (

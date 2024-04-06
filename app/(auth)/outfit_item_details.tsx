@@ -24,6 +24,7 @@ const OutfitItemDetailsScreen = () => {
       let ci = DataStorageSingleton.getInstance().clothingItems.find(i => i.id == parseInt(id));  
       if(ci) {
         setCloth(ci);
+        DataStorageSingleton.getInstance().clothId = ci.id;
       }
     }
   };

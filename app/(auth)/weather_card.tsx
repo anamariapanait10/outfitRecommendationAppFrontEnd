@@ -56,12 +56,14 @@ const WeatherDiv = () => {
         <View style={{ flex: 1, flexDirection:'row', justifyContent: 'center'}}>
             <Carousel
                 layout={"default"}
-                ref={ref => setCarousel(ref)}
+                // ref={ref => setCarousel(ref)}
                 data={state.carouselItems}
                 sliderWidth={355}
                 itemWidth={355}
                 renderItem={_renderItem}
-                onSnapToItem = { index => setState({activeIndex:index, carouselItems: state.carouselItems}) } />
+                onSnapToItem = { index => setState({activeIndex:index, carouselItems: state.carouselItems}) } 
+                vertical={false}
+                />
         </View>
         </SafeAreaView>
     );

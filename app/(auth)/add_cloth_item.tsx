@@ -9,7 +9,8 @@ import { DataStorageSingleton } from "./data_storage_singleton";
 import { router } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
 import SpinnerOverlay from './spinner_overlay';
-
+import Slider from '@react-native-community/slider';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const ToggleButton = ({ label, isActive, onPress }) => (
   <TouchableOpacity
@@ -34,6 +35,8 @@ const ClothingItemForm = () => {
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const { isLoaded, userId, getToken } = useAuth();
+  const [selectedTemperature, setTemperature] = useState(10);
+  const [selectedWeather, setWeather] = useState(50);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -142,7 +145,9 @@ const ClothingItemForm = () => {
           pattern: selectedPattern,
           material: selectedMaterial,
           seasons: selectedSeasons.join(","),
-          occasions: selectedOccasions.join(",")
+          occasions: selectedOccasions.join(","),
+          temperature: selectedTemperature,
+          weather: selectedWeather
         });
 
         console.log("POST request body:", requestBody);
@@ -182,15 +187,15 @@ const ClothingItemForm = () => {
     makePostRequest();
 
     // Reset form fields
-    setImage("");
-    setDescription("");
-    setSelectedCategory("");
-    setSelectedSubCategory("");
-    setSelectedColor("");
-    setSelectedMaterial("");
-    setSelectedPattern("");
-    setSelectedOccasions([]);
-    setSelectedSeasons([]);
+    // setImage("");
+    // setDescription("");
+    // setSelectedCategory("");
+    // setSelectedSubCategory("");
+    // setSelectedColor("");
+    // setSelectedMaterial("");
+    // setSelectedPattern("");
+    // setSelectedOccasions([]);
+    // setSelectedSeasons([]);
   };
 
   const categories = ['Topwear', 'Bottomwear', 'Footwear', 'Bodywear', 'Headwear', 'Accessories'];
@@ -217,7 +222,7 @@ const ClothingItemForm = () => {
   ];
   const materials = ['Cotton', 'Leather', 'Polyester', 'Nylon'];
   const patterns = ['Graphic', 'Plain', 'Striped', 'Polka Dot'];
-  const seasons = ['Spring', 'Summer', 'Fall', 'Winter'];
+  const seasons = ['Spring', 'Summer', 'Autumn', 'Winter'];
   const occasions = ['Casual', 'Ethnic', 'Formal', 'Sports', 'Smart Casual', 'Travel', 'Party'];
 
   return (
@@ -330,10 +335,6 @@ const ClothingItemForm = () => {
           ))}
         </View>
 
-        <TouchableOpacity style={styles.saveButton} onPress={handleSubmit}>
-          <Text style={styles.saveButtonText}>Save</Text>
-        </TouchableOpacity>
-
         <ChooseImageModal
           modalVisible={modalVisible}
           onBackPress={() => setModalVisible(false)}
@@ -341,6 +342,57 @@ const ClothingItemForm = () => {
           onGalleryPress={() => uploadImage("gallery")}
         />
       </View>
+      <View style={styles.container}>
+      <Text style={styles.slider_label_temp}>Temperature: {Math.round(selectedTemperature)}°</Text>
+      
+      <View style={styles.iconRow}>
+        <Ionicons name="snow-outline" size={30} color="#0000FF" />
+        <Ionicons name="sunny-outline" size={30} color="#FFD700" style={styles.iconRight} />
+      </View>
+      <LinearGradient
+          colors={['#2222FF', '#55AA55', '#FF2222']}
+          start={{x: 0, y: 0}}
+          end={{x: 1, y: 0}}
+          style={styles.gradient}>
+          <Slider
+            style={styles.slider}
+            minimumValue={-10}
+            value={10}
+            maximumValue={30}
+            minimumTrackTintColor="transparent"
+            maximumTrackTintColor="transparent"
+            thumbTintColor={Colors.purple}
+            onValueChange={setTemperature}
+          />
+      </LinearGradient>
+      
+      <Text style={styles.slider_label}>Weather</Text>
+      <View style={styles.iconRow}>
+        <Ionicons name="snow-outline" size={30} color="#708090" />
+        <Ionicons name="cloudy-outline" size={30} color="#708090" style={styles.iconCenter} />
+        <Ionicons name="sunny-outline" size={30} color="#FFD700" style={styles.iconRight} />
+      </View>  
+      <LinearGradient
+          colors={['#FFFFFF', '#55AA55', '#FFD700']}
+          start={{x: 0, y: 0}}
+          end={{x: 1, y: 0}}
+          style={styles.gradient}>
+            <Slider
+          style={styles.slider}
+          minimumValue={0}
+          value={15}
+          maximumValue={30}
+          minimumTrackTintColor="transparent"
+          maximumTrackTintColor="transparent"
+          thumbTintColor={Colors.purple}
+          onValueChange={setWeather}
+        /> 
+      </LinearGradient>
+      
+      <TouchableOpacity style={styles.saveButton} onPress={handleSubmit}>
+          <Text style={styles.saveButtonText}>Save</Text>
+        </TouchableOpacity>
+    </View>
     </ScrollView>
   );
 };
@@ -447,6 +499,39 @@ const styles = StyleSheet.create({
   subcategoryText: {
     fontSize: 16,
     color: 'gray',
+  },
+  slider: {
+    height: 80,
+    margin: 10,
+  },
+  slider_label_temp: {
+    fontSize: 16,
+    color: '#333',
+    textAlign: 'center',
+  },
+  slider_label: {
+    fontSize: 16,
+    color: '#333',
+    textAlign: 'center',
+    marginTop: 20
+  },
+  iconRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
+  },
+  iconCenter: {
+    marginLeft: 'auto',
+  },
+  iconRight: {
+    marginLeft: 'auto',
+  },
+  gradient: {
+    borderRadius: 20,
+    height: 30,
+    justifyContent: 'center',
+    borderColor: '#FFF',
+    borderWidth: 10
   },
 });
 
