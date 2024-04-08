@@ -129,7 +129,7 @@ const AddItemPage = () => {
 
         const json = await response.json();
         // console.log("POST request response:", json);
-        DataStorageSingleton.getInstance().fetchClothesData(await getToken(), userId, isLoaded);
+        // await DataStorageSingleton.getInstance().fetchClothesData(await getToken(), userId, isLoaded);
         router.replace({pathname: '/(auth)/wardrobe'})
       } catch (error) {
         console.error("Error making POST request:", error);
