@@ -23,6 +23,8 @@ export class DataStorageSingleton {
         carouselItems: []
     };
 
+    public monthOutfits = {}
+
     static getInstance() {
         if (DataStorageSingleton.instance === null) {
             DataStorageSingleton.instance = new DataStorageSingleton();
@@ -141,6 +143,55 @@ export class DataStorageSingleton {
             let item = this.weatherItems[i];
             let formattedDate = format(item.date, 'E MMM d');
             this.carouselWeatherItems.carouselItems.push({title: formattedDate, text: item.temperature + "°C", icon: item.icon});   
+        }
+    }
+
+    public fetchOutfitsForMonth = async (yearMonth: string, token: string | null, userId: string | null | undefined, isLoaded: boolean) => {
+        if (!userId || !isLoaded) {
+            console.log('No authenticated user found.');
+            return;
+        }
+        try {
+            const baseUrl = process.env.EXPO_PUBLIC_BASE_API_URL + '/worn-outfits/get_for_year_month?yearMonth=' + yearMonth;
+            const response = await fetch(baseUrl, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+            DataStorageSingleton.getInstance().monthOutfits = data;
+        } catch (error: any) {
+            // Handle any errors, such as by displaying an alert
+            Alert.alert("Error fetching data", error.message);
+        }
+    }
+
+    public wearOutfit = async (clothes: ClothingItem[], date: string, token: string | null, userId: string | null | undefined, isLoaded: boolean) => {
+        if (!userId || !isLoaded) {
+            console.log('No authenticated user found.');
+            return;
+        }
+        try {
+            const baseUrl = process.env.EXPO_PUBLIC_BASE_API_URL + '/worn-outfits/wear/';
+            const requestBody = JSON.stringify({
+                outfit: clothes,
+                date: date
+            });
+            const response = await fetch(baseUrl, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: requestBody
+            });
+            const data = await response.json();
+            DataStorageSingleton.getInstance().monthOutfits = data;
+        } catch (error: any) {
+            // Handle any errors, such as by displaying an alert
+            Alert.alert("Error fetching data", error.message);
         }
     }
 }

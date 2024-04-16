@@ -1,4 +1,4 @@
-import { Animated, View, Text, Alert, Image, StyleSheet, PanResponder, Dimensions } from 'react-native';
+import { Animated, View, Text, Alert, Image, StyleSheet, PanResponder, Dimensions, Button } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { useAuth, useUser } from '@clerk/clerk-expo';
 import Colors from "../../constants/Colors";
@@ -125,6 +125,12 @@ const Home = () => {
     // fetchRadomOutfit();
   }, []);
 
+  const wearOutfit = async () => {
+    if(clothes != undefined) {
+      DataStorageSingleton.getInstance().wearOutfit(clothes, new Date().toISOString().split('T')[0], await getToken(), userId, isLoaded);
+    }
+  }
+
   const handleSelectLocation = async (location) => {
     const reverseGeocode = await Location.reverseGeocodeAsync({
       latitude: location.latitude,
@@ -214,6 +220,7 @@ const Home = () => {
               // keyExtractor={item => item.id.toString()}
               numColumns={1}
             />
+            <Button title='Wear This Outfit' onPress={wearOutfit}></Button>
           </View>
         ) : (
           <Text style={styles.noOutfitText}>No recommended outfit found</Text>
