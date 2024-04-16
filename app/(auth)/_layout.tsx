@@ -180,6 +180,12 @@ const TabsPage = () => {
           href: null,
         }}
       />
+      <Tabs.Screen
+        name="select_location_modal"
+        options={{
+          href: null,
+        }}
+      />
     </Tabs>
   );
 };

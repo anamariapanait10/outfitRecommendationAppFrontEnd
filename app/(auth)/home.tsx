@@ -11,11 +11,22 @@ import { DataStorageSingleton } from './data_storage_singleton';
 import { set } from 'date-fns';
 import TransparentClothCard, { TransparentClothingItem } from '../../components/TransparentClothCard';
 import { ClothingItem } from './cloth_card';
+import LocationSelector from './select_location_modal';
+import * as Location from 'expo-location';
 
 const Home = () => {
   const { isLoaded, userId, getToken } = useAuth();
   const [recommendedCloth, setRecommendedCloth] = useState(null);
   const [clothes, setClothes] = useState<ClothingItem[] | undefined>([]);
+  const [locationModalVisible, setLocationModalVisible] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState({
+                                                      city: 'București',
+                                                      county: 'București',
+                                                      latitude: 44.41233794877461,
+                                                      longitude: 26.051842868328094,
+                                                      latitudeDelta: 0.0922,
+                                                      longitudeDelta: 0.0421,
+                                                  });
 
   const fetchWeatherData = async () => {
     await DataStorageSingleton.getInstance().fetchWeatherData(44.4268, 26.1025);
@@ -72,8 +83,8 @@ const Home = () => {
     } else {
       weatherString = "overcast";
     }
-    await DataStorageSingleton.getInstance().fetchRecommendations(await getToken(), userId, isLoaded, weatherString, temperatureString);
-    setClothes(DataStorageSingleton.getInstance().recommendations);
+    // await DataStorageSingleton.getInstance().fetchRecommendations(await getToken(), userId, isLoaded, weatherString, temperatureString);
+    // setClothes(DataStorageSingleton.getInstance().recommendations);
   };
 
   const fetchRadomOutfit = async () => {
@@ -115,16 +126,47 @@ const Home = () => {
     fetchClothesData();
     // fetchRadomOutfit();
   }, []);
+
+  const handleSelectLocation = async (location) => {
+    const reverseGeocode = await Location.reverseGeocodeAsync({
+      latitude: location.latitude,
+      longitude: location.longitude
+    });
+    
+    if (reverseGeocode.length > 0) {
+      setSelectedLocation({
+          city: reverseGeocode[0].city,
+          county: reverseGeocode[0].region,
+          latitude: location.latitude,
+          longitude: location.longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+      });
+    } else {
+      setSelectedLocation(location);
+    }
+    
+    setLocationModalVisible(false);
+  };
   
   return (
     <View style={styles.container}>
 
       <View style={styles.weatherAndLocationContainer}>
         <View style={styles.locationAndCalendarContainer}>
-          <View style={styles.locationContainer}>
+          <TouchableOpacity style={styles.locationContainer} onPress={() => setLocationModalVisible(true)}>
             <Ionicons style={styles.location} name="location" size={24}/>
-            <Text style={styles.location}>Bucharest</Text>
-          </View>
+            {/* <Text style={styles.location}>Bucharest</Text> */}
+            {selectedLocation && <Text style={styles.location}>{selectedLocation.city}</Text>}
+            {selectedLocation && !selectedLocation.city && selectedLocation.county && <Text style={styles.location}>{selectedLocation.county}</Text>}
+            {selectedLocation && !selectedLocation.city && !selectedLocation.county && <Text style={styles.location}>{selectedLocation.latitude.toFixed(2)}, {selectedLocation.longitude.toFixed(2)}</Text>}
+            {/* {!selectedLocation && <Text style={styles.location}>Bucuresti</Text>} */}
+            <LocationSelector
+                visible={locationModalVisible}
+                onClose={() => setLocationModalVisible(false)}
+                onSelectLocation={handleSelectLocation}
+            />
+          </TouchableOpacity>
           <View>
             <TouchableOpacity onPress={() => router.replace({pathname: '/(auth)/calendar'})}>
               <Text style={styles.calendar}>See calendar</Text>
