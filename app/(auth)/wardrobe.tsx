@@ -33,19 +33,8 @@ const WardrobeScreen = () => {
 
     useFocusEffect(
         React.useCallback(() => {
-          if (isFocused) {
-            // If gaining focus and was not previously focused, it's navigating to the page
-            setFilteredClothes(DataStorageSingleton.getInstance().clothingItems);
-          }
-          
-          // Update the previous focus state
-          setPreviousFocusState(isFocused);
-    
-          return () => {
-
-          };
-         
-        }, [isFocused])
+            fetchClothesData(); 
+        }, [])
     );
 
     // const handleFilterChange = (filterType, value) => {
