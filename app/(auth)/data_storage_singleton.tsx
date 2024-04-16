@@ -8,6 +8,7 @@ export class DataStorageSingleton {
     public clothingItems: ClothingItem[] = [];
     public weatherItems: WeatherItem[] = [];
     public clothId: number = 0;
+    public recommendations: ClothingItem[] = [];
 
     static getInstance() {
         if (DataStorageSingleton.instance === null) {
@@ -56,9 +57,9 @@ export class DataStorageSingleton {
             if (data.list[i].dt_txt.includes(chosenTime)){
                 var date = data.list[i].dt_txt;
                 var temperature = data.list[i].main.temp;
-                var weather = data.list[i].weather[0].description;
+                var weatherId = data.list[i].weather[0].id;
                 var icon = data.list[i].weather[0].icon;
-                this.weatherItems.push(new WeatherItem(date, temperature, weather, icon));
+                this.weatherItems.push(new WeatherItem(date, temperature, weatherId, icon));
             }
            
         }
@@ -89,6 +90,30 @@ export class DataStorageSingleton {
           }
         } catch (error) {
           console.log(error);
+        }
+    };
+
+    public fetchRecommendations = async (token: string | null, userId: string | null | undefined, isLoaded: boolean, weather: string, temperature: string) => {
+        if (!userId || !isLoaded) {
+            console.log('No authenticated user found.');
+            return;
+        }
+        try {
+            const baseUrl = process.env.EXPO_PUBLIC_BASE_API_URL + '/outfit-items/get_recommendations/';
+            const queryParams = `?weather=${encodeURIComponent(weather)}&temperature=${encodeURIComponent(temperature)}`;
+            const urlWithParams = baseUrl + queryParams;
+            const response = await fetch(urlWithParams, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+            DataStorageSingleton.getInstance().recommendations = data;
+        } catch (error: any) {
+            // Handle any errors, such as by displaying an alert
+            Alert.alert("Error fetching data", error.message);
         }
     };
 }

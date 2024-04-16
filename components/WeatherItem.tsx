@@ -1,13 +1,13 @@
 export class WeatherItem {
     date: string;
     temperature: string;
-    weather: string;
+    weatherId: number;
     icon: string;
 
-    constructor(date: string, temperature: string, weather: string, icon: string) {
+    constructor(date: string, temperature: string, weatherId: number, icon: string) {
         this.date = date;
         this.temperature = temperature;
-        this.weather = weather;
+        this.weatherId = weatherId;
         this.icon = icon;
     }
 }

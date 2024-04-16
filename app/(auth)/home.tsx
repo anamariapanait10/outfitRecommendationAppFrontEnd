@@ -10,11 +10,12 @@ import { router, useFocusEffect } from 'expo-router';
 import { DataStorageSingleton } from './data_storage_singleton';
 import { set } from 'date-fns';
 import TransparentClothCard, { TransparentClothingItem } from '../../components/TransparentClothCard';
+import { ClothingItem } from './cloth_card';
 
 const Home = () => {
   const { isLoaded, userId, getToken } = useAuth();
   const [recommendedCloth, setRecommendedCloth] = useState(null);
-  const [clothes, setClothes] = useState([]);
+  const [clothes, setClothes] = useState<ClothingItem[] | undefined>([]);
 
   const fetchWeatherData = async () => {
     await DataStorageSingleton.getInstance().fetchWeatherData(44.4268, 26.1025);
@@ -31,17 +32,48 @@ const Home = () => {
     return date.toLocaleDateString();
   };
   
+  // const fetchClothesData = async () => {
+  //   await DataStorageSingleton.getInstance().fetchClothesData(await getToken(), userId, isLoaded);
+  //   let clothesItems = DataStorageSingleton.getInstance().clothingItems;
+  //   let len = clothesItems.length;
+  //   let topwearList = clothesItems.filter((item) => item.category == 'Topwear');
+  //   let topwear = topwearList[Math.floor(Math.random() * topwearList.length)];
+  //   let bottomwearList = clothesItems.filter((item) => item.category == 'Bottomwear');
+  //   let bottomwear = bottomwearList[Math.floor(Math.random() * bottomwearList.length)];
+  //   let footwearList = clothesItems.filter((item) => item.category == 'Footwear');
+  //   let footwear = footwearList[Math.floor(Math.random() * footwearList.length)];
+  //   setClothes([topwear, bottomwear, footwear]);
+  // };
+
   const fetchClothesData = async () => {
-    await DataStorageSingleton.getInstance().fetchClothesData(await getToken(), userId, isLoaded);
-    let clothesItems = DataStorageSingleton.getInstance().clothingItems;
-    let len = clothesItems.length;
-    let topwearList = clothesItems.filter((item) => item.category == 'Topwear');
-    let topwear = topwearList[Math.floor(Math.random() * topwearList.length)];
-    let bottomwearList = clothesItems.filter((item) => item.category == 'Bottomwear');
-    let bottomwear = bottomwearList[Math.floor(Math.random() * bottomwearList.length)];
-    let footwearList = clothesItems.filter((item) => item.category == 'Footwear');
-    let footwear = footwearList[Math.floor(Math.random() * footwearList.length)];
-    setClothes([topwear, bottomwear, footwear]);
+    if(DataStorageSingleton.getInstance().weatherItems.length == 0) {
+      await DataStorageSingleton.getInstance().fetchWeatherData(44.4268, 26.1025);
+    }
+    let weatherItem = DataStorageSingleton.getInstance().weatherItems[0];
+    console.log("weatherItem ", weatherItem);
+    let temperatureNumber = Number(weatherItem.temperature);
+    let temperatureString = "";
+    if(temperatureNumber < 10) {
+      temperatureString = "Cold";
+    } else if(temperatureNumber >= 10 && temperatureNumber < 20) {
+      temperatureString = "Mild";
+    } else {
+      temperatureString = "Hot";
+    }
+    let weatherString = "";
+    if(weatherItem.weatherId < 600) {
+      weatherString = "rainy";
+    } else if(weatherItem.weatherId < 700) {
+      weatherString = "snowy";
+    } else if(weatherItem.weatherId < 800) {
+      weatherString = "overcast";
+    } else if(weatherItem.weatherId == 800) {
+      weatherString = "sunny";
+    } else {
+      weatherString = "overcast";
+    }
+    await DataStorageSingleton.getInstance().fetchRecommendations(await getToken(), userId, isLoaded, weatherString, temperatureString);
+    setClothes(DataStorageSingleton.getInstance().recommendations);
   };
 
   const fetchRadomOutfit = async () => {
