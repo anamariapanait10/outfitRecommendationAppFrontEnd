@@ -1,5 +1,5 @@
-import { Animated, View, Text, Alert, Image, StyleSheet, PanResponder, Dimensions } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { Animated, View, Text, Alert, Image, StyleSheet, PanResponder, Dimensions, Button } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAuth, useUser } from '@clerk/clerk-expo';
 import Colors from "../../constants/Colors";
 import { Ionicons } from '@expo/vector-icons';
@@ -11,15 +11,22 @@ import { DataStorageSingleton } from './data_storage_singleton';
 import { set } from 'date-fns';
 import TransparentClothCard, { TransparentClothingItem } from '../../components/TransparentClothCard';
 import { ClothingItem } from './cloth_card';
+import LocationSelector from './select_location_modal';
+import * as Location from 'expo-location';
 
 const Home = () => {
   const { isLoaded, userId, getToken } = useAuth();
   const [recommendedCloth, setRecommendedCloth] = useState(null);
   const [clothes, setClothes] = useState<ClothingItem[] | undefined>([]);
+  const [locationModalVisible, setLocationModalVisible] = useState(false);
+  
+  const weatherDivRef = useRef(null);
 
-  const fetchWeatherData = async () => {
-    await DataStorageSingleton.getInstance().fetchWeatherData(44.4268, 26.1025);
-  }
+  // Function to call the child's function
+  const callWeatherUpdate = () => {
+    weatherDivRef.current?.updateItems();
+  };
+
 
   // useEffect(() => {
   //   console.log("Fetching weather data...");
@@ -45,12 +52,14 @@ const Home = () => {
   //   setClothes([topwear, bottomwear, footwear]);
   // };
 
-  const fetchClothesData = async () => {
-    if(DataStorageSingleton.getInstance().weatherItems.length == 0) {
-      await DataStorageSingleton.getInstance().fetchWeatherData(44.4268, 26.1025);
+  const fetchClothesData = async (refreshWeatherData=false) => {
+    if(DataStorageSingleton.getInstance().weatherItems.length == 0 || refreshWeatherData) {
+      await DataStorageSingleton.getInstance().fetchWeatherData();
+      await DataStorageSingleton.getInstance().updateCarouselWeatherItems();
+      callWeatherUpdate();
     }
     let weatherItem = DataStorageSingleton.getInstance().weatherItems[0];
-    console.log("weatherItem ", weatherItem);
+    // console.log("weatherItem ", weatherItem);
     let temperatureNumber = Number(weatherItem.temperature);
     let temperatureString = "";
     if(temperatureNumber < 10) {
@@ -72,8 +81,8 @@ const Home = () => {
     } else {
       weatherString = "overcast";
     }
-    await DataStorageSingleton.getInstance().fetchRecommendations(await getToken(), userId, isLoaded, weatherString, temperatureString);
-    setClothes(DataStorageSingleton.getInstance().recommendations);
+    // await DataStorageSingleton.getInstance().fetchRecommendations(await getToken(), userId, isLoaded, weatherString, temperatureString);
+    // setClothes(DataStorageSingleton.getInstance().recommendations);
   };
 
   const fetchRadomOutfit = async () => {
@@ -115,16 +124,66 @@ const Home = () => {
     fetchClothesData();
     // fetchRadomOutfit();
   }, []);
+
+  const wearOutfit = async () => {
+    if(clothes != undefined) {
+      DataStorageSingleton.getInstance().wearOutfit(clothes, new Date().toISOString().split('T')[0], await getToken(), userId, isLoaded);
+    }
+  }
+
+  const handleSelectLocation = async (location) => {
+    const reverseGeocode = await Location.reverseGeocodeAsync({
+      latitude: location.latitude,
+      longitude: location.longitude
+    });
+    
+    if (reverseGeocode.length > 0) {
+      DataStorageSingleton.getInstance().selectedLocation = {
+          city: reverseGeocode[0].city,
+          county: reverseGeocode[0].region,
+          latitude: location.latitude,
+          longitude: location.longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+      };
+    } else {
+      DataStorageSingleton.getInstance().selectedLocation = location;
+    }
+    
+    setLocationModalVisible(false);
+    fetchClothesData(true);
+  };
   
   return (
     <View style={styles.container}>
 
       <View style={styles.weatherAndLocationContainer}>
         <View style={styles.locationAndCalendarContainer}>
-          <View style={styles.locationContainer}>
+          <TouchableOpacity style={styles.locationContainer} onPress={() => setLocationModalVisible(true)}>
             <Ionicons style={styles.location} name="location" size={24}/>
-            <Text style={styles.location}>Bucharest</Text>
-          </View>
+            {/* <Text style={styles.location}>Bucharest</Text> */}
+            {DataStorageSingleton.getInstance().selectedLocation &&
+             <Text style={styles.location}>{DataStorageSingleton.getInstance().selectedLocation.city}</Text>}
+
+            {DataStorageSingleton.getInstance().selectedLocation && !DataStorageSingleton.getInstance().selectedLocation.city &&
+             DataStorageSingleton.getInstance().selectedLocation.county && 
+              <Text style={styles.location}>
+                {DataStorageSingleton.getInstance().selectedLocation.county}
+              </Text>
+            }
+            {DataStorageSingleton.getInstance().selectedLocation && !DataStorageSingleton.getInstance().selectedLocation.city &&
+              !DataStorageSingleton.getInstance().selectedLocation.county &&
+              <Text style={styles.location}>
+                {DataStorageSingleton.getInstance().selectedLocation.latitude.toFixed(2)},
+                {DataStorageSingleton.getInstance().selectedLocation.longitude.toFixed(2)}
+              </Text>
+            }
+            <LocationSelector
+                visible={locationModalVisible}
+                onClose={() => setLocationModalVisible(false)}
+                onSelectLocation={handleSelectLocation}
+            />
+          </TouchableOpacity>
           <View>
             <TouchableOpacity onPress={() => router.replace({pathname: '/(auth)/calendar'})}>
               <Text style={styles.calendar}>See calendar</Text>
@@ -138,7 +197,7 @@ const Home = () => {
         </View> */}
 
          <View style={{height: 80, width: 360}}>
-           <WeatherDiv />
+           <WeatherDiv ref={weatherDivRef} />
         </View>
       </View>
       {/* <View style={{height: 80, width: 400}}>
@@ -161,6 +220,7 @@ const Home = () => {
               // keyExtractor={item => item.id.toString()}
               numColumns={1}
             />
+            <Button title='Wear This Outfit' onPress={wearOutfit}></Button>
           </View>
         ) : (
           <Text style={styles.noOutfitText}>No recommended outfit found</Text>

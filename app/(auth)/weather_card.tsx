@@ -4,25 +4,15 @@ import Carousel from 'react-native-snap-carousel';
 import { DataStorageSingleton } from './data_storage_singleton';
 import { format } from 'date-fns';
 
-const WeatherDiv = () => {
+const WeatherDiv = React.forwardRef((props, ref) => {
 
-    const [carousel, setCarousel] = React.useState();
     const [state, setState] = React.useState({activeIndex:0, carouselItems: []});
+    const [counter, setCounter] = React.useState(0); // this counter is used just to trigger a state change when it is changed
 
     const fetchWeatherData = async () => {
-        
-        await DataStorageSingleton.getInstance().fetchWeatherData(44.4268, 26.1025);
-        let carouselItems = [];
-        for(var i = 0; i < DataStorageSingleton.getInstance().weatherItems.length; i++) {
-            let item = DataStorageSingleton.getInstance().weatherItems[i];
-            let formattedDate = format(item.date, 'E MMM d');
-            carouselItems.push({title: formattedDate, text: item.temperature + "°C", icon: item.icon});   
-        }
-
-        setState({
-          activeIndex:0,
-          carouselItems: carouselItems
-        });
+      await DataStorageSingleton.getInstance().fetchWeatherData();
+      DataStorageSingleton.getInstance().updateCarouselWeatherItems();
+      setState(DataStorageSingleton.getInstance().carouselWeatherItems);
     }
 
     React.useEffect(() => {
@@ -30,6 +20,15 @@ const WeatherDiv = () => {
         fetchWeatherData();
     }, []);
 
+    const updateItems = () => {
+        setState(DataStorageSingleton.getInstance().carouselWeatherItems);
+        setCounter(counter + 1);
+    };
+  
+    // Use useImperativeHandle to expose functions to the parent
+    React.useImperativeHandle(ref, () => ({
+      updateItems
+    }));
 
     const _renderItem = ({item}) => {
         return (
@@ -50,7 +49,6 @@ const WeatherDiv = () => {
         )
     }
 
-  
     return (
         <SafeAreaView style={{flex: 1}}>
         <View style={{ flex: 1, flexDirection:'row', justifyContent: 'center'}}>
@@ -61,14 +59,15 @@ const WeatherDiv = () => {
                 sliderWidth={355}
                 itemWidth={355}
                 renderItem={_renderItem}
-                onSnapToItem = { index => setState({activeIndex:index, carouselItems: state.carouselItems}) } 
+                onSnapToItem = { index => setState({activeIndex:index,
+                   carouselItems: state.carouselItems}) } 
                 vertical={false}
                 />
         </View>
         </SafeAreaView>
     );
     
-}
+});
 
 const styles = StyleSheet.create({
   weatherContainer: {
