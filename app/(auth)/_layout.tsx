@@ -96,9 +96,8 @@ const TabsPage = () => {
         }}
       />
       <Tabs.Screen
-        name="add_item_page"
+        name="filter_bar"
         options={{
-          headerTitle: 'Add Cloth Item',
           href: null,
         }}
       />

@@ -12,13 +12,50 @@ import SpinnerOverlay from './spinner_overlay';
 import Slider from '@react-native-community/slider';
 import { LinearGradient } from 'expo-linear-gradient';
 
-const ToggleButton = ({ label, isActive, onPress }) => (
+const colorMap = {
+  white: '#FFFFFF',
+  beige: '#F5F5DC',
+  turquoise: '#40E0D0',
+  black: '#000000',
+  blue: '#0000FF',
+  purple: '#800080',
+  brown: '#A52A2A',
+  'dark-green': '#006400',
+  'light-green': '#90EE90',
+  orange: '#FFA500',
+  'light-blue': '#ADD8E6',
+  'light-gray': '#D3D3D3',
+  'dark-red': '#8B0000',
+  'dark-yellow': '#9B870C',
+  'dark-gray': '#A9A9A9',
+  pink: '#FFC0CB',
+  'dark-blue': '#00008B',
+  gray: '#808080',
+  green: '#008000',
+  yellow: '#FFFF00',
+  red: '#FF0000',
+  'light-pink': '#FFB6C1'
+};
+
+const ToggleButton = ({ label, isActive, onPress, color="" }) => (
+  
   <TouchableOpacity
-    style={[styles.toggleButton, isActive ? styles.activeButton : styles.inactiveButton]}
+    style={[color ?  styles.toggleButtonColor : styles.toggleButton, isActive ? styles.activeButton : styles.inactiveButton]}
     onPress={onPress}>
-    <Text style={[styles.toggleButtonText, isActive ? styles.activeText : styles.inactiveText]}>
-      {label}
-    </Text>
+    {color && 
+      <View style={styles.colorButtonContainer}>
+        <View style={[styles.colorSquare, { backgroundColor: colorMap[color] }]} />
+        <Text style={[styles.toggleButtonText, isActive ? styles.activeText : styles.inactiveText]}>
+          {label}
+        </Text>
+      </View>
+    }
+    {!color &&  
+      <Text style={[styles.toggleButtonText, isActive ? styles.activeText : styles.inactiveText]}>
+        {label}
+      </Text>
+    }
+   
   </TouchableOpacity>
 );
 
@@ -213,12 +250,14 @@ const ClothingItemForm = () => {
     ]
   };
   const colors = [
-    "Navy Blue", "Blue", "Silver", "Black", "Grey", "Green", "Purple", "White", "Brown",
-    "Bronze", "Teal", "Copper", "Pink", "Off White", "Beige", "Red", "Khaki", "Orange", 
-    "Yellow", "Charcoal", "Steel", "Gold", "Tan", "Magenta", "Lavender", "Sea Green", 
-    "Cream", "Peach", "Olive", "Burgundy", "Multi", "Maroon", "Grey Melange", "Rust", 
-    "Turquoise Blue", "Metallic", "Mustard", "Coffee Brown", "Taupe", "Mauve", 
-    "Mushroom Brown", "Nude", "Fluorescent Green", "Lime Green", "Rose"
+    'white', 'beige', 'black', 
+    'light-gray', 'gray', 'dark-gray', 
+    'yellow',  'dark-yellow',  
+    'light-green', 'green', 'dark-green', 
+    'turquoise',  'orange',
+    'light-blue', 'blue', 'dark-blue',  
+    'light-pink', 'pink', 'red',
+    'dark-red', 'brown', 'purple'
   ];
   const materials = ['Cotton', 'Leather', 'Polyester', 'Nylon'];
   const patterns = ['Graphic', 'Plain', 'Striped', 'Polka Dot'];
@@ -279,6 +318,7 @@ const ClothingItemForm = () => {
               label={color}
               isActive={selectedColor == color}
               onPress={() => setSelectedColor(color)}
+              color={color}
             />
           ))}
         </View>
@@ -426,6 +466,15 @@ const styles = StyleSheet.create({
     borderColor: Colors.grey,
     margin: 5,
   },
+  toggleButtonColor: {
+    paddingVertical: 7,
+    paddingHorizontal: 11,
+    borderRadius: 17,
+    borderWidth: 1,
+    borderColor: Colors.grey,
+    marginTop: 5,
+    marginBottom: 5
+  },
   activeButton: {
     backgroundColor: Colors.purple,
   },
@@ -476,19 +525,14 @@ const styles = StyleSheet.create({
   imagePickerBeforeSelection: {
     borderStyle: 'dashed',
   },
-  // editButton: {
-  //   position: 'absolute',
-  //   top: 10,
-  //   right: 10,
-  //   backgroundColor: 'white',
-  //   padding: 3,
-  //   borderRadius: 5,
-  //   elevation: 3,
-  //   shadowColor: '#000',
-  //   shadowOffset: { width: 0, height: 2 },
-  //   shadowOpacity: 0.25,
-  //   shadowRadius: 3.84,
-  // },
+  colorSquare: {
+    width: 20,
+    height: 20,
+    borderRadius: 5,
+    borderWidth: 0.6,
+    borderColor: '#222222',
+    marginRight: 10,
+  },
   subcategoryContainer: {
     marginTop: 20,
   },
@@ -533,6 +577,10 @@ const styles = StyleSheet.create({
     borderColor: '#FFF',
     borderWidth: 10
   },
+  colorButtonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  }
 });
 
 export default ClothingItemForm;
