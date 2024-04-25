@@ -185,6 +185,13 @@ const TabsPage = () => {
           href: null,
         }}
       />
+       <Tabs.Screen
+        name="outfit_picker"
+        options={{
+          // href: null,
+          headerTitle: 'Choose Your Outfit',
+        }}
+      />
     </Tabs>
   );
 };

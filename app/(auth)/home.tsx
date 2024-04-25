@@ -190,21 +190,10 @@ const Home = () => {
             </TouchableOpacity>
           </View>
         </View>
-
-        {/* <View style={styles.weatherContainer}>
-          <Text>Fri Mar 22</Text>
-          <Text style={styles.weatherText}>🌤️ 25°C</Text>
-        </View> */}
-
-         <View style={{height: 80, width: 360}}>
-           <WeatherDiv ref={weatherDivRef} />
-        </View>
       </View>
-      {/* <View style={{height: 80, width: 400}}>
-        <WeatherDiv />
-      </View> */}
-
-      {/* <Text style={styles.welcomeText}>Welcome! 🎉</Text> */}
+      <View style={{height: 80, width: '100%'}}>
+           <WeatherDiv ref={weatherDivRef} />
+      </View>
       <View style={styles.recommendedOutfitContainer}>
         <Text style={styles.recommendedOutfitTitle}>Recommendations for today</Text>
         {clothes ? (
@@ -256,7 +245,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     marginTop: 50,
-    width: '80%',
+    width: Dimensions.get('window').width - 50,
   },
   recommendedOutfitTitle: {
     fontSize: 16,

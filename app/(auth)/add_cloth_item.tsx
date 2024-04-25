@@ -106,7 +106,7 @@ const ClothingItemForm = () => {
         result = await ImagePicker.launchImageLibraryAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.Images,
           allowsEditing: true,
-          aspect: [1, 1],
+          // aspect: [1, 1],
           quality: 1,
           base64: true,
         });
@@ -115,7 +115,7 @@ const ClothingItemForm = () => {
         result = await ImagePicker.launchCameraAsync({
           cameraType: ImagePicker.CameraType.front,
           allowsEditing: true,
-          aspect: [1, 1],
+          // aspect: [1, 1],
           quality: 1,
           base64: true,
         });
@@ -250,14 +250,14 @@ const ClothingItemForm = () => {
     ]
   };
   const colors = [
-    'white', 'beige', 'black', 
-    'light-gray', 'gray', 'dark-gray', 
-    'yellow',  'dark-yellow',  
-    'light-green', 'green', 'dark-green', 
-    'turquoise',  'orange',
-    'light-blue', 'blue', 'dark-blue',  
-    'light-pink', 'pink', 'red',
-    'dark-red', 'brown', 'purple'
+    'White', 'Beige', 'Black', 
+    'Light gray', 'Gray', 'Dark gray', 
+    'Yellow',  'Dark yellow',  
+    'Light green', 'Green', 'Dark green', 
+    'Turquoise',  'Orange',
+    'Light blue', 'Blue', 'Dark blue',  
+    'Light pink', 'Pink', 'Red',
+    'Dark red', 'Brown', 'Purple'
   ];
   const materials = ['Cotton', 'Leather', 'Polyester', 'Nylon'];
   const patterns = ['Graphic', 'Plain', 'Striped', 'Polka Dot'];
@@ -316,9 +316,9 @@ const ClothingItemForm = () => {
             <ToggleButton
               key={color}
               label={color}
-              isActive={selectedColor == color}
+              isActive={selectedColor.toLowerCase() == color.toLowerCase()}
               onPress={() => setSelectedColor(color)}
-              color={color}
+              color={color.toLowerCase().replace(' ', '-')}
             />
           ))}
         </View>

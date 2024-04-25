@@ -1,13 +1,14 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Image, ScrollView } from 'react-native';
 
+
 const categories = [
-    { name: 'All', image: require('..\\..\\assets\\images\\topwear_icon.png') },
-    { name: 'Topwear', image: require('..\\..\\assets\\images\\topwear_icon.png') },
-    { name: 'Bottomwear', image: require('..\\..\\assets\\images\\bottomwear_icon.png') },
-    { name: 'Footwear', image: require('..\\..\\assets\\images\\topwear_icon.png') },
-    { name: 'Bodywear', image: require('..\\..\\assets\\images\\topwear_icon.png') },
-    { name: 'Accessories', image: require('..\\..\\assets\\images\\topwear_icon.png') },
+    { name: 'All', image: require('../../assets/images/topwear_icon.png') },
+    { name: 'Topwear', image: require('../../assets/images/topwear_icon.png') },
+    { name: 'Bottomwear', image: require('../../assets/images/bottomwear_icon.png') },
+    { name: 'Footwear', image: require('../../assets/images/topwear_icon.png') },
+    { name: 'Bodywear', image: require('../../assets/images/topwear_icon.png') },
+    { name: 'Accessories', image: require('../../assets/images/topwear_icon.png') },
 ];
 
 const FilterBar = ({ onFilterChange }) => {
@@ -37,7 +38,7 @@ const FilterBar = ({ onFilterChange }) => {
         // alignItems: 'top',
         flexDirection: 'row',
         paddingTop: 10,
-        // height: 40
+        // height: 50
     },
     filterButton: {
         alignItems: 'center',

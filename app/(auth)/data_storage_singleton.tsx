@@ -25,6 +25,8 @@ export class DataStorageSingleton {
 
     public monthOutfits = {}
 
+    public lastAIExpertResponse = '';
+
     static getInstance() {
         if (DataStorageSingleton.instance === null) {
             DataStorageSingleton.instance = new DataStorageSingleton();
@@ -191,6 +193,34 @@ export class DataStorageSingleton {
             DataStorageSingleton.getInstance().monthOutfits = data;
         } catch (error: any) {
             // Handle any errors, such as by displaying an alert
+            Alert.alert("Error fetching data", error.message);
+        }
+    }
+
+    public askAiExpert = async (top: ClothingItem, bottom: ClothingItem, foot: ClothingItem, event: string, token: string | null, userId: string | null | undefined, isLoaded: boolean) => {
+        if (!userId || !isLoaded) {
+            console.log('No authenticated user found.');
+            return;
+        }
+        try {
+            const baseUrl = process.env.EXPO_PUBLIC_BASE_API_URL + '/ai-expert/ask/';
+            const requestBody = JSON.stringify({
+                topwear: top,
+                bottomwear: bottom,
+                footwear: foot,
+                event: event
+            });
+            const response = await fetch(baseUrl, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: requestBody
+            });
+            const data = await response.json();
+            this.lastAIExpertResponse = data;
+        } catch (error: any) {
             Alert.alert("Error fetching data", error.message);
         }
     }
