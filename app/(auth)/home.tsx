@@ -156,7 +156,6 @@ const Home = () => {
         <View style={styles.locationAndCalendarContainer}>
           <TouchableOpacity style={styles.locationContainer} onPress={() => setLocationModalVisible(true)}>
             <Ionicons style={styles.location} name="location" size={24}/>
-            {/* <Text style={styles.location}>Bucharest</Text> */}
             {DataStorageSingleton.getInstance().selectedLocation &&
              <Text style={styles.location}>{DataStorageSingleton.getInstance().selectedLocation.city}</Text>}
 
@@ -185,16 +184,10 @@ const Home = () => {
             </TouchableOpacity>
           </View>
         </View>
-
-        {/* <View style={styles.weatherContainer}>
-          <Text>Fri Mar 22</Text>
-          <Text style={styles.weatherText}>🌤️ 25°C</Text>
-        </View> */}        
       </View>
       <View style={{height: 80, width: '100%'}}>
-        <WeatherDiv ref={weatherDivRef} />
+           <WeatherDiv ref={weatherDivRef} />
       </View>
-
       <View style={styles.recommendedOutfitContainer}>
         <Text style={styles.recommendedOutfitTitle}>Recommendations for today</Text>
         {clothes ? (

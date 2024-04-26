@@ -185,6 +185,7 @@ const TabsPage = () => {
           href: null,
         }}
       />
+<<<<<<< HEAD
       <Tabs.Screen
         name="add_marketplace_item"
         options={{
@@ -213,6 +214,13 @@ const TabsPage = () => {
         options={{
           // href: null,
           headerTitle: '✨ Marketplace ✨',
+=======
+       <Tabs.Screen
+        name="outfit_picker"
+        options={{
+          // href: null,
+          headerTitle: 'Choose Your Outfit',
+>>>>>>> 21cfea85c1f9059181c2ff60cbe22e0cd19e2db0
         }}
       />
     </Tabs>

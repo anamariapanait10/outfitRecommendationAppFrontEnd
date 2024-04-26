@@ -42,30 +42,30 @@ const WardrobeScreen = () => {
     );
 
     return (
-        <View style={styles.container}>
-            <FilterBar onFilterChange={handleFilterChange} />
-            <FlatList
-                style={{ width: '100%'}}
-                data={filteredClothes}
-                renderItem={({ item }) => <ClothCard {...item} />}
-                keyExtractor={item => item.id.toString()}
-                numColumns={3}
-                refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={fetchClothesData} />
-                }
-            />
-            <Pressable style={styles.button} onPress={() => router.replace({pathname: '/(auth)/add_cloth_item'})}>
-                <Ionicons name="add" size={24} color="white" />
-            </Pressable>         
+        <View>
+            <View style={{height: 80}}>
+                <FilterBar onFilterChange={handleFilterChange} />
+            </View>
+            <View>
+                <FlatList
+                    style={{ width: '100%'}}
+                    data={filteredClothes}
+                    renderItem={({ item }) => <ClothCard {...item} />}
+                    keyExtractor={item => item.id.toString()}
+                    numColumns={3}
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={fetchClothesData} />
+                    }
+                />
+                <Pressable style={styles.button} onPress={() => router.replace({pathname: '/(auth)/add_cloth_item'})}>
+                    <Ionicons name="add" size={24} color="white" />
+                </Pressable>         
+            </View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "center",
-    },
     button: {
       alignItems: 'center',
       justifyContent: 'center',
