@@ -81,8 +81,8 @@ const Home = () => {
     } else {
       weatherString = "overcast";
     }
-    // await DataStorageSingleton.getInstance().fetchRecommendations(await getToken(), userId, isLoaded, weatherString, temperatureString);
-    // setClothes(DataStorageSingleton.getInstance().recommendations);
+    await DataStorageSingleton.getInstance().fetchRecommendations(await getToken(), userId, isLoaded, weatherString, temperatureString);
+    setClothes(DataStorageSingleton.getInstance().recommendations);
   };
 
   const fetchRadomOutfit = async () => {
@@ -110,19 +110,14 @@ const Home = () => {
             }
         });
         const data = await response.json();
-        // setRecommendedCloth(data[Math.floor(Math.random() * data.length)]); 
         setRecommendedCloth(data[0]); 
     } catch (error: any) {
       Alert.alert("Error", error.message);
     }
   };
 
-  // useEffect(() => {
-  //   fetchClothesData(); 
-  // });
   useEffect(() => {
     fetchClothesData();
-    // fetchRadomOutfit();
   }, []);
 
   const wearOutfit = async () => {
@@ -194,33 +189,25 @@ const Home = () => {
         {/* <View style={styles.weatherContainer}>
           <Text>Fri Mar 22</Text>
           <Text style={styles.weatherText}>🌤️ 25°C</Text>
-        </View> */}
-
-         <View style={{height: 80, width: 360}}>
-           <WeatherDiv ref={weatherDivRef} />
-        </View>
+        </View> */}        
       </View>
-      {/* <View style={{height: 80, width: 400}}>
-        <WeatherDiv />
-      </View> */}
+      <View style={{height: 80, width: '100%'}}>
+        <WeatherDiv ref={weatherDivRef} />
+      </View>
 
-      {/* <Text style={styles.welcomeText}>Welcome! 🎉</Text> */}
       <View style={styles.recommendedOutfitContainer}>
         <Text style={styles.recommendedOutfitTitle}>Recommendations for today</Text>
         {clothes ? (
-          // <View style={styles.outfitDetails}>
-          //   <Image source={{ uri: recommendedCloth.image.toString() }} style={styles.outfitImage} />
-          //   <Text style={styles.outfitName}>{recommendedCloth.name}</Text>
-          // </View>
-          <View style={{ height: 300 }}>
+          <View style={{ height: 350, justifyContent: 'center', alignItems: 'center' }}>
             <FlatList
               style={{ width: '100%' }}
               data={clothes}
               renderItem={({ item }) => <TransparentClothCard {...item} />}
-              // keyExtractor={item => item.id.toString()}
               numColumns={1}
             />
-            <Button title='Wear This Outfit' onPress={wearOutfit}></Button>
+            <TouchableOpacity style={styles.wearOutfitButton} onPress={wearOutfit}>
+                <Text style={styles.wearOutfitButtonText}>Wear This Outfit</Text>
+            </TouchableOpacity>
           </View>
         ) : (
           <Text style={styles.noOutfitText}>No recommended outfit found</Text>
@@ -256,7 +243,8 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     marginTop: 50,
-    width: '80%',
+    width: Dimensions.get('window').width - 50,
+    height: '70%',
   },
   recommendedOutfitTitle: {
     fontSize: 16,
@@ -329,6 +317,18 @@ const styles = StyleSheet.create({
   },
   dateText: {
     fontSize: 18,
+  },
+  wearOutfitButton: {
+    backgroundColor: Colors.purple,
+    paddingVertical: 7,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginTop: 7,
+  },
+  wearOutfitButtonText: {
+    fontSize: 20,
+    color: 'white',
+    textAlign: 'center',
   },
 });
 

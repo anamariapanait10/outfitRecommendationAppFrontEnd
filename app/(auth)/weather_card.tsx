@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Text, View, SafeAreaView, StyleSheet, Image } from 'react-native';
+import { Text, View, SafeAreaView, StyleSheet, Image, Dimensions } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import { DataStorageSingleton } from './data_storage_singleton';
 import { format } from 'date-fns';
@@ -33,10 +33,9 @@ const WeatherDiv = React.forwardRef((props, ref) => {
     const _renderItem = ({item}) => {
         return (
           <View style={[{
-              // backgroundColor:'transparent',
               borderRadius: 5,
               height: 70,
-              padding: 5,
+              // padding: 5,
               marginLeft: 15,
               marginRight: 15, }, styles.weatherContainer]}>
             <Text style={{fontSize: 13}}>{item.title}</Text>
@@ -56,8 +55,8 @@ const WeatherDiv = React.forwardRef((props, ref) => {
                 layout={"default"}
                 // ref={ref => setCarousel(ref)}
                 data={state.carouselItems}
-                sliderWidth={355}
-                itemWidth={355}
+                sliderWidth={ Dimensions.get('window').width }
+                itemWidth={ Dimensions.get('window').width - 20 }
                 renderItem={_renderItem}
                 onSnapToItem = { index => setState({activeIndex:index,
                    carouselItems: state.carouselItems}) } 
@@ -77,7 +76,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     borderRadius: 5,
     backgroundColor: '#ffffff', 
-    shadowColor: '#000',
+    shadowColor: '#000000',
     shadowOffset: {
       width: 0,
       height: 2,

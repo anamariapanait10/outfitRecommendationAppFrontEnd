@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Image, View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { Image, View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import Colors from "../../constants/Colors";
 import ChooseImageModal from './choose_image_modal';
 import * as ImagePicker from "expo-image-picker";
@@ -121,7 +121,6 @@ const ClothingItemForm = () => {
         });
       }
       if (!result.canceled) {
-        // console.log(result.assets[0].base64);
         sendImageForProcessing('data:image/jpeg;base64,' + result.assets[0].base64);
       }
     } catch (error: any) {
@@ -212,27 +211,9 @@ const ClothingItemForm = () => {
       } catch (error) {
         console.error("Error making POST request:", error);
       }
-
-      // Alert.alert(
-      //   "Item Added",
-      //   `Item with seasons: ${selectedSeasons.join(', ')}, occasions: ${selectedOccasions.join(', ')}, `
-      //   + `categories: ${selectedCategories.join(', ')}, colors: ${selectedColors.join(', ')}, materials: ${selectedMaterials.join(', ')}, `
-      //   + `patterns: ${selectedPatterns.join(', ')} added.`
-      // );
     };
 
     makePostRequest();
-
-    // Reset form fields
-    // setImage("");
-    // setDescription("");
-    // setSelectedCategory("");
-    // setSelectedSubCategory("");
-    // setSelectedColor("");
-    // setSelectedMaterial("");
-    // setSelectedPattern("");
-    // setSelectedOccasions([]);
-    // setSelectedSeasons([]);
   };
 
   const categories = ['Topwear', 'Bottomwear', 'Footwear', 'Bodywear', 'Headwear', 'Accessories'];
@@ -275,7 +256,6 @@ const ClothingItemForm = () => {
           ) : (
             <Text>Select an Image</Text>
           )}
-          {/* <Ionicons name="create-outline" size={24} style={styles.editButton} /> */}
         </TouchableOpacity>
 
         <Text style={styles.title}>What item is this?</Text>
@@ -431,7 +411,7 @@ const ClothingItemForm = () => {
       
       <TouchableOpacity style={styles.saveButton} onPress={handleSubmit}>
           <Text style={styles.saveButtonText}>Save</Text>
-        </TouchableOpacity>
+      </TouchableOpacity>
     </View>
     </ScrollView>
   );

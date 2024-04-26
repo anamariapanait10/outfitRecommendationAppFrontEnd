@@ -3,6 +3,7 @@ import { ClothingItem } from "./cloth_card";
 import { WeatherItem } from "../../components/WeatherItem";
 import { format } from 'date-fns';
 export class DataStorageSingleton {
+    
     static instance: DataStorageSingleton | null = null;
 
     public clothingItems: ClothingItem[] = [];
@@ -194,4 +195,27 @@ export class DataStorageSingleton {
             Alert.alert("Error fetching data", error.message);
         }
     }
+
+    public getMarketplaceItemById = async (id: string, token: string | null, userId: string | null | undefined, isLoaded: boolean) => {
+        if (!userId || !isLoaded) {
+            console.log('No authenticated user found.');
+            return;
+        }
+        try {
+            const baseUrl = process.env.EXPO_PUBLIC_BASE_API_URL + '/marketplace-items/' + id;
+            const response = await fetch(baseUrl, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+            });
+            const data = await response.json();
+            return data;
+        } catch (error: any) {
+            // Handle any errors, such as by displaying an alert
+            Alert.alert("Error fetching data", error.message);
+        }
+    }
+
 }

@@ -2,7 +2,7 @@ import { Tabs, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable } from 'react-native';
 import { useAuth } from '@clerk/clerk-expo';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, Text, View } from 'react-native';
 import Colors from "../../constants/Colors";
 import { useRouter } from 'expo-router';
 import { DataStorageSingleton } from './data_storage_singleton';
@@ -183,6 +183,36 @@ const TabsPage = () => {
         name="select_location_modal"
         options={{
           href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="add_marketplace_item"
+        options={{
+          href: null,
+          headerTitle: 'Add Item To Marketplace',
+          // headerTitle: () => (
+          //   <Text>
+          //     <Ionicons name="arrow-back-outline" size={22} color={'#fff'} />
+          //     ✨ Marketplace ✨
+          //   </Text>
+          // ),
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={{
+                paddingLeft: 4,
+                paddingTop: 4,
+              }}>
+              <Ionicons name="arrow-back-outline" size={22} color={'#fff'} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+       <Tabs.Screen
+        name="marketplace"
+        options={{
+          // href: null,
+          headerTitle: '✨ Marketplace ✨',
         }}
       />
     </Tabs>

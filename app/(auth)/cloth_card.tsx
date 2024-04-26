@@ -19,7 +19,6 @@ export class ClothingItem {
     constructor(id: number,
         wardrobe_id: number,
         description: string,
-        size: string,
         color: string,
         category: string,
         subCategory: string,
