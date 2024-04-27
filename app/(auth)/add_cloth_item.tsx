@@ -296,7 +296,7 @@ const ClothingItemForm = () => {
             <ToggleButton
               key={color}
               label={color}
-              isActive={selectedColor.toLowerCase() == color.toLowerCase()}
+              isActive={selectedColor?.toLowerCase() == color.toLowerCase()}
               onPress={() => setSelectedColor(color)}
               color={color.toLowerCase().replace(' ', '-')}
             />

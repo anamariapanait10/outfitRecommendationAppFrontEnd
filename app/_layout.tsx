@@ -4,8 +4,12 @@ import { useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
 import { Slot } from 'expo-router';
+import { useFonts } from 'expo-font';
 
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
+let customFonts = {
+  'GreatVibes': require('../assets/fonts/GreatVibes-Regular.ttf')
+};
 
 const tokenCache = {
   async getToken(key: string) {
@@ -28,6 +32,7 @@ const InitialLayout = () => {
   const { isLoaded, isSignedIn } = useAuth();
   const segments = useSegments();
   const router = useRouter();
+  const [isFontrLoaded] = useFonts(customFonts);
 
   useEffect(() => {
     if (!isLoaded) return;

@@ -1,7 +1,8 @@
-import { View, StyleSheet, TextInput, Button } from 'react-native';
+import { View, StyleSheet, TextInput, Button, TouchableOpacity, Text } from 'react-native';
 import React, { useState } from 'react';
 import { Stack } from 'expo-router';
 import { useSignIn } from '@clerk/clerk-expo';
+import Colors from '../../constants/Colors';
 
 const PwReset = () => {
   const [emailAddress, setEmailAddress] = useState('');
@@ -48,7 +49,9 @@ const PwReset = () => {
         <>
           <TextInput autoCapitalize="none" placeholder="example@domain.com" value={emailAddress} onChangeText={setEmailAddress} style={styles.inputField} />
 
-          <Button onPress={onRequestReset} title="Send Reset Email" color={'#6c47ff'}></Button>
+          <TouchableOpacity onPress={onRequestReset} style={styles.button}>
+              <Text style={{color: 'white', fontSize: 18}}>Send Reset Email</Text>
+          </TouchableOpacity>
         </>
       )}
 
@@ -58,7 +61,9 @@ const PwReset = () => {
             <TextInput value={code} placeholder="Enter sent code" style={styles.inputField} onChangeText={setCode} />
             <TextInput placeholder="New password" value={password} onChangeText={setPassword} secureTextEntry style={styles.inputField} />
           </View>
-          <Button onPress={onReset} title="Set new Password" color={'#6c47ff'}></Button>
+          <TouchableOpacity onPress={onReset} style={styles.button}>
+              <Text style={{color: 'white', fontSize: 18}}>Set new Password</Text>
+          </TouchableOpacity>
         </>
       )}
     </View>
@@ -75,14 +80,18 @@ const styles = StyleSheet.create({
     marginVertical: 4,
     height: 50,
     borderWidth: 1,
-    borderColor: '#6c47ff',
+    borderColor: Colors.purple,
     borderRadius: 4,
     padding: 10,
     backgroundColor: '#fff',
   },
   button: {
-    margin: 8,
+    backgroundColor: Colors.purple,
+    padding: 10,
+    borderRadius: 4,
     alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 10,
   },
 });
 

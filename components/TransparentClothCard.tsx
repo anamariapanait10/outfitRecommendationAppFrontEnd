@@ -25,10 +25,10 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
         borderRadius: 5,
         height: 70,
-        padding: 5,
+        // padding: 5,
         marginLeft: 15,
         marginRight: 15,
-        marginBottom: 20,
+        marginBottom: 15,
     },
     image: {
         height: 80,

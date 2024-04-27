@@ -7,6 +7,7 @@ import Colors from "../../constants/Colors";
 import { useRouter } from 'expo-router';
 import { DataStorageSingleton } from './data_storage_singleton';
 
+
 export const LogoutButton = () => {
   const { signOut } = useAuth();
 
@@ -56,14 +57,20 @@ const TabsPage = () => {
     <Tabs
       screenOptions={{
         headerStyle: {
-          backgroundColor: '#6c47ff',
+          backgroundColor: Colors.purple, // '#6c47ff',
         },
         headerTintColor: '#fff',
+        tabBarActiveTintColor:  Colors.purple,
       }}>
       <Tabs.Screen
         name="wardrobe"
         options={{
-          headerTitle: '✨ My Wardrobe ✨',
+          headerTitle: ' My Wardrobe ',
+          headerTitleStyle: {
+            fontFamily: 'GreatVibes',
+            fontSize: 24,
+          },
+          headerTitleAlign: 'center',
           tabBarIcon: ({ color, size }) => <Ionicons name="body" size={size} color={color} />,
           tabBarLabel: 'Wardrobe',
         }}
@@ -72,23 +79,17 @@ const TabsPage = () => {
       <Tabs.Screen
         name="home"
         options={{
-          headerTitle: '✨ Outfits ✨',
+          headerTitle: ' Outfits ',
+          headerTitleStyle: {
+            fontFamily: 'GreatVibes',
+            fontSize: 26,
+          },
+          headerTitleAlign: 'center',
           tabBarIcon: ({ color, size }) => <Ionicons name="home-outline" size={size} color={color} />,
           tabBarLabel: 'Outfits',
         }}
         redirect={!isSignedIn}
       />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          headerTitle: '✨ Profile ✨',
-          tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" size={size} color={color} />,
-          tabBarLabel: 'My Profile',
-          headerRight: () => <LogoutButton />,
-        }}
-        redirect={!isSignedIn}
-      />
-      
       <Tabs.Screen
         name="cloth_card"
         options={{
@@ -105,6 +106,11 @@ const TabsPage = () => {
         name="add_cloth_item"
         options={{
           headerTitle: 'Add A Cloth Item',
+          headerTitleStyle: {
+            fontFamily: 'GreatVibes',
+            fontSize: 21,
+          },
+          headerTitleAlign: 'center',
           href: null,
           headerLeft: () => (
             <TouchableOpacity
@@ -127,7 +133,12 @@ const TabsPage = () => {
       <Tabs.Screen
         name="outfit_item_details"
         options={{
-          headerTitle: 'Outfit Item Details',
+          headerTitle: 'Outfit Item Details ',
+          headerTitleStyle: {
+            fontFamily: 'GreatVibes',
+            fontSize: 24,
+          },
+          headerTitleAlign: 'center',
           href: null,
           headerLeft: () => (
             <TouchableOpacity
@@ -136,15 +147,22 @@ const TabsPage = () => {
                 paddingLeft: 4,
                 paddingTop: 4,
               }}>
-              <Ionicons name="arrow-back-outline" size={22} color={'#fff'} />
+              <Ionicons name="arrow-back-outline" size={22} color={'#eee'} />
             </TouchableOpacity>
           ),
           headerRight: () => (
             <TouchableOpacity
               onPress={handleDeleteCloth}
               style={{
-                paddingRight: 5,
-                paddingTop: 4,
+                marginRight: 10,
+                paddingLeft: 4,
+                paddingRight: 4,
+                paddingTop: 3,
+                paddingBottom: 3,
+                borderColor: '#fff',
+                borderWidth: 1,
+                borderRadius: 15,
+                backgroundColor: '#fff',  
               }}>
               <Ionicons name="trash-outline" size={24} color={Colors.black} />
             </TouchableOpacity>
@@ -155,6 +173,12 @@ const TabsPage = () => {
         name="calendar"
         options={{
           href: null,
+          headerTitle: 'Calendar',
+          headerTitleStyle: {
+            fontFamily: 'GreatVibes',
+            fontSize: 26,
+          },
+          headerTitleAlign: 'center',
           headerLeft: () => (
             <TouchableOpacity
               onPress={() => router.back()}
@@ -185,18 +209,16 @@ const TabsPage = () => {
           href: null,
         }}
       />
-<<<<<<< HEAD
       <Tabs.Screen
         name="add_marketplace_item"
         options={{
           href: null,
-          headerTitle: 'Add Item To Marketplace',
-          // headerTitle: () => (
-          //   <Text>
-          //     <Ionicons name="arrow-back-outline" size={22} color={'#fff'} />
-          //     ✨ Marketplace ✨
-          //   </Text>
-          // ),
+          headerTitle: ' Add Item To Marketplace ',
+          headerTitleStyle: {
+            fontFamily: 'GreatVibes',
+            fontSize: 20,
+          },
+          headerTitleAlign: 'center',
           headerLeft: () => (
             <TouchableOpacity
               onPress={() => router.back()}
@@ -209,19 +231,77 @@ const TabsPage = () => {
           ),
         }}
       />
-       <Tabs.Screen
+      <Tabs.Screen
         name="marketplace"
         options={{
-          // href: null,
-          headerTitle: '✨ Marketplace ✨',
-=======
-       <Tabs.Screen
+          headerTitle: ' Marketplace ',
+          headerTitleStyle: {
+            fontFamily: 'GreatVibes',
+            fontSize: 24,
+          },
+          headerTitleAlign: 'center',
+          tabBarIcon: ({ color, size }) => <Ionicons name="bag-handle-outline" size={size} color={color} />,
+          tabBarLabel: 'Marketplace',
+        }}
+      />
+      <Tabs.Screen
         name="outfit_picker"
         options={{
-          // href: null,
-          headerTitle: 'Choose Your Outfit',
->>>>>>> 21cfea85c1f9059181c2ff60cbe22e0cd19e2db0
+          href: null,
+          headerTitleStyle: {
+            fontFamily: 'GreatVibes',
+            fontSize: 24,
+          },
+          headerTitleAlign: 'center',
+          headerTitle: ' Choose Your Outfit ',
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={{
+                paddingLeft: 4,
+                paddingTop: 4,
+              }}>
+              <Ionicons name="arrow-back-outline" size={22} color={'#fff'} />
+            </TouchableOpacity>
+          ),
         }}
+      />
+      <Tabs.Screen
+        name="marketplace_item_details"
+        options={{
+          href: null,
+          headerTitle: 'Marketplace Item Details',
+          headerTitleStyle: {
+            fontFamily: 'GreatVibes',
+            fontSize: 22,
+          },
+          headerTitleAlign: 'center',
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={{
+                paddingLeft: 4,
+                paddingTop: 4,
+              }}>
+              <Ionicons name="arrow-back-outline" size={22} color={'#fff'} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          headerTitle: ' Profile ',
+          headerTitleStyle: {
+            fontFamily: 'GreatVibes',
+            fontSize: 26,
+          },
+          headerTitleAlign: 'center',
+          tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" size={size} color={color} />,
+          tabBarLabel: 'My Profile',
+          headerRight: () => <LogoutButton />,
+        }}
+        redirect={!isSignedIn}
       />
     </Tabs>
   );

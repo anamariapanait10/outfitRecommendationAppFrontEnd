@@ -27,8 +27,9 @@ export default StyleSheet.create({
     },
     title: {
         fontSize: 16,
-        color: '#6c47ff',
+        color: '#7b68ee', // '#6c47ff', 
         width: '100%',
+        textAlign: 'center',
     },
     filterBar: {
 

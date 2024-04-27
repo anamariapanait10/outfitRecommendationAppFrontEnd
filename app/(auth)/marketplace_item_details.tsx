@@ -5,7 +5,7 @@ import { DataStorageSingleton } from "./data_storage_singleton";
 import { useAuth } from "@clerk/clerk-expo";
 import SpinnerOverlay from "./spinner_overlay";
 import { ClothingItem } from "./cloth_card";
-import { set } from "date-fns";
+import MarketplaceItemDetailsTable from "../../components/MarketplaceItemDetailsTable";
 
 export class MarketplaceItem {
     id: number;
@@ -59,8 +59,8 @@ const MarketplaceItemDetails = () => {
     const fetchData = async () => {
         if(typeof id === 'string') {
             setLoading(true);
-            let i = await DataStorageSingleton.getInstance().getMarketplaceItemById(id, await getToken(), userId, isLoaded);
-            setItem(i);
+            let item = await DataStorageSingleton.getInstance().getMarketplaceItemById(id, await getToken(), userId, isLoaded);
+            setItem(item);
             setLoading(false);
         }
     }
@@ -72,14 +72,17 @@ const MarketplaceItemDetails = () => {
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <SpinnerOverlay isVisible={loading} />
-            <Text style={styles.title}>{item?.description}</Text>
             <Image style={styles.image} source={{ uri: item?.outfit.image }} />
-            <Text style={styles.detail}>Brand: {item?.brand}</Text>
+            {/* <Text style={styles.detail}>Brand: {item?.brand}</Text>
             <Text style={styles.detail}>Size: {item?.size}</Text>
             <Text style={styles.detail}>Condition: {item?.condition}</Text>
             <Text style={styles.detail}>Price: ${item?.price}</Text>
             <Text style={styles.detail}>Location: {item?.location}</Text>
             <Text style={styles.detail}>Posted Date: {item?.postedDate}</Text>
+            <Text style={styles.title}>{item?.description}</Text> */} 
+            <View style={{width: '95%'}}>
+              <MarketplaceItemDetailsTable {...item} />
+            </View>
         </ScrollView>
     );
 };
@@ -98,8 +101,7 @@ const styles = StyleSheet.create({
   image: {
     width: 300,
     height: 300,
-    resizeMode: "contain",
-    marginBottom: 10,
+    borderRadius: 20,
   },
   detail: {
     fontSize: 16,

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, Dimensions, Modal } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, Dimensions, Modal, Button } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Carousel from 'react-native-snap-carousel';
@@ -9,6 +9,7 @@ import { ClothingItem } from './cloth_card';
 import Colors from '../../constants/Colors';
 import SpinnerOverlay from './spinner_overlay';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { Calendar } from 'react-native-calendars';
 
 const OutfitPicker = () => {
     const { isLoaded, userId, getToken } = useAuth();
@@ -19,6 +20,8 @@ const OutfitPicker = () => {
     const [bottomwears, setBottomwears] = useState<ClothingItem[]>([]);
     const [footwears, setFootwears] = useState<ClothingItem[]>([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isCalendarVisible, setIsCalendarVisible] = useState(false);
+    const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
     const [expertResponse, setExpertResponse] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -48,6 +51,27 @@ const OutfitPicker = () => {
       fetchClothesData(); 
     }, []);
 
+  
+    // const onChangeDate = (event, selectedDate) => {
+    //   const currentDate = selectedDate || date;
+    //   setDatePickerVisible(false);
+    //   setDate(currentDate);
+    //   console.log("Date: ", currentDate);
+    //   // Save the date or other operations
+    // };
+    const openCalendar = () => {
+      setIsCalendarVisible(true);
+    };
+    const handleDateSelect = (day) => {
+      setDate(day.dateString);
+      console.log("Selected date: ", day.dateString);
+    };
+    const handleSaveData = async () => {
+      // save the date
+      let clothes = [topwears[topwearIndex], bottomwears[bottomwearIndex], footwears[footwearIndex]];
+      DataStorageSingleton.getInstance().wearOutfit(clothes, date, await getToken(), userId, isLoaded);
+    };
+
     const renderCarouselItem = ({ item, index }) => {
         return (
             <View style={styles.item}>
@@ -72,84 +96,105 @@ const OutfitPicker = () => {
     }
 
     return (
-      <View style={styles.mainContainer}>
-        <SpinnerOverlay isVisible={loading} />
-        <GestureHandlerRootView>    
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={isModalVisible}
-            onRequestClose={() => {setIsModalVisible(false)}}
-          > 
-            <View style={{flex: 1, justifyContent: 'center'}}>
-              <View style={styles.modalView}>
-                <Text style={{fontSize: 25}}>Expert's decision</Text>
-                {renderOutfitItem(topwears[topwearIndex])}
-                {renderOutfitItem(bottomwears[bottomwearIndex])}
-                {renderOutfitItem(footwears[footwearIndex])}
-                <Text>
-                   {expertResponse.decision == 'Yes' ? 'The outfit will look great!' : 'This outfit is not be the best, maybe try another one.'}
-                </Text>
-                <Text>
-                  {expertResponse.reason}
-                </Text>
-                <TouchableOpacity
-                  style={styles.closeButton}
-                  onPress={() => {setIsModalVisible(false)}}
-                >
-                  <Text>Close</Text>
+      <View style={{height: '100%'}}>  
+        <View style={styles.mainContainer}>
+          <SpinnerOverlay isVisible={loading} />
+          <GestureHandlerRootView>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={isModalVisible}
+              onRequestClose={() => {setIsModalVisible(false)}}
+            > 
+              <View style={{flex: 1, justifyContent: 'center'}}>
+                <View style={styles.modalView}>
+                  <Text style={{fontSize: 25}}>Expert's decision</Text>
+                  {renderOutfitItem(topwears[topwearIndex])}
+                  {renderOutfitItem(bottomwears[bottomwearIndex])}
+                  {renderOutfitItem(footwears[footwearIndex])}
+                  <Text>
+                    {expertResponse.decision == 'Yes' ? 'The outfit will look great!' : 'This outfit is not be the best, maybe try another one.'}
+                  </Text>
+                  <Text>
+                    {expertResponse.reason}
+                  </Text>
+                  <TouchableOpacity
+                    style={styles.closeButton}
+                    onPress={() => {setIsModalVisible(false)}}
+                  >
+                    <Text>Close</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              
+            </Modal>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={isCalendarVisible}
+              onRequestClose={() => {setIsCalendarVisible(false); handleSaveData()}}
+            >
+              <View style={styles.calendarView}>
+                <Calendar
+                  onDayPress={handleDateSelect}
+                  markedDates={{ [date]: { selected: true, marked: true, selectedColor: Colors.purple } }}
+                />
+                <TouchableOpacity style={{backgroundColor: Colors.purple, padding: 10, borderRadius: 20}} onPress={() => setIsCalendarVisible(false)}>
+                    <Text style={{color: 'white'}}>Close</Text>
                 </TouchableOpacity>
               </View>
+            </Modal>
+          </GestureHandlerRootView>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between'}}>
+            <View style={{width: '50%', marginLeft: 5}}>
+              <DropDownPicker
+                open={isDropdownOpen}
+                value={dropdownValue}
+                items={dropdownItems}
+                setOpen={setDropdownOpen}
+                setValue={setDropdownValue}
+                setItems={setDropdownItems}
+                placeholder="Select an occasion"
+                zIndex={3000}
+                zIndexInverse={1000}
+              />
             </View>
-            
-          </Modal>
-        </GestureHandlerRootView>
-        <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
-          <View style={{width: '50%', marginLeft: 5}}>
-            <DropDownPicker
-              open={isDropdownOpen}
-              value={dropdownValue}
-              items={dropdownItems}
-              setOpen={setDropdownOpen}
-              setValue={setDropdownValue}
-              setItems={setDropdownItems}
-              placeholder="Select an occasion"
-              zIndex={3000}
-              zIndexInverse={1000}
-            />
+            <TouchableOpacity style={{ backgroundColor: 'black', width: '45%', height:50, padding:15, paddingLeft: 29, borderRadius: 5, marginRight: 5}} onPress={askAiExpert}>
+              <Text style={styles.buttonText}>Ask the AI Expert</Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity style={{ backgroundColor: 'black', width: '45%', height:50, padding:15, paddingLeft: 29, borderRadius: 5, marginRight: 5}} onPress={askAiExpert}>
-            <Text style={styles.buttonText}>Ask the AI Expert</Text>
-          </TouchableOpacity>
+          <View style={styles.outfitContainer}>
+            <Carousel
+            data={topwears}
+            layout={"default"}
+            renderItem={renderCarouselItem}
+            sliderWidth={ Dimensions.get('window').width }
+            itemWidth={ 200 }
+            firstItem={Math.floor(topwears.length / 2)}
+            onSnapToItem={(index) => setTopwearIndex(index)}
+            />
+            <Carousel
+            data={bottomwears}
+            layout={"default"}
+            renderItem={renderCarouselItem}
+            sliderWidth={ Dimensions.get('window').width }
+            itemWidth={ 200 }
+            firstItem={Math.floor(bottomwears.length / 2)}
+            onSnapToItem={(index) => setBottomwearIndex(index)}
+            />
+            <Carousel
+            data={footwears}
+            layout={"default"}
+            renderItem={renderCarouselItem}
+            sliderWidth={ Dimensions.get('window').width }
+            itemWidth={ 200 }
+            firstItem={Math.floor(footwears.length / 2)}
+            onSnapToItem={(index) => setFootwearIndex(index)}
+            />
+          </View> 
         </View>
-        <View style={styles.outfitContainer}>
-          <Carousel
-          data={topwears}
-          layout={"default"}
-          renderItem={renderCarouselItem}
-          sliderWidth={ Dimensions.get('window').width }
-          itemWidth={ Dimensions.get('window').width - 20 }
-          onSnapToItem={(index) => setTopwearIndex(index)}
-          />
-          <Carousel
-          data={bottomwears}
-          layout={"default"}
-          renderItem={renderCarouselItem}
-          sliderWidth={ Dimensions.get('window').width }
-          itemWidth={ Dimensions.get('window').width - 20 }
-          onSnapToItem={(index) => setBottomwearIndex(index)}
-          />
-          <Carousel
-          data={footwears}
-          layout={"default"}
-          renderItem={renderCarouselItem}
-          sliderWidth={ Dimensions.get('window').width }
-          itemWidth={ Dimensions.get('window').width - 20 }
-          onSnapToItem={(index) => setFootwearIndex(index)}
-          />
-        </View> 
         <View style={{position: 'absolute', bottom: 20, right: 20}}>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={openCalendar}>
             <Text style={styles.buttonText}>Save Outfit</Text>
           </TouchableOpacity>
         </View>
@@ -159,17 +204,17 @@ const OutfitPicker = () => {
 
 const styles = StyleSheet.create({
     mainContainer: {
-      width: '100%',
-      height: '100%',
-      paddingTop: 5,
-      flex: 1,
-      flexDirection: 'column'
+      // width: '100%',
+      // height: '100%',
+      paddingTop: 10,
+      // flex: 1,
+      // flexDirection: 'column'
       // alignItems: 'center'
     },
     outfitContainer: {
       // flex: 1,
       // paddingTop: 20,
-      marginTop: 5,
+      marginTop: 40,
       marginBottom: 30,
       // alignItems: 'center'
     },
@@ -202,6 +247,22 @@ const styles = StyleSheet.create({
     },
     buttonText: {
       color: '#fff',
+    },
+    calendarView: {
+      margin: 20,
+      backgroundColor: "white",
+      borderRadius: 20,
+      padding: 35,
+      alignItems: "center",
+      justifyContent: "space-between",
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 5,
     },
     modalView: {
       margin: 20,

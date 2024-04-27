@@ -1,8 +1,9 @@
-import { Button, TextInput, View, StyleSheet } from 'react-native';
+import { Button, TextInput, View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { useSignUp } from '@clerk/clerk-expo';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { useState } from 'react';
 import { Stack } from 'expo-router';
+import Colors from '../../constants/Colors';
 
 const Register = () => {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -69,7 +70,9 @@ const Register = () => {
           <TextInput autoCapitalize="none" placeholder="example@domain.com" value={emailAddress} onChangeText={setEmailAddress} style={styles.inputField} />
           <TextInput placeholder="password" value={password} onChangeText={setPassword} secureTextEntry style={styles.inputField} />
 
-          <Button onPress={onSignUpPress} title="Sign up" color={'#6c47ff'}></Button>
+          <TouchableOpacity onPress={onSignUpPress} style={styles.button}>
+              <Text style={{color: 'white', fontSize: 18}}>Sign up</Text>
+          </TouchableOpacity>
         </>
       )}
 
@@ -78,7 +81,10 @@ const Register = () => {
           <View>
             <TextInput value={code} placeholder="Enter sent code" style={styles.inputField} onChangeText={setCode} />
           </View>
-          <Button onPress={onPressVerify} title="Verify Email" color={'#6c47ff'}></Button>
+
+          <TouchableOpacity onPress={onPressVerify} style={styles.button}>
+              <Text style={{color: 'white', fontSize: 18}}>Verify Email</Text>
+          </TouchableOpacity>
         </>
       )}
     </View>
@@ -95,14 +101,18 @@ const styles = StyleSheet.create({
     marginVertical: 4,
     height: 50,
     borderWidth: 1,
-    borderColor: '#6c47ff',
+    borderColor: Colors.purple,
     borderRadius: 4,
     padding: 10,
     backgroundColor: '#fff',
   },
   button: {
-    margin: 8,
+    backgroundColor: Colors.purple,
+    padding: 10,
+    borderRadius: 4,
     alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 10,
   },
 });
 

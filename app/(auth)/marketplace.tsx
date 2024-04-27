@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, FlatList, Text, ActivityIndicator, Image } from 'react-native';
+import { View, StyleSheet, FlatList, Text, ActivityIndicator, Image, TouchableOpacity } from 'react-native';
 import { Card, Button } from 'react-native-paper';
 import { useAuth } from '@clerk/clerk-expo';
 import { router } from 'expo-router';
+import MarketplaceItemTable from '../../components/MarketplaceItemTable';
 
 const MarketplaceScreen = () => {
     const [items, setItems] = useState([]);
@@ -47,22 +48,40 @@ const MarketplaceScreen = () => {
         makeGetRequest();
     };
 
+    // const renderItem = ({ item }) => (
+    //     <Card style={styles.card}>
+    //         <Card.Title title={item.brand} subtitle={item.price + " EUR"} /> 
+    //         <Card.Content>
+    //             <Text>{item.description}</Text>
+    //             <Text>Condition: {item.condition}</Text>
+    //             <Text>Size: {item.size}</Text>
+    //             <Text>Brand: {item.brand}</Text>
+    //             <Text>Location: {item.location}</Text>
+    //             <Image source={{ uri: item.outfit.image }} style={{ width: 200, height: 200 }} />
+    //         </Card.Content>
+    //         <Card.Actions>
+    //             <Button onPress={() => router.replace({pathname: '/(auth)/marketplace_item_details', params: {id: item.id}})}>View Details</Button>
+    //         </Card.Actions>
+    //     </Card>
+    // );
+
     const renderItem = ({ item }) => (
         <Card style={styles.card}>
-            <Card.Title title={item.brand} subtitle={item.price + " EUR"} /> 
-            <Card.Content>
-                <Text>{item.description}</Text>
-                <Text>Condition: {item.condition}</Text>
-                <Text>Size: {item.size}</Text>
-                <Text>Brand: {item.brand}</Text>
-                <Text>Location: {item.location}</Text>
-                <Image source={{ uri: item.outfit.image }} style={{ width: 200, height: 200 }} />
-            </Card.Content>
-            <Card.Actions>
-                <Button onPress={() => router.replace({pathname: '/(auth)/marketplace_item_details', params: {id: item.id}})}>View Details</Button>
-            </Card.Actions>
+          <View style={styles.container}>
+            <View style={{width: '65%'}}>
+                <MarketplaceItemTable {...item} />
+            </View>
+            <View style={styles.info}>
+              <Image source={{ uri: item.outfit.image }} style={styles.image} />
+              <Card.Actions>
+                <TouchableOpacity style={styles.button} onPress={() => router.replace({pathname: '/(auth)/marketplace_item_details', params: {id: item.id}})}>
+                    <Text style={{color: 'white'}}>View Details</Text>
+                </TouchableOpacity>
+              </Card.Actions>
+            </View>
+          </View>
         </Card>
-    );
+      );
 
     return (
         <View style={styles.container}>
@@ -80,13 +99,37 @@ const MarketplaceScreen = () => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 10,
-    },
     card: {
-        marginVertical: 8,
+        margin: 8,
+        overflow: 'hidden',
     },
+    container: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+    },
+    image: {
+        width: 'auto',
+        height: 150,
+        marginLeft: 10,
+        marginTop: 10,
+        marginRight: 10,
+        borderRadius: 15,
+    },
+    info: {
+        // flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+    },
+    text: {
+        marginBottom: 4,
+    },
+    button: {
+        padding: 10,
+        backgroundColor: '#7b68ee',
+        color: 'white',
+        borderRadius: 5,
+        marginTop: 20,
+    }
 });
 
 export default MarketplaceScreen;

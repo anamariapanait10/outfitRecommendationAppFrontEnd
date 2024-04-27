@@ -1,15 +1,13 @@
-import { Animated, View, Text, Alert, Image, StyleSheet, PanResponder, Dimensions, Button } from 'react-native';
+import { View, Text, ImageBackground, StyleSheet, Dimensions } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
-import { useAuth, useUser } from '@clerk/clerk-expo';
+import { useAuth } from '@clerk/clerk-expo';
 import Colors from "../../constants/Colors";
 import { Ionicons } from '@expo/vector-icons';
-import OutfitCalendar from './calendar';
 import WeatherDiv from './weather_card';
 import { TouchableOpacity, FlatList } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { DataStorageSingleton } from './data_storage_singleton';
-import { set } from 'date-fns';
-import TransparentClothCard, { TransparentClothingItem } from '../../components/TransparentClothCard';
+import TransparentClothCard from '../../components/TransparentClothCard';
 import { ClothingItem } from './cloth_card';
 import LocationSelector from './select_location_modal';
 import * as Location from 'expo-location';
@@ -22,35 +20,9 @@ const Home = () => {
   
   const weatherDivRef = useRef(null);
 
-  // Function to call the child's function
   const callWeatherUpdate = () => {
     weatherDivRef.current?.updateItems();
   };
-
-
-  // useEffect(() => {
-  //   console.log("Fetching weather data...");
-  //   fetchWeatherData();
-  // }, []);
-
-  const displayDate = (offset) => {
-    const date = new Date();
-    date.setDate(date.getDate() + offset);
-    return date.toLocaleDateString();
-  };
-  
-  // const fetchClothesData = async () => {
-  //   await DataStorageSingleton.getInstance().fetchClothesData(await getToken(), userId, isLoaded);
-  //   let clothesItems = DataStorageSingleton.getInstance().clothingItems;
-  //   let len = clothesItems.length;
-  //   let topwearList = clothesItems.filter((item) => item.category == 'Topwear');
-  //   let topwear = topwearList[Math.floor(Math.random() * topwearList.length)];
-  //   let bottomwearList = clothesItems.filter((item) => item.category == 'Bottomwear');
-  //   let bottomwear = bottomwearList[Math.floor(Math.random() * bottomwearList.length)];
-  //   let footwearList = clothesItems.filter((item) => item.category == 'Footwear');
-  //   let footwear = footwearList[Math.floor(Math.random() * footwearList.length)];
-  //   setClothes([topwear, bottomwear, footwear]);
-  // };
 
   const fetchClothesData = async (refreshWeatherData=false) => {
     if(DataStorageSingleton.getInstance().weatherItems.length == 0 || refreshWeatherData) {
@@ -83,37 +55,6 @@ const Home = () => {
     }
     await DataStorageSingleton.getInstance().fetchRecommendations(await getToken(), userId, isLoaded, weatherString, temperatureString);
     setClothes(DataStorageSingleton.getInstance().recommendations);
-  };
-
-  const fetchRadomOutfit = async () => {
-    if (!userId || !isLoaded) {
-      console.log('No authenticated user found.');
-      return;
-    }
-    console.log('Fetching random outfit...');
-    console.log("clothes ", clothes);
-    
-  };
-
-  const fetchRandomCloth = async () => {
-    if (!userId || !isLoaded) {
-        console.log('No authenticated user found.');
-        return;
-    }
-    try {
-        const token = await getToken();
-        const response = await fetch(process.env.EXPO_PUBLIC_BASE_API_URL + '/outfit-items/', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-        const data = await response.json();
-        setRecommendedCloth(data[0]); 
-    } catch (error: any) {
-      Alert.alert("Error", error.message);
-    }
   };
 
   useEffect(() => {
@@ -155,7 +96,7 @@ const Home = () => {
       <View style={styles.weatherAndLocationContainer}>
         <View style={styles.locationAndCalendarContainer}>
           <TouchableOpacity style={styles.locationContainer} onPress={() => setLocationModalVisible(true)}>
-            <Ionicons style={styles.location} name="location" size={24}/>
+            <Ionicons style={styles.location} name="location" size={22}/>
             {DataStorageSingleton.getInstance().selectedLocation &&
              <Text style={styles.location}>{DataStorageSingleton.getInstance().selectedLocation.city}</Text>}
 
@@ -179,8 +120,9 @@ const Home = () => {
             />
           </TouchableOpacity>
           <View>
-            <TouchableOpacity onPress={() => router.replace({pathname: '/(auth)/calendar'})}>
-              <Text style={styles.calendar}>See calendar</Text>
+            <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => router.replace({pathname: '/(auth)/calendar'})}>
+              <Ionicons style={[styles.location, {paddingTop: 1.5, padding: 2, color: Colors.purple}]} name="calendar-outline" size={19}/>
+              <Text style={styles.calendar}> See calendar </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -189,9 +131,16 @@ const Home = () => {
            <WeatherDiv ref={weatherDivRef} />
       </View>
       <View style={styles.recommendedOutfitContainer}>
-        <Text style={styles.recommendedOutfitTitle}>Recommendations for today</Text>
+        <Text style={styles.recommendedOutfitTitle}>Recommendations for today based on weather</Text>
+        {/* <ImageBackground
+            source={require('../../assets/images/titleBackground.png')}
+            style={styles.image}
+            resizeMode="contain"
+          >
+          <Text style={styles.recommendedOutfitTitle}>Recommendations for today based on weather</Text>
+        </ImageBackground> */}
         {clothes ? (
-          <View style={{ height: 350, justifyContent: 'center', alignItems: 'center' }}>
+          <View style={{ height: 320, justifyContent: 'center', alignItems: 'center' }}>
             <FlatList
               style={{ width: '100%' }}
               data={clothes}
@@ -206,6 +155,9 @@ const Home = () => {
           <Text style={styles.noOutfitText}>No recommended outfit found</Text>
         )}
       </View>
+      <TouchableOpacity style={styles.wearAnotherOutfitButton} onPress={() => router.replace({pathname: '/(auth)/outfit_picker'})}>
+          <Text style={styles.wearOutfitButtonText}>Or Try Another Outfit</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -224,6 +176,7 @@ const styles = StyleSheet.create({
   },
   recommendedOutfitContainer: {
     alignItems: 'center',
+    paddingTop: 0,
     padding: 20,
     borderRadius: 10,
     backgroundColor: '#ffffff', 
@@ -235,14 +188,20 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    marginTop: 50,
+    marginTop: 10,
     width: Dimensions.get('window').width - 50,
-    height: '70%',
+    height: '67%',
   },
   recommendedOutfitTitle: {
     fontSize: 16,
     fontWeight: '500',
     marginBottom: 30,
+    margin: 20,
+    textAlign: 'center',
+    // padding: 25,
+    // color: 'white',
+    // backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    // borderRadius: 10,
   },
   outfitDetails: {
     alignItems: 'center',
@@ -264,6 +223,7 @@ const styles = StyleSheet.create({
     color: '#a9a9a9',
   },
   weatherAndLocationContainer: {
+    marginTop: 20,
     width: '90%',
   },
   locationAndCalendarContainer: {
@@ -299,7 +259,7 @@ const styles = StyleSheet.create({
     color: Colors.grey,
   },
   calendar: {
-    color: "#007AFF"
+    color: Colors.purple, // "#007AFF"
   },
   swipeableContainer: {
     width: '100%',
@@ -313,15 +273,26 @@ const styles = StyleSheet.create({
   },
   wearOutfitButton: {
     backgroundColor: Colors.purple,
-    paddingVertical: 7,
+    paddingVertical: 5,
     paddingHorizontal: 20,
     borderRadius: 10,
-    marginTop: 7,
+    marginTop: 30,
+  },
+  wearAnotherOutfitButton: {
+    backgroundColor: '#cccccc',
+    paddingVertical: 5,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginTop: 15,
   },
   wearOutfitButtonText: {
     fontSize: 20,
     color: 'white',
     textAlign: 'center',
+  },
+  image: {
+    height: 160,
+    justifyContent: 'center',
   },
 });
 

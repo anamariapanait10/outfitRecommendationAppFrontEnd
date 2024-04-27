@@ -193,7 +193,6 @@ export class DataStorageSingleton {
             const data = await response.json();
             DataStorageSingleton.getInstance().monthOutfits = data;
         } catch (error: any) {
-            // Handle any errors, such as by displaying an alert
             Alert.alert("Error fetching data", error.message);
         }
     }

@@ -3,12 +3,12 @@ import { View, TouchableOpacity, Text, StyleSheet, Image, ScrollView } from 'rea
 
 
 const categories = [
-    { name: 'All', image: require('../../assets/images/topwear_icon.png') },
+    { name: 'All', image: require('../../assets/images/grid_icon.png') },
     { name: 'Topwear', image: require('../../assets/images/topwear_icon.png') },
-    { name: 'Bottomwear', image: require('../../assets/images/bottomwear_icon.png') },
-    { name: 'Footwear', image: require('../../assets/images/topwear_icon.png') },
-    { name: 'Bodywear', image: require('../../assets/images/topwear_icon.png') },
-    { name: 'Accessories', image: require('../../assets/images/topwear_icon.png') },
+    { name: 'Bottomwear', image: require('../../assets/images/bottomwear_icon2.png') },
+    { name: 'Footwear', image: require('../../assets/images/footwear_icon2.png') },
+    { name: 'Bodywear', image: require('../../assets/images/bodywear_icon.png') },
+    { name: 'Accessories', image: require('../../assets/images/accessories_icon.png') },
 ];
 
 const FilterBar = ({ onFilterChange }) => {
@@ -50,7 +50,7 @@ const FilterBar = ({ onFilterChange }) => {
     filterImage: {
         width: 40,
         height: 40,
-        borderRadius: 20,
+        borderRadius: 7,
     },
     filterText: {
         marginTop: 3,

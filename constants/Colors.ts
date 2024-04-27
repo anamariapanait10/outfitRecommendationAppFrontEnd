@@ -20,5 +20,6 @@ export default {
   light_grey: '#e9ecef',
   purple: '#7b68ee',
   light_purple: '#d1d0ff',
+  dark_purple: '#6c47ff',
   red: '#eb5058',
 };

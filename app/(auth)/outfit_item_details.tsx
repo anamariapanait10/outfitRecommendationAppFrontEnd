@@ -50,7 +50,7 @@ const OutfitItemDetailsScreen = () => {
         </View>
       </ScrollView>
       <Pressable style={styles_2.button} onPress={() => router.replace({pathname: '/(auth)/add_marketplace_item', params: {id: cloth.id}})}>
-        <Ionicons name="bag-outline" size={20} color="white" />
+        <Ionicons name="pricetags-outline" size={20} color="white" />
       </Pressable> 
     </View>
   );
@@ -65,13 +65,13 @@ const styles_2 = StyleSheet.create({
   button: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: 50,
-    height: 50,
+    width: 45,
+    height: 45,
     borderRadius: 25,
     backgroundColor: '#7b68ee',
     position: 'absolute',
-    bottom: 20,
-    right: 20,
+    bottom: 10,
+    right: 10,
   },
 });
 

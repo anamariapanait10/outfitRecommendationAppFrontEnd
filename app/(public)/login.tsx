@@ -1,8 +1,9 @@
 import { useSignIn } from '@clerk/clerk-expo';
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
-import { View, StyleSheet, TextInput, Button, Pressable, Text, Alert } from 'react-native';
+import { View, StyleSheet, TextInput, Pressable, Text, TouchableOpacity } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
+import Colors from '../../constants/Colors';
 
 const Login = () => {
   const { signIn, setActive, isLoaded } = useSignIn();
@@ -22,7 +23,6 @@ const Login = () => {
         password,
       });
 
-      // This indicates the user is signed in
       await setActive({ session: completeSignIn.createdSessionId });
     } catch (err: any) {
       alert(err.errors[0].message);
@@ -38,16 +38,18 @@ const Login = () => {
       <TextInput autoCapitalize="none" placeholder="example@domain.com" value={emailAddress} onChangeText={setEmailAddress} style={styles.inputField} />
       <TextInput placeholder="password" value={password} onChangeText={setPassword} secureTextEntry style={styles.inputField} />
 
-      <Button onPress={onSignInPress} title="Login" color={'#6c47ff'}></Button>
+      <TouchableOpacity onPress={onSignInPress} style={styles.loginButton}>
+        <Text style={{color: 'white', fontSize: 18}}>Login</Text>
+      </TouchableOpacity>
 
       <Link href="/reset" asChild>
         <Pressable style={styles.button}>
-          <Text>Forgot password?</Text>
+          <Text style={styles.buttonText}>Forgot password?</Text>
         </Pressable>
       </Link>
       <Link href="/register" asChild>
         <Pressable style={styles.button}>
-          <Text>Create An Account</Text>
+          <Text style={styles.buttonText}>Create An Account</Text>
         </Pressable>
       </Link>
     </View>
@@ -58,13 +60,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    padding: 20,
+    paddingLeft: 25,
+    paddingRight: 25,
+    marginBottom: 50,
   },
   inputField: {
     marginVertical: 4,
     height: 50,
     borderWidth: 1,
-    borderColor: '#6c47ff',
+    borderColor: Colors.purple,
     borderRadius: 4,
     padding: 10,
     backgroundColor: '#fff',
@@ -73,6 +77,17 @@ const styles = StyleSheet.create({
     margin: 8,
     alignItems: 'center',
   },
+  buttonText: {
+    color: Colors.purple,
+  },
+  loginButton: {
+    backgroundColor: Colors.purple,
+    padding: 10,
+    borderRadius: 4,
+    alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 10,
+  }
 });
 
 export default Login;
