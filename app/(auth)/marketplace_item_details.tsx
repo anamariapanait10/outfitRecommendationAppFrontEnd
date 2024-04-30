@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image, ScrollView, FlatList, Dimensions, TouchableOpacity, ActivityIndicator } from "react-native";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { DataStorageSingleton } from "./data_storage_singleton";
 import { useAuth } from "@clerk/clerk-expo";
 import SpinnerOverlay from "./spinner_overlay";
@@ -22,18 +22,18 @@ export class MarketplaceItem {
     location: string;
 
     constructor(
-        id: number,
-        userId: string,
-        outfit: ClothingItem,
-        description: string,
-        status: string,
-        images: string[],
-        condition: string,
-        size: string,
-        brand: string,
-        postedDate: string,
-        price: number,
-        location: string
+        id: number = Math.random() * 100,
+        userId: string = '',
+        outfit: ClothingItem = new ClothingItem(),
+        description: string = '',
+        status: string = '',
+        images: string[] = [],
+        condition: string = '',
+        size: string = '',
+        brand: string = '',
+        postedDate: string = '',
+        price: number = 0,
+        location: string = ''
     ) {
         this.id = id;
         this.userId = userId;
@@ -53,14 +53,14 @@ export class MarketplaceItem {
 const MarketplaceItemDetails = () => {
     const { isLoaded, userId, getToken } = useAuth();
     const { id } = useLocalSearchParams();
-    const [itemId, setItemId] = useState(id);
+    const [itemId, setItemId] = useState('');
     const [marketplaceItem, setMarketplaceItem] = useState<MarketplaceItem | undefined>();
     const [loading, setLoading] = useState(false);
     const [recommendationsLoading, setRecommendatiopsLoading] = useState(false);
-    const [similarItems, setSimilarItems] = useState<MarketplaceItem[] | undefined>([]);
+    const [similarItems, setSimilarItems] = useState<MarketplaceItem[] | undefined>([new MarketplaceItem(), new MarketplaceItem(), new MarketplaceItem()]);
 
     const fetchData = async () => {
-        if(typeof itemId === 'string') {
+        if(typeof itemId === 'string' && itemId !== '') {
             setLoading(true);
             console.log('loading ' + itemId);
             let item = await DataStorageSingleton.getInstance().getMarketplaceItemById(itemId, await getToken(), userId, isLoaded);
@@ -74,9 +74,12 @@ const MarketplaceItemDetails = () => {
         }
     }
 
-    useEffect(() => {
-        fetchData();
-    }, []);
+    useFocusEffect(React.useCallback(() => {
+      if(typeof id === 'string') {
+        setItemId(id);
+      }
+      console.log('set to ' + id);
+    }, [id]));
 
     useEffect(() => {
         fetchData();
@@ -107,7 +110,7 @@ const MarketplaceItemDetails = () => {
             contentContainerStyle={styles.contentContainer}
             style={{marginBottom: 10}}
             renderItem={({ item: recommendedItem }) => (
-              <TouchableOpacity style={styles.card} onPress={() => {setItemId(recommendedItem.id.toString());}}>
+              <TouchableOpacity style={styles.card} onPress={() => {setItemId(recommendedItem.id.toString()); router.setParams({id: recommendedItem.id.toString()})}}>
                 <View>
                   <Text style={styles.brand}>{recommendedItem.brand}</Text>
                   <Text style={styles.price}>${recommendedItem.price}</Text>

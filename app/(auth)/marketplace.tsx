@@ -64,7 +64,7 @@ const MarketplaceScreen = () => {
                 <View style={styles.info}>
                 <Image source={{ uri: item.outfit.image }} style={styles.image} />
                 <Card.Actions>
-                    <TouchableOpacity style={styles.button} onPress={() => router.replace({pathname: '/(auth)/marketplace_item_details', params: {id: item.id}})}>
+                    <TouchableOpacity style={styles.button} onPress={() => router.push({pathname: '/(auth)/marketplace_item_details', params: {id: item.id}})}>
                         <Text style={{color: 'white'}}>View Details</Text>
                     </TouchableOpacity>
                 </Card.Actions>

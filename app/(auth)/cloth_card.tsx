@@ -16,17 +16,17 @@ export class ClothingItem {
     occasions: string;
     image: string;
 
-    constructor(id: number,
-        wardrobe_id: number,
-        description: string,
-        color: string,
-        category: string,
-        subCategory: string,
-        pattern: string,
-        material: string,
-        seasons: string,
-        occasions: string,
-        image: string
+    constructor(id: number = 0,
+        wardrobe_id: number = 0,
+        description: string = '',
+        color: string = '',
+        category: string = '',
+        subCategory: string = '',
+        pattern: string = '',
+        material: string = '',
+        seasons: string = '',
+        occasions: string = '',
+        image: string = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wYAAnMB+wka/dsAAAAASUVORK5CYII='
         ) {
             this.id = id;
             this.wardrobe_id = wardrobe_id;
