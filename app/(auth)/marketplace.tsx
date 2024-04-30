@@ -4,10 +4,13 @@ import { Card, Button } from 'react-native-paper';
 import { useAuth } from '@clerk/clerk-expo';
 import { router } from 'expo-router';
 import MarketplaceItemTable from '../../components/MarketplaceItemTable';
+import Colors from "../../constants/Colors";
+import SpinnerOverlay from './spinner_overlay';
 
 const MarketplaceScreen = () => {
     const [items, setItems] = useState([]);
     const { isLoaded, userId, getToken } = useAuth();
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         fetchItems();
@@ -48,52 +51,55 @@ const MarketplaceScreen = () => {
         makeGetRequest();
     };
 
-    // const renderItem = ({ item }) => (
-    //     <Card style={styles.card}>
-    //         <Card.Title title={item.brand} subtitle={item.price + " EUR"} /> 
-    //         <Card.Content>
-    //             <Text>{item.description}</Text>
-    //             <Text>Condition: {item.condition}</Text>
-    //             <Text>Size: {item.size}</Text>
-    //             <Text>Brand: {item.brand}</Text>
-    //             <Text>Location: {item.location}</Text>
-    //             <Image source={{ uri: item.outfit.image }} style={{ width: 200, height: 200 }} />
-    //         </Card.Content>
-    //         <Card.Actions>
-    //             <Button onPress={() => router.replace({pathname: '/(auth)/marketplace_item_details', params: {id: item.id}})}>View Details</Button>
-    //         </Card.Actions>
-    //     </Card>
-    // );
-
     const renderItem = ({ item }) => (
         <Card style={styles.card}>
-          <View style={styles.container}>
-            <View style={{width: '65%'}}>
-                <MarketplaceItemTable {...item} />
+            <SpinnerOverlay isVisible={loading} />
+            <View style={styles.container}>
+                <View style={{width: '65%'}}>
+                    <MarketplaceItemTable {...item} />
+                </View>
+                <View style={styles.info}>
+                <Image source={{ uri: item.outfit.image }} style={styles.image} />
+                <Card.Actions>
+                    <TouchableOpacity style={styles.button} onPress={() => router.replace({pathname: '/(auth)/marketplace_item_details', params: {id: item.id}})}>
+                        <Text style={{color: 'white'}}>View Details</Text>
+                    </TouchableOpacity>
+                </Card.Actions>
+                </View>
             </View>
-            <View style={styles.info}>
-              <Image source={{ uri: item.outfit.image }} style={styles.image} />
-              <Card.Actions>
-                <TouchableOpacity style={styles.button} onPress={() => router.replace({pathname: '/(auth)/marketplace_item_details', params: {id: item.id}})}>
-                    <Text style={{color: 'white'}}>View Details</Text>
-                </TouchableOpacity>
-              </Card.Actions>
-            </View>
-          </View>
         </Card>
       );
 
-    return (
-        <View style={styles.container}>
-            {!items ? (
-                <ActivityIndicator size="large" color="#0000ff" />
-            ) : (
-                <FlatList
-                    data={items}
-                    renderItem={renderItem}
-                    keyExtractor={item => item.id.toString()}
+/*       <View style={{padding: 10, flexDirection: 'row', justifyContent: 'space-between'}}>
+                <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => setModalVisible(true)} >
+                    <Ionicons style={{paddingTop: 1.5, padding: 2, color: Colors.purple}} name="search-outline" size={19}/>
+                    <Text style={styles.search_items}> Search for silimar products </Text>
+                </TouchableOpacity>
+                <ChooseImageModal
+                    modalVisible={modalVisible}
+                    onBackPress={() => setModalVisible(false)}
+                    onCameraPress={() => uploadImage("camera")}
+                    onGalleryPress={() => uploadImage("gallery")}
                 />
-            )}
+                {image ? (
+                    <Image source={{ uri: image }} style={styles.imagePreview} />
+                ) : (
+                    <Text>Select an Image</Text>
+                )}
+            </View> */
+    return (
+        <View>  
+            <View style={styles.container}>
+                {!items ? (
+                    <ActivityIndicator size="large" color="#0000ff" />
+                ) : (
+                    <FlatList
+                        data={items}
+                        renderItem={renderItem}
+                        keyExtractor={item => item.id.toString()}
+                    />
+                )}
+            </View>
         </View>
     );
 };
@@ -129,7 +135,33 @@ const styles = StyleSheet.create({
         color: 'white',
         borderRadius: 5,
         marginTop: 20,
-    }
+    },
+    search_items: {
+        color: Colors.purple,
+    },
+    imagePicker: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 300, 
+        marginBottom: 10,
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderRadius: 10,
+        backgroundColor: '#f8f8f8',
+        position: 'relative',
+    },
+    imagePreview: {
+        //marginLeft: 40,
+        width: 100,
+        height: 100,
+        borderRadius: 10,
+    },
+    imagePickerAfterSelection: {
+        borderStyle: 'solid',
+    },
+    imagePickerBeforeSelection: {
+        borderStyle: 'dashed',
+    },
 });
 
 export default MarketplaceScreen;

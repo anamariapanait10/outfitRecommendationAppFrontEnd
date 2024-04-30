@@ -2,13 +2,14 @@ import { Alert } from "react-native";
 import { ClothingItem } from "./cloth_card";
 import { WeatherItem } from "../../components/WeatherItem";
 import { format } from 'date-fns';
+import { MarketplaceItem } from "./marketplace_item_details";
 export class DataStorageSingleton {
-    
     static instance: DataStorageSingleton | null = null;
 
     public clothingItems: ClothingItem[] = [];
     public weatherItems: WeatherItem[] = [];
     public clothId: number = 0;
+    public marketPlaceItemId: number = 0;
     public recommendations: ClothingItem[] = [];
     public selectedLocation = {
         city: 'București',
@@ -190,8 +191,9 @@ export class DataStorageSingleton {
                 },
                 body: requestBody
             });
-            const data = await response.json();
-            DataStorageSingleton.getInstance().monthOutfits = data;
+            if(response.status !== 200) {
+                Alert.alert("Error fetching data", "Could not save outfit.");
+            } 
         } catch (error: any) {
             Alert.alert("Error fetching data", error.message);
         }
@@ -239,8 +241,32 @@ export class DataStorageSingleton {
                 },
                 body: requestBody
             });
+            if(response.status !== 200) {
+                Alert.alert("Error fetching data", "Could not fetch AI expert response. Please try again later.");    
+            }
             const data = await response.json();
             this.lastAIExpertResponse = data;
+        } catch (error: any) {
+            Alert.alert("Error fetching data", error.message);
+        }
+    }
+
+    public fetchSimilarItems = async (id: string, token: string | null, userId: string | null | undefined, isLoaded: boolean) => {
+        if (!userId || !isLoaded) {
+            console.log('No authenticated user found.');
+            return;
+        }
+        try {
+            const baseUrl = process.env.EXPO_PUBLIC_BASE_API_URL + '/marketplace-items/similarity?marketplaceItemId=' + id;
+            const response = await fetch(baseUrl, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+            });
+            const data = await response.json();
+            return data;
         } catch (error: any) {
             Alert.alert("Error fetching data", error.message);
         }

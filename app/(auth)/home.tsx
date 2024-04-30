@@ -1,11 +1,11 @@
-import { View, Text, ImageBackground, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@clerk/clerk-expo';
 import Colors from "../../constants/Colors";
 import { Ionicons } from '@expo/vector-icons';
 import WeatherDiv from './weather_card';
 import { TouchableOpacity, FlatList } from 'react-native';
-import { router, useFocusEffect } from 'expo-router';
+import { router } from 'expo-router';
 import { DataStorageSingleton } from './data_storage_singleton';
 import TransparentClothCard from '../../components/TransparentClothCard';
 import { ClothingItem } from './cloth_card';
@@ -198,10 +198,6 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     margin: 20,
     textAlign: 'center',
-    // padding: 25,
-    // color: 'white',
-    // backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    // borderRadius: 10,
   },
   outfitDetails: {
     alignItems: 'center',

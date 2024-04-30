@@ -29,9 +29,9 @@ const UploadMarketplaceItem = () => {
     const [image, setImage] = useState("");
 
     const sendImageForProcessing = async (image: any) => {
-        setImage(image);
-        setModalVisible(false);
-      };
+      setImage(image);
+      setModalVisible(false);
+    };
 
     const uploadImage = async (mode: string) => {
         try {
@@ -97,17 +97,17 @@ const UploadMarketplaceItem = () => {
               const token = await getToken();
       
               const requestBody = JSON.stringify({
-                user_id: userId,
-                outfit_id: cloth.id,
-                description: itemDetails.description,
-                status: "Available",
-                images: itemDetails.images || "",
-                condition: itemDetails.condition,
-                size: itemDetails.size,
-                brand: itemDetails.brand,
-                posted_date: new Date().toISOString(),
-                price: itemDetails.price,
-                location: itemDetails.location,
+                // user_id: userId,
+                // outfit: cloth.id,
+                // description: itemDetails.description,
+                // status: "Available",
+                // images: itemDetails.images || "",
+                // condition: itemDetails.condition,
+                // size: itemDetails.size,
+                // brand: itemDetails.brand,
+                //posted_date: new Date().toISOString(),
+                // price: parseFloat(itemDetails.price),
+                // location: itemDetails.location,
               });
       
               console.log("POST request body:", requestBody);
@@ -124,12 +124,12 @@ const UploadMarketplaceItem = () => {
                 }
               );
       
-              if (!response.ok) {
+              if (response.status !== 200) {
                 throw new Error("Something went wrong");
               }
       
               const json = await response.json();
-              DataStorageSingleton.getInstance().fetchClothesData(await getToken(), userId, isLoaded);
+              await DataStorageSingleton.getInstance().fetchClothesData(await getToken(), userId, isLoaded);
               router.replace({pathname: '/(auth)/marketplace'})
             } catch (error) {
               console.error("Error making POST request:", error);

@@ -53,7 +53,7 @@ const MarketplaceItemDetailsTable = (item: MarketplaceItem ) => {
         </DataTable.Cell>
         <DataTable.Cell>{item.location}</DataTable.Cell>
       </DataTable.Row>
-      {item.outfit.description &&
+      {item.outfit?.description &&
         <DataTable.Row>
             <DataTable.Cell>
                 <View style={styles.cellIconLayout}>
@@ -71,7 +71,7 @@ const MarketplaceItemDetailsTable = (item: MarketplaceItem ) => {
                 <Text style={styles.boldText}>Subcategory</Text>
             </View>
         </DataTable.Cell>
-        <DataTable.Cell>{item.outfit.subCategory}</DataTable.Cell>
+        <DataTable.Cell>{item.outfit?.subCategory}</DataTable.Cell>
       </DataTable.Row>
       <DataTable.Row>
         <DataTable.Cell>
@@ -80,7 +80,7 @@ const MarketplaceItemDetailsTable = (item: MarketplaceItem ) => {
                 <Text style={styles.boldText}>Material</Text>
             </View>
         </DataTable.Cell>
-        <DataTable.Cell>{item.outfit.material}</DataTable.Cell>
+        <DataTable.Cell>{item.outfit?.material}</DataTable.Cell>
       </DataTable.Row>
     </DataTable>
   );

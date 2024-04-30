@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Image, ScrollView, FlatList } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { DataStorageSingleton } from "./data_storage_singleton";
 import { useAuth } from "@clerk/clerk-expo";
@@ -55,12 +55,16 @@ const MarketplaceItemDetails = () => {
     const { id } = useLocalSearchParams();
     const [item, setItem] = useState<MarketplaceItem | undefined>();
     const [loading, setLoading] = useState(false);
+    const [similarItems, setSimilarItems] = useState<MarketplaceItem[] | undefined>([]);
 
     const fetchData = async () => {
         if(typeof id === 'string') {
             setLoading(true);
             let item = await DataStorageSingleton.getInstance().getMarketplaceItemById(id, await getToken(), userId, isLoaded);
             setItem(item);
+            DataStorageSingleton.getInstance().marketPlaceItemId = item.id;
+            let similarItems = await DataStorageSingleton.getInstance().fetchSimilarItems(id,  await getToken(), userId, isLoaded);
+            setSimilarItems(similarItems);
             setLoading(false);
         }
     }
@@ -83,6 +87,13 @@ const MarketplaceItemDetails = () => {
             <View style={{width: '95%'}}>
               <MarketplaceItemDetailsTable {...item} />
             </View>
+            <FlatList horizontal
+              data={similarItems}
+              keyExtractor={item => item.id.toString()}
+              renderItem={({ item }) => (
+                <Text>{item.description} - ${item.price}</Text>
+            )}/>
+            
         </ScrollView>
     );
 };
