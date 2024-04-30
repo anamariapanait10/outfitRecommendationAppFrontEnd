@@ -97,17 +97,17 @@ const UploadMarketplaceItem = () => {
               const token = await getToken();
       
               const requestBody = JSON.stringify({
-                // user_id: userId,
-                // outfit: cloth.id,
-                // description: itemDetails.description,
-                // status: "Available",
-                // images: itemDetails.images || "",
-                // condition: itemDetails.condition,
-                // size: itemDetails.size,
-                // brand: itemDetails.brand,
-                //posted_date: new Date().toISOString(),
-                // price: parseFloat(itemDetails.price),
-                // location: itemDetails.location,
+                user_id: userId,
+                outfit: cloth.id,
+                description: itemDetails.description,
+                status: "Available",
+                images: itemDetails.images || "",
+                condition: itemDetails.condition,
+                size: itemDetails.size,
+                brand: itemDetails.brand,
+                posted_date: new Date().toISOString(),
+                price: parseFloat(itemDetails.price),
+                location: itemDetails.location,
               });
       
               console.log("POST request body:", requestBody);
@@ -124,7 +124,7 @@ const UploadMarketplaceItem = () => {
                 }
               );
       
-              if (response.status !== 200) {
+              if (!response.ok) {
                 throw new Error("Something went wrong");
               }
       
