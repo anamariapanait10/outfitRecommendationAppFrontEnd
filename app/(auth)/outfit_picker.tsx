@@ -69,7 +69,7 @@ const OutfitPicker = () => {
     const handleSaveData = async () => {
       // save the date
       let clothes = [topwears[topwearIndex], bottomwears[bottomwearIndex], footwears[footwearIndex]];
-      DataStorageSingleton.getInstance().wearOutfit(clothes, date, await getToken(), userId, isLoaded);
+      await DataStorageSingleton.getInstance().wearOutfit(clothes, date, await getToken(), userId, isLoaded);
     };
 
     const renderCarouselItem = ({ item, index }) => {
@@ -132,16 +132,20 @@ const OutfitPicker = () => {
               animationType="slide"
               transparent={true}
               visible={isCalendarVisible}
-              onRequestClose={() => {setIsCalendarVisible(false); handleSaveData()}}
             >
               <View style={styles.calendarView}>
                 <Calendar
                   onDayPress={handleDateSelect}
-                  markedDates={{ [date]: { selected: true, marked: true, selectedColor: Colors.purple } }}
+                  markedDates={{ [date]: { selected: true, marked: true, selectedColor: Colors.light_purple } }}
                 />
-                <TouchableOpacity style={{backgroundColor: Colors.purple, padding: 10, borderRadius: 20}} onPress={() => setIsCalendarVisible(false)}>
-                    <Text style={{color: 'white'}}>Close</Text>
-                </TouchableOpacity>
+                <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
+                  <TouchableOpacity style={{backgroundColor: Colors.light_grey, paddingVertical: 10, paddingHorizontal: 10, borderRadius: 20}} onPress={() => setIsCalendarVisible(false)}>
+                    <Text style={{color: 'black'}}>Close</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={{backgroundColor: Colors.light_purple, paddingVertical: 10, paddingHorizontal: 17, borderRadius: 20}} onPress={() => {setIsCalendarVisible(false); handleSaveData()}}>
+                    <Text style={{color: 'black'}}>Add</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </Modal>
           </GestureHandlerRootView>

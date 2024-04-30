@@ -63,7 +63,15 @@ const Home = () => {
 
   const wearOutfit = async () => {
     if(clothes != undefined) {
-      DataStorageSingleton.getInstance().wearOutfit(clothes, new Date().toISOString().split('T')[0], await getToken(), userId, isLoaded);
+      const currentDate = new Date();
+      const currentYearMonth = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
+      await DataStorageSingleton.getInstance().fetchOutfitsForMonth(currentYearMonth, await getToken(), userId, isLoaded);
+      let outfits = DataStorageSingleton.getInstance().monthOutfits;
+      if (currentDate.toISOString().split('T')[0] in outfits){
+        console.log("Exista deja");
+      } else {
+        DataStorageSingleton.getInstance().wearOutfit(clothes, new Date().toISOString().split('T')[0], await getToken(), userId, isLoaded);
+      }
     }
   }
 
@@ -127,8 +135,8 @@ const Home = () => {
           </View>
         </View>
       </View>
-      <View style={{height: 80, width: '100%'}}>
-           <WeatherDiv ref={weatherDivRef} />
+      <View style={{height: 90, width: '100%', marginBottom: 10}}>
+        <WeatherDiv ref={weatherDivRef} />
       </View>
       <View style={styles.recommendedOutfitContainer}>
         <Text style={styles.recommendedOutfitTitle}>Recommendations for today based on weather</Text>
@@ -140,7 +148,7 @@ const Home = () => {
           <Text style={styles.recommendedOutfitTitle}>Recommendations for today based on weather</Text>
         </ImageBackground> */}
         {clothes ? (
-          <View style={{ height: 320, justifyContent: 'center', alignItems: 'center' }}>
+          <View style={{ height: 310, justifyContent: 'center', alignItems: 'center' }}>
             <FlatList
               style={{ width: '100%' }}
               data={clothes}
@@ -190,7 +198,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     marginTop: 10,
     width: Dimensions.get('window').width - 50,
-    height: '67%',
+    height: '64%',
   },
   recommendedOutfitTitle: {
     fontSize: 16,
@@ -272,14 +280,14 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 20,
     borderRadius: 10,
-    marginTop: 30,
+    //marginTop: 30,
   },
   wearAnotherOutfitButton: {
     backgroundColor: '#cccccc',
     paddingVertical: 5,
     paddingHorizontal: 20,
     borderRadius: 10,
-    marginTop: 15,
+    marginTop: 10,
   },
   wearOutfitButtonText: {
     fontSize: 20,

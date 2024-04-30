@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Text, View, SafeAreaView, StyleSheet, Image, Dimensions } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import { DataStorageSingleton } from './data_storage_singleton';
+import PaginationDots from '../../components/PaginationDots';
 
 const WeatherDiv = React.forwardRef((props, ref) => {
 
@@ -39,29 +40,28 @@ const WeatherDiv = React.forwardRef((props, ref) => {
               marginRight: 15, }, styles.weatherContainer]}>
             <Text style={{fontSize: 13}}>{item.title}</Text>
             <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Image source={{ uri: "http://openweathermap.org/img/w/" + item.icon + ".png" }} style={styles.weatherImage} />
-                <Text>{item.text}</Text>
+              <Image source={{ uri: "http://openweathermap.org/img/w/" + item.icon + ".png" }} style={styles.weatherImage} />
+              <Text>{item.text}</Text>
             </View>
           </View>
-
         )
     }
 
     return (
         <SafeAreaView style={{flex: 1}}>
-        <View style={{ flex: 1, flexDirection:'row', justifyContent: 'center'}}>
-            <Carousel
-                layout={"default"}
-                // ref={ref => setCarousel(ref)}
-                data={state.carouselItems}
-                sliderWidth={ Dimensions.get('window').width }
-                itemWidth={ Dimensions.get('window').width - 20 }
-                renderItem={_renderItem}
-                onSnapToItem = { index => setState({activeIndex:index,
-                   carouselItems: state.carouselItems}) } 
-                vertical={false}
-                />
-        </View>
+            <View style={{ flex: 1, flexDirection:'row', justifyContent: 'center'}}>
+                <Carousel
+                    layout={"default"}
+                    data={state.carouselItems}
+                    sliderWidth={ Dimensions.get('window').width }
+                    itemWidth={ Dimensions.get('window').width - 20 }
+                    renderItem={_renderItem}
+                    onSnapToItem = { 
+                      index => setState({activeIndex:index, carouselItems: state.carouselItems}) } 
+                    vertical={false}
+                    />
+            </View>
+            <PaginationDots activeIndex={state.activeIndex} itemCount={state.carouselItems.length} />
         </SafeAreaView>
     );
     
