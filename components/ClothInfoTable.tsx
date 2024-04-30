@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { DataTable } from 'react-native-paper';
-import { ClothingItem } from '../app/(auth)/cloth_card';
+import { ClothingItem } from './cloth_card';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const ClothInfoTable = (cloth: ClothingItem) => {

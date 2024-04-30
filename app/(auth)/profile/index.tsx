@@ -2,7 +2,7 @@ import { View, Text, TextInput, StyleSheet, SafeAreaView, TouchableOpacity, Imag
 import { useEffect, useState } from 'react';
 import { useUser } from '@clerk/clerk-expo';
 import { Ionicons } from '@expo/vector-icons';
-import Colors from '../../constants/Colors';
+import Colors from '../../../constants/Colors';
 import * as ImagePicker from 'expo-image-picker';
 
 const Profile = () => {

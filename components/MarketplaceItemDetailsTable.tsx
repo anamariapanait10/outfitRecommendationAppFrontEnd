@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { DataTable } from 'react-native-paper';
-import { MarketplaceItem } from '../app/(auth)/marketplace_item_details';
+import { MarketplaceItem } from '../app/(auth)/marketplace/marketplace_item_details';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Ionicons } from '@expo/vector-icons';
 

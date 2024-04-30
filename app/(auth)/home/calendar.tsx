@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import { Dimensions, View, Text, Image, StyleSheet, Modal, Alert } from 'react-native';
 import { Calendar } from 'react-native-calendars';
-import Colors from '../../constants/Colors';
+import Colors from '../../../constants/Colors';
 import { TouchableOpacity } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { DataStorageSingleton } from './data_storage_singleton';
+import { DataStorageSingleton } from '../../../constants/data_storage_singleton';
 import { useAuth } from '@clerk/clerk-expo';
 import { Ionicons } from '@expo/vector-icons';
-import CustomAlert from '../../components/CustomAlert';
-import SpinnerOverlay from './spinner_overlay';
+import CustomAlert from '../../../components/CustomAlert';
+import SpinnerOverlay from '../../../components/spinner_overlay';
 import { useFocusEffect } from '@react-navigation/native';
 
 const OutfitCalendar = () => {
