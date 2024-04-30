@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Image, ScrollView, View, StyleSheet, TouchableOpacity } from 'react-native';
-import { TextInput, Text } from 'react-native-paper';
+import { Image, ScrollView, View, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { Text } from 'react-native-paper';
 import { DataStorageSingleton } from './data_storage_singleton';
 import { router, useLocalSearchParams } from 'expo-router';
 import { ClothingItem } from './cloth_card';
@@ -9,6 +9,8 @@ import { useAuth } from "@clerk/clerk-expo";
 import ChooseImageModal from './choose_image_modal';
 import * as ImagePicker from "expo-image-picker";
 import Colors from "../../constants/Colors";
+import ToggleButton from "../../components/ToggleButton"
+import { black } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 
 const UploadMarketplaceItem = () => {
     const [itemDetails, setItemDetails] = useState({
@@ -25,45 +27,11 @@ const UploadMarketplaceItem = () => {
     const [ cloth, setCloth ] = useState(new ClothingItem(0, 0, "", "", "", "", "", "", "", "", placeholderImage));
     const isFocused = useIsFocused();
     const { isLoaded, userId, getToken } = useAuth();
-    const [modalVisible, setModalVisible] = useState(false);
     const [image, setImage] = useState("");
-
-    const sendImageForProcessing = async (image: any) => {
-      setImage(image);
-      setModalVisible(false);
-    };
-
-    const uploadImage = async (mode: string) => {
-        try {
-          let result = {};
-          if (mode === "gallery") {
-            await ImagePicker.requestMediaLibraryPermissionsAsync();
-            result = await ImagePicker.launchImageLibraryAsync({
-              mediaTypes: ImagePicker.MediaTypeOptions.Images,
-              allowsEditing: true,
-              aspect: [1, 1],
-              quality: 1,
-              base64: true,
-            });
-          } else {
-            await ImagePicker.requestCameraPermissionsAsync();
-            result = await ImagePicker.launchCameraAsync({
-              cameraType: ImagePicker.CameraType.front,
-              allowsEditing: true,
-              aspect: [1, 1],
-              quality: 1,
-              base64: true,
-            });
-          }
-          if (!result.canceled) {
-            sendImageForProcessing('data:image/jpeg;base64,' + result.assets[0].base64);
-          }
-        } catch (error: any) {
-          alert("Error uploading image: " + error.message);
-          setModalVisible(false);
-        }
-      };
     
+    const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+    const conditions = ['Poor', 'Good', 'Like new', 'New'];
+
     const handleInputChange = (name, value) => {
         setItemDetails({ ...itemDetails, [name]: value });
     };
@@ -73,6 +41,7 @@ const UploadMarketplaceItem = () => {
           let ci = DataStorageSingleton.getInstance().clothingItems.find(i => i.id == parseInt(id));  
           if(ci) {
             setCloth(ci);
+            setImage(ci.image);
             DataStorageSingleton.getInstance().clothId = ci.id;
           }
         }
@@ -97,17 +66,17 @@ const UploadMarketplaceItem = () => {
               const token = await getToken();
       
               const requestBody = JSON.stringify({
-                // user_id: userId,
-                // outfit: cloth.id,
-                // description: itemDetails.description,
-                // status: "Available",
-                // images: itemDetails.images || "",
-                // condition: itemDetails.condition,
-                // size: itemDetails.size,
-                // brand: itemDetails.brand,
-                //posted_date: new Date().toISOString(),
-                // price: parseFloat(itemDetails.price),
-                // location: itemDetails.location,
+                user_id: userId,
+                outfit: cloth.id,
+                description: itemDetails.description,
+                status: "Available",
+                images: itemDetails.images || "",
+                condition: itemDetails.condition,
+                size: itemDetails.size,
+                brand: itemDetails.brand,
+                posted_date: new Date().toISOString(),
+                price: parseFloat(itemDetails.price),
+                location: itemDetails.location,
               });
       
               console.log("POST request body:", requestBody);
@@ -124,7 +93,7 @@ const UploadMarketplaceItem = () => {
                 }
               );
       
-              if (response.status !== 200) {
+              if (!response.ok) {
                 throw new Error("Something went wrong");
               }
       
@@ -143,54 +112,61 @@ const UploadMarketplaceItem = () => {
         <ScrollView style={styles.container}>
             <View style={{marginRight: 10, marginLeft: 10}}>
                 {/* Image picker */}
-                <TouchableOpacity onPress={() => setModalVisible(true)} style={[styles.imagePicker, image? styles.imagePickerAfterSelection : styles.imagePickerBeforeSelection]}>
+                <View style={[styles.imagePicker, image? styles.imagePickerAfterSelection : styles.imagePickerBeforeSelection]}>
                 {image ? (
                     <Image source={{ uri: image }} style={styles.imagePreview} />
-                ) : (
-                    <Text>Select an Image</Text>
-                )}
-                </TouchableOpacity>
-                <ChooseImageModal
-                    modalVisible={modalVisible}
-                    onBackPress={() => setModalVisible(false)}
-                    onCameraPress={() => uploadImage("camera")}
-                    onGalleryPress={() => uploadImage("gallery")}
-                />
+                ) : (<View></View>)}
+                </View>
+
+                <Text style={styles.label}>Brand</Text>
                 <TextInput
-                    label="Brand"
+                    // label="Brand"
                     value={itemDetails.brand}
                     onChangeText={text => handleInputChange('brand', text)}
                     style={styles.input}
                 />
+                <Text style={styles.label}>Item Condition</Text>
+                <View style={styles.toggleButtonGroup}>
+                  {conditions.map((condition) => (
+                    <ToggleButton
+                      key={condition}
+                      label={condition}
+                      isActive={itemDetails.condition == condition}
+                      onPress={() => handleInputChange('condition', condition)}
+                    />
+                  ))}
+                </View>
+                <Text style={styles.label}>Size</Text>
+                <View style={styles.toggleButtonGroup}>
+                  {sizes.map((size) => (
+                    <ToggleButton
+                      key={size}
+                      label={size}
+                      isActive={itemDetails.size == size}
+                      onPress={() => handleInputChange('size', size)}
+                    />
+                  ))}
+                </View>
+                <Text style={styles.label}>Description</Text>
                 <TextInput
-                    label="Condition"
-                    value={itemDetails.condition}
-                    onChangeText={text => handleInputChange('condition', text)}
-                    style={styles.input}
-                />
-                <TextInput
-                    label="Size"
-                    value={itemDetails.size}
-                    onChangeText={text => handleInputChange('size', text)}
-                    style={styles.input}
-                />
-                <TextInput
-                    label="Description"
+                    // label="Description"
                     value={itemDetails.description}
                     onChangeText={text => handleInputChange('description', text)}
                     multiline
                     numberOfLines={4}
                     style={styles.input}
                 />
+                <Text style={styles.label}>Price</Text>
                 <TextInput
-                    label="Price (EUR)"
+                    // label="Price (EUR)"
                     value={itemDetails.price}
                     onChangeText={text => handleInputChange('price', text)}
                     keyboardType="numeric"
                     style={styles.input}
                 />
+                <Text style={styles.label}>Location</Text>
                 <TextInput
-                    label="Location"
+                    // label="Location"
                     value={itemDetails.location}
                     onChangeText={text => handleInputChange('location', text)}
                     style={styles.input}
@@ -210,10 +186,13 @@ const styles = StyleSheet.create({
     },
     input: {
         marginBottom: 5,
-        marginVertical: 4,
-        height: 50,
+        height: 40,
         borderRadius: 7,
         backgroundColor: '#fff',
+        padding: 10,
+        color: 'black',
+        borderWidth: 0.5,
+        borderColor: 'black'
     },
     imagePicker: {
         alignItems: 'center',
@@ -249,6 +228,16 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: 'white',
         textAlign: 'center',
+    },
+    toggleButtonGroup: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+    },
+    label: {
+      fontSize: 18,
+      marginTop: 20,
+      marginBottom: 10,
     },
 });
 

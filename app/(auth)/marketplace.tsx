@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, FlatList, Text, ActivityIndicator, Image, TouchableOpacity } from 'react-native';
 import { Card, Button } from 'react-native-paper';
 import { useAuth } from '@clerk/clerk-expo';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import MarketplaceItemTable from '../../components/MarketplaceItemTable';
 import Colors from "../../constants/Colors";
 import SpinnerOverlay from './spinner_overlay';
@@ -12,9 +12,11 @@ const MarketplaceScreen = () => {
     const { isLoaded, userId, getToken } = useAuth();
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        fetchItems();
-    }, []);
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchItems();    
+        }, [])
+    );
 
     const fetchItems = async () => {
         const makeGetRequest = async () => {
@@ -28,11 +30,11 @@ const MarketplaceScreen = () => {
                 const response = await fetch(
                     process.env.EXPO_PUBLIC_BASE_API_URL + `/marketplace-items/get_available_items_for_user?userId=${userId}`,
                     {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${token}`,
+                        },
                     }
                 );
         
@@ -41,14 +43,15 @@ const MarketplaceScreen = () => {
                 }
         
                 const json = await response.json();
-                console.log("GET request response:", json);
+                // console.log("GET request response:", json);
                 setItems(json);
             } catch (error) {
                 console.error("Error making POST request:", error);
             }
         };
-      
-        makeGetRequest();
+        setLoading(true);
+        await makeGetRequest();
+        setLoading(false);
     };
 
     const renderItem = ({ item }) => (
@@ -61,7 +64,7 @@ const MarketplaceScreen = () => {
                 <View style={styles.info}>
                 <Image source={{ uri: item.outfit.image }} style={styles.image} />
                 <Card.Actions>
-                    <TouchableOpacity style={styles.button} onPress={() => router.replace({pathname: '/(auth)/marketplace_item_details', params: {id: item.id}})}>
+                    <TouchableOpacity style={styles.button} onPress={() => router.push({pathname: '/(auth)/marketplace_item_details', params: {id: item.id}})}>
                         <Text style={{color: 'white'}}>View Details</Text>
                     </TouchableOpacity>
                 </Card.Actions>
