@@ -171,6 +171,28 @@ export class DataStorageSingleton {
         }
     }
 
+    public deleteOutfit = async (date: string, token: string | null, userId: string | null | undefined, isLoaded: boolean) => {
+        if (!userId || !isLoaded) {
+            console.log('No authenticated user found.');
+            return;
+        }
+        try {
+            const baseUrl = process.env.EXPO_PUBLIC_BASE_API_URL + '/worn-outfits/' + date + '/';
+            const response = await fetch(baseUrl, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            if(response.status !== 204) {
+                Alert.alert("Error fetching data", "Could not delete outfit.");
+            }
+        } catch (error: any) {
+            Alert.alert("Error fetching data", error.message);
+        }
+    }
+
     public wearOutfit = async (clothes: ClothingItem[], date: string, token: string | null, userId: string | null | undefined, isLoaded: boolean) => {
         if (!userId || !isLoaded) {
             console.log('No authenticated user found.');
@@ -270,5 +292,31 @@ export class DataStorageSingleton {
             Alert.alert("Error fetching data", error.message);
         }
     }
+
+    public makeGETRequest = async (endpoint: string, token: string | null, userId: string | null | undefined, isLoaded: boolean, customResponseProcessing?: (data: any) => void) => {
+        if (!userId || !isLoaded) {
+            console.log('No authenticated user found.');
+            return;
+        }
+        try {
+            const response = await fetch(process.env.EXPO_PUBLIC_BASE_API_URL + endpoint, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+            if (customResponseProcessing) {
+                console.log("Custom response processing");
+                customResponseProcessing(data);
+            } else {
+                console.log("No custom response processing");
+                return data;
+            }
+        } catch (error: any) {
+            Alert.alert("Error fetching data", error.message);
+        }
+    };
 
 }

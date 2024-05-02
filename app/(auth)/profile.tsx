@@ -1,9 +1,14 @@
-import { View, Text, TextInput, StyleSheet, SafeAreaView, TouchableOpacity, Image } from 'react-native';
-import { useEffect, useState } from 'react';
+import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { useUser } from '@clerk/clerk-expo';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '../../constants/Colors';
 import * as ImagePicker from 'expo-image-picker';
+import { useFocusEffect } from '@react-navigation/native';
+import { DataStorageSingleton } from "./data_storage_singleton";
+import { useAuth } from '@clerk/clerk-expo';
+import { AnimatedCircularProgress } from 'react-native-circular-progress';
+import { set } from 'date-fns';
 
 const Profile = () => {
   const { user } = useUser();
@@ -11,8 +16,13 @@ const Profile = () => {
   const [lastName, setLastName] = useState(user?.lastName);
   const [email, setEmail] = useState(user?.emailAddresses[0].emailAddress);
   const [edit, setEdit] = useState(false);
+  const [clothPercentage, setClothPercentage] = useState(0);
+  const [outfitPercentage, setOutfitPercentage] = useState(0);
+  const [wornOutfits, setWornOutfits] = useState(0);
+  const [totalOutfits, setTotalOutfits] = useState(0);
+  const [season, setSeason] = useState('');
+  const { isLoaded, userId, getToken } = useAuth();
 
-  // Load user data on mount
   useEffect(() => {
     if (!user) return;
 
@@ -20,6 +30,21 @@ const Profile = () => {
     setLastName(user.lastName);
     setEmail(user.emailAddresses[0].emailAddress);
   }, [user]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchData = async () => {
+        const stats = await DataStorageSingleton.getInstance().makeGETRequest('/stats/get_stats?userId='+userId, await getToken(), userId, isLoaded);
+        console.log("Stats: ", stats);
+        setClothPercentage(stats.worn_clothes_percentage);
+        setOutfitPercentage(stats.worn_outfits_percentage);
+        setWornOutfits(stats.worn_outfits);
+        setTotalOutfits(stats.total_outfits);
+        setSeason(stats.season);
+      };
+      fetchData();
+    }, [])
+  );
 
   const onSaveUser = async () => {
     setEdit(false);
@@ -55,9 +80,9 @@ const Profile = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ScrollView>
       {user && (
-        <View style={styles.card}>
+        <View style={styles.profile}>
           <TouchableOpacity onPress={onCaptureImage}>
             <Image source={{ uri: user?.imageUrl }} style={styles.avatar} />
           </TouchableOpacity>
@@ -83,7 +108,31 @@ const Profile = () => {
           <Text>Since {user?.createdAt?.toLocaleDateString()}</Text>
         </View>
       )}
-    </SafeAreaView>
+      <View style={styles.card}> 
+        <Text style={styles.title}>Wardrobe Usage</Text>
+        <View style={styles.progressBarContainer}>
+          <View style={[styles.progressBar, { width: `${clothPercentage}%` }]} />
+        </View>
+        <Text style={styles.usageText}>You're wearing {clothPercentage}% of your {season} wardrobe</Text>
+      </View>
+      <View style={styles.card}>
+        <AnimatedCircularProgress
+          size={120}
+          width={15}
+          fill={outfitPercentage}
+          tintColor='orange' //"#FF9500"
+          backgroundColor="#E6E6E6">
+          {
+            (fill) => (
+              <Text style={styles.percentageText}>
+                {`${Math.round(fill)}%`}
+              </Text>
+            )
+          }
+        </AnimatedCircularProgress>
+        <Text style={styles.detailsText}>{`${wornOutfits}/${totalOutfits} outfits worn`}</Text>
+      </View>
+    </ScrollView>
   );
 };
 
@@ -96,6 +145,19 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 24,
+  },
+  profile: {
+    alignItems: 'center',
+    padding: 24,
+    backgroundColor: '#fff',
+    marginBottom: 20,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: {
+      width: 1,
+      height: 2,
+    },
   },
   container: {
     flex: 1,
@@ -113,6 +175,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   card: {
+    // margin: 20,
     backgroundColor: '#fff',
     padding: 24,
     borderRadius: 16,
@@ -125,8 +188,9 @@ const styles = StyleSheet.create({
       height: 2,
     },
     alignItems: 'center',
-    gap: 14,
-    marginBottom: 24,
+    // gap: 14,
+    marginHorizontal: 20,
+    marginBottom: 10,
   },
   avatar: {
     width: 100,
@@ -142,6 +206,38 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
   },
+  title: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  progressBarContainer: {
+    height: 20,
+    width: '100%',
+    backgroundColor: '#e0e0e0',
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  progressBar: {
+    height: '100%',
+    backgroundColor: 'orange',
+    borderRadius: 10,
+  },
+  usageText: {
+    marginTop: 10,
+    fontSize: 14,
+    color: '#666',
+  },
+  percentageText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FF9500',
+  },
+  detailsText: {
+    fontSize: 16,
+    color: '#666',
+    marginTop: 5,
+  }
 });
 
 export default Profile;

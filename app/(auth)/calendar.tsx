@@ -10,6 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import CustomAlert from '../../components/CustomAlert';
 import SpinnerOverlay from './spinner_overlay';
 import { useFocusEffect } from '@react-navigation/native';
+import { set } from 'date-fns';
 
 const OutfitCalendar = () => {
   const { isLoaded, userId, getToken } = useAuth();
@@ -23,8 +24,10 @@ const OutfitCalendar = () => {
   const [loading, setLoading] = useState(false);
 
   const fetchMonthOutfits = async () => {
+    setLoading(true);
     await DataStorageSingleton.getInstance().fetchOutfitsForMonth(yearMonth, await getToken(), userId, isLoaded);
     setOutfits(DataStorageSingleton.getInstance().monthOutfits);
+    setLoading(false);
   }
 
   const handleDeleteOutfit = async (date) => {
@@ -139,10 +142,11 @@ const OutfitCalendar = () => {
       <CustomAlert
         visible={alertVisible}
         onClose={() => setAlertVisible(false)}
-        onDelete={() => {
+        onSubmit={() => {
           deleteOutfit(selectedDayOutfit.date);
           setAlertVisible(false);
         }}
+        question="Are you sure you want to delete this outfit?"
       />
       <Calendar 
         onMonthChange={(m) => setYearMonth(m.year.toString() + '-' + (m.month < 10 ? '0' : '') + m.month.toString())}
@@ -159,7 +163,6 @@ const OutfitCalendar = () => {
         dayComponent={({ date, state }) => {
           return (
             <TouchableOpacity 
-              //style={styles.dayContainer}
               onPress={() => handleDayPress(date)}
             >
               <View style={styles.dayContainer}>

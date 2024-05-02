@@ -11,12 +11,13 @@ import TransparentClothCard from '../../components/TransparentClothCard';
 import { ClothingItem } from './cloth_card';
 import LocationSelector from './select_location_modal';
 import * as Location from 'expo-location';
+import CustomAlert from '../../components/CustomAlert';
 
 const Home = () => {
   const { isLoaded, userId, getToken } = useAuth();
-  const [recommendedCloth, setRecommendedCloth] = useState(null);
   const [clothes, setClothes] = useState<ClothingItem[] | undefined>([]);
   const [locationModalVisible, setLocationModalVisible] = useState(false);
+  const [wearOutfitAlert, setWearOutfitAlert] = useState(false);
   
   const weatherDivRef = useRef(null);
 
@@ -68,12 +69,20 @@ const Home = () => {
       await DataStorageSingleton.getInstance().fetchOutfitsForMonth(currentYearMonth, await getToken(), userId, isLoaded);
       let outfits = DataStorageSingleton.getInstance().monthOutfits;
       if (currentDate.toISOString().split('T')[0] in outfits){
-        console.log("Exista deja");
+        setWearOutfitAlert(true);
       } else {
-        DataStorageSingleton.getInstance().wearOutfit(clothes, new Date().toISOString().split('T')[0], await getToken(), userId, isLoaded);
+        DataStorageSingleton.getInstance().wearOutfit(clothes, currentDate.toISOString().split('T')[0], await getToken(), userId, isLoaded);
       }
     }
   }
+
+  const replaceOutfit = async () => {
+    if(clothes != undefined) {
+      const currentDate = new Date().toISOString().split('T')[0];
+      await DataStorageSingleton.getInstance().deleteOutfit(currentDate, await getToken(), userId, isLoaded);
+      DataStorageSingleton.getInstance().wearOutfit(clothes, new Date().toISOString().split('T')[0], await getToken(), userId, isLoaded);
+    }
+ }
 
   const handleSelectLocation = async (location) => {
     const reverseGeocode = await Location.reverseGeocodeAsync({
@@ -154,6 +163,15 @@ const Home = () => {
               data={clothes}
               renderItem={({ item }) => <TransparentClothCard {...item} />}
               numColumns={1}
+            />
+            <CustomAlert
+              visible={wearOutfitAlert}
+              onClose={() => setWearOutfitAlert(false)}
+              onSubmit={() => {
+                replaceOutfit();
+                setWearOutfitAlert(false);
+              }}
+              question="An outfit is already scheduled for this date. Proceeding will overwrite it. Do you want to continue?"
             />
             <TouchableOpacity style={styles.wearOutfitButton} onPress={wearOutfit}>
                 <Text style={styles.wearOutfitButtonText}>Wear This Outfit</Text>

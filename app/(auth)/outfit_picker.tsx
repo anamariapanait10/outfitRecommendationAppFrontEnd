@@ -10,6 +10,7 @@ import Colors from '../../constants/Colors';
 import SpinnerOverlay from './spinner_overlay';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Calendar } from 'react-native-calendars';
+import CustomAlert from '../../components/CustomAlert';
 
 const OutfitPicker = () => {
     const { isLoaded, userId, getToken } = useAuth();
@@ -24,7 +25,6 @@ const OutfitPicker = () => {
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
     const [expertResponse, setExpertResponse] = useState('');
     const [loading, setLoading] = useState(false);
-
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const [dropdownValue, setDropdownValue] = useState("");
     const [dropdownItems, setDropdownItems] = useState([
@@ -36,6 +36,7 @@ const OutfitPicker = () => {
       {label: 'Travel', value: 'Travel'},
       {label: 'Party', value: 'Party'}
     ]);
+    const [wearOutfitAlert, setWearOutfitAlert] = useState(false);
     
     const fetchClothesData = async () => {
       setLoading(true);
@@ -64,12 +65,24 @@ const OutfitPicker = () => {
     };
     const handleDateSelect = (day) => {
       setDate(day.dateString);
-      console.log("Selected date: ", day.dateString);
     };
-    const handleSaveData = async () => {
-      // save the date
+
+    const replaceOutfit = async () => {
       let clothes = [topwears[topwearIndex], bottomwears[bottomwearIndex], footwears[footwearIndex]];
-      await DataStorageSingleton.getInstance().wearOutfit(clothes, date, await getToken(), userId, isLoaded);
+      await DataStorageSingleton.getInstance().deleteOutfit(date, await getToken(), userId, isLoaded);
+      DataStorageSingleton.getInstance().wearOutfit(clothes, date, await getToken(), userId, isLoaded);
+   }
+
+    const handleSaveOutfit = async () => {
+      let clothes = [topwears[topwearIndex], bottomwears[bottomwearIndex], footwears[footwearIndex]];
+      let currentYearMonth = date.split('-').slice(0, 2).join('-');
+      await DataStorageSingleton.getInstance().fetchOutfitsForMonth(currentYearMonth, await getToken(), userId, isLoaded);
+      let outfits = DataStorageSingleton.getInstance().monthOutfits;
+      if (date in outfits){
+        setWearOutfitAlert(true);
+      } else {
+        DataStorageSingleton.getInstance().wearOutfit(clothes, date, await getToken(), userId, isLoaded);
+      }
     };
 
     const renderCarouselItem = ({ item, index }) => {
@@ -142,7 +155,7 @@ const OutfitPicker = () => {
                   <TouchableOpacity style={{backgroundColor: Colors.light_grey, paddingVertical: 10, paddingHorizontal: 10, borderRadius: 20}} onPress={() => setIsCalendarVisible(false)}>
                     <Text style={{color: 'black'}}>Close</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={{backgroundColor: Colors.light_purple, paddingVertical: 10, paddingHorizontal: 17, borderRadius: 20}} onPress={() => {setIsCalendarVisible(false); handleSaveData()}}>
+                  <TouchableOpacity style={{backgroundColor: Colors.light_purple, paddingVertical: 10, paddingHorizontal: 17, borderRadius: 20}} onPress={() => {handleSaveOutfit(); setIsCalendarVisible(false)}}>
                     <Text style={{color: 'black'}}>Add</Text>
                   </TouchableOpacity>
                 </View>
@@ -167,6 +180,15 @@ const OutfitPicker = () => {
               <Text style={styles.buttonText}>Ask the AI Expert</Text>
             </TouchableOpacity>
           </View>
+          <CustomAlert
+              visible={wearOutfitAlert}
+              onClose={() => setWearOutfitAlert(false)}
+              onSubmit={() => {
+                replaceOutfit();
+                setWearOutfitAlert(false);
+              }}
+              question="An outfit is already scheduled for this date. Proceeding will overwrite it. Do you want to continue?"
+            />
           <View style={styles.outfitContainer}>
             <Carousel
             data={topwears}

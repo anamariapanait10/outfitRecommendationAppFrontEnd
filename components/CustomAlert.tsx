@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Colors from '../constants/Colors';
 
-const CustomAlert = ({ visible, onClose, onDelete }) => {
+const CustomAlert = ({ visible, onClose, onSubmit, question }) => {
   return (
     <Modal
       visible={visible}
@@ -20,12 +20,12 @@ const CustomAlert = ({ visible, onClose, onDelete }) => {
           activeOpacity={1}
           onPress={(e) => e.stopPropagation()}
         >
-          <Text style={{textAlign: 'center'}}>Are you sure you want to delete this outfit?</Text>
+          <Text style={{textAlign: 'center'}}>{question}</Text>
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={[styles.button, styles.buttonClose]} onPress={onClose}>
               <Text style={styles.textStyle}>No</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, styles.buttonDelete]} onPress={onDelete}>
+            <TouchableOpacity style={[styles.button, styles.buttonDelete]} onPress={onSubmit}>
               <Text style={styles.textStyle}>Yes</Text>
             </TouchableOpacity>
           </View>
