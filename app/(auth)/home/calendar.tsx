@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { Dimensions, View, Text, Image, StyleSheet, Modal, Alert } from 'react-native';
+import { Dimensions, View, Text, Image, StyleSheet, Modal} from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import Colors from '../../../constants/Colors';
 import { TouchableOpacity } from 'react-native';
@@ -10,7 +10,6 @@ import { Ionicons } from '@expo/vector-icons';
 import CustomAlert from '../../../components/CustomAlert';
 import SpinnerOverlay from '../../../components/spinner_overlay';
 import { useFocusEffect } from '@react-navigation/native';
-import { set } from 'date-fns';
 
 const OutfitCalendar = () => {
   const { isLoaded, userId, getToken } = useAuth();

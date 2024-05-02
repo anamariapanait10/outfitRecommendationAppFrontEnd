@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, Dimensions, Modal, Button } from 'react-native';
-import { Swipeable } from 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Carousel from 'react-native-snap-carousel';
 import { DataStorageSingleton } from '../../../constants/data_storage_singleton';
@@ -10,7 +9,7 @@ import Colors from '../../../constants/Colors';
 import SpinnerOverlay from '../../../components/spinner_overlay';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Calendar } from 'react-native-calendars';
-import CustomAlert from '../../components/CustomAlert';
+import CustomAlert from '../../../components/CustomAlert';
 
 const OutfitPicker = () => {
     const { isLoaded, userId, getToken } = useAuth();

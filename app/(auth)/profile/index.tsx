@@ -5,10 +5,9 @@ import { Ionicons } from '@expo/vector-icons';
 import Colors from '../../../constants/Colors';
 import * as ImagePicker from 'expo-image-picker';
 import { useFocusEffect } from '@react-navigation/native';
-import { DataStorageSingleton } from "./data_storage_singleton";
+import { DataStorageSingleton } from "../../../constants/data_storage_singleton";
 import { useAuth } from '@clerk/clerk-expo';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import { set } from 'date-fns';
 
 const Profile = () => {
   const { user } = useUser();

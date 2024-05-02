@@ -12,6 +12,7 @@ import SpinnerOverlay from '../../../components/spinner_overlay';
 import Slider from '@react-native-community/slider';
 import { LinearGradient } from 'expo-linear-gradient';
 import ToggleButton from '../../../components/ToggleButton';
+import SliderMarks from '../../../components/SliderMarks';
 
 
 const ClothingItemForm = () => {
@@ -45,10 +46,8 @@ const ClothingItemForm = () => {
 
   const handleToggle = (selection, selectionsList, setSelectionsList) => {
     if (selectionsList.includes(selection)) {
-      // If the selection is already in the selectionsList, we remove it from it
       setSelectionsList(selectionsList.filter((s) => s !== selection));
     } else {
-      // If the selection is not already the selectionsList, we add it
       setSelectionsList([...selectionsList, selection]);
     }
   };
@@ -319,56 +318,58 @@ const ClothingItemForm = () => {
         />
       </View>
       <View style={styles.container}>
-      <Text style={styles.slider_label_temp}>Temperature: {Math.round(selectedTemperature)}°</Text>
-      
-      <View style={styles.iconRow}>
-        <Ionicons name="snow-outline" size={30} color="#0000FF" />
-        <Ionicons name="sunny-outline" size={30} color="#FFD700" style={styles.iconRight} />
-      </View>
-      <LinearGradient
-          colors={['#2222FF', '#55AA55', '#FF2222']}
-          start={{x: 0, y: 0}}
-          end={{x: 1, y: 0}}
-          style={styles.gradient}>
-          <Slider
-            style={styles.slider}
-            minimumValue={-10}
-            value={10}
-            maximumValue={30}
-            minimumTrackTintColor="transparent"
-            maximumTrackTintColor="transparent"
-            thumbTintColor={Colors.purple}
-            onValueChange={setTemperature}
-          />
-      </LinearGradient>
-      
-      <Text style={styles.slider_label}>Weather</Text>
-      <View style={styles.iconRow}>
-        <Ionicons name="snow-outline" size={30} color="#708090" />
-        <Ionicons name="cloudy-outline" size={30} color="#708090" style={styles.iconCenter} />
-        <Ionicons name="sunny-outline" size={30} color="#FFD700" style={styles.iconRight} />
-      </View>  
-      <LinearGradient
-          colors={['#FFFFFF', '#55AA55', '#FFD700']}
-          start={{x: 0, y: 0}}
-          end={{x: 1, y: 0}}
-          style={styles.gradient}>
+        <Text style={styles.slider_label_temp}>Temperature: {Math.round(selectedTemperature)}°</Text>
+        
+        <View style={styles.iconRow}>
+          <Ionicons name="snow-outline" size={30} color="#0000FF" />
+          <Ionicons name="sunny-outline" size={30} color="#FFD700" style={styles.iconRight} />
+        </View>
+        <LinearGradient
+            colors={['#2222FF', '#55AA55', '#FF2222']}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}
+            style={styles.gradient}>
+            <SliderMarks minimumValue={-10} maximumValue={30} step={5} style={styles.marksBelow} />
             <Slider
-          style={styles.slider}
-          minimumValue={0}
-          value={15}
-          maximumValue={30}
-          minimumTrackTintColor="transparent"
-          maximumTrackTintColor="transparent"
-          thumbTintColor={Colors.purple}
-          onValueChange={setWeather}
-        /> 
-      </LinearGradient>
-      
-      <TouchableOpacity style={styles.saveButton} onPress={handleSubmit}>
-          <Text style={styles.saveButtonText}>Save</Text>
-      </TouchableOpacity>
-    </View>
+              style={styles.slider}
+              minimumValue={-10}
+              value={10}
+              maximumValue={30}
+              minimumTrackTintColor="transparent"
+              maximumTrackTintColor="transparent"
+              thumbTintColor={Colors.purple}
+              onValueChange={setTemperature}
+            />
+        </LinearGradient>
+        
+        <Text style={styles.slider_label}>Weather</Text>
+        <View style={styles.iconRow}>
+          <Ionicons name="snow-outline" size={30} color="#708090" />
+          <Ionicons name="cloudy-outline" size={30} color="#708090" style={styles.iconCenter} />
+          <Ionicons name="sunny-outline" size={30} color="#FFD700" style={styles.iconRight} />
+        </View>  
+        <LinearGradient
+            colors={['#FFFFFF', '#55AA55', '#FFD700']}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}
+            style={styles.gradient}>
+            <SliderMarks minimumValue={0} maximumValue={30} step={5} style={styles.marksBelow} />
+            <Slider
+              style={styles.slider}
+              minimumValue={0}
+              value={15}
+              maximumValue={30}
+              minimumTrackTintColor="transparent"
+              maximumTrackTintColor="transparent"
+              thumbTintColor={Colors.purple}
+              onValueChange={setWeather}
+            /> 
+        </LinearGradient>
+        
+        <TouchableOpacity style={styles.saveButton} onPress={handleSubmit}>
+            <Text style={styles.saveButtonText}>Save</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 };
@@ -516,7 +517,10 @@ const styles = StyleSheet.create({
   colorButtonContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-  }
+  },
+  marksBelow: {
+  //  top: 45,
+  },
 });
 
 export default ClothingItemForm;

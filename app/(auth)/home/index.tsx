@@ -11,7 +11,7 @@ import TransparentClothCard from '../../../components/TransparentClothCard';
 import { ClothingItem } from '../../../components/cloth_card';
 import LocationSelector from '../../../components/select_location_modal';
 import * as Location from 'expo-location';
-import CustomAlert from '../../components/CustomAlert';
+import CustomAlert from '../../../components/CustomAlert';
 
 const Home = () => {
   const { isLoaded, userId, getToken } = useAuth();
