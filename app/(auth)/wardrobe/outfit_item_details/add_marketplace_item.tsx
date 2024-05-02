@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { Image, ScrollView, View, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { Text } from 'react-native-paper';
-import { DataStorageSingleton } from './data_storage_singleton';
+import { DataStorageSingleton } from '../../../../constants/data_storage_singleton';
 import { router, useLocalSearchParams } from 'expo-router';
-import { ClothingItem } from './cloth_card';
+import { ClothingItem } from '../../../../components/cloth_card';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { useAuth } from "@clerk/clerk-expo";
-import ChooseImageModal from './choose_image_modal';
+import ChooseImageModal from '../../../../components/choose_image_modal';
 import * as ImagePicker from "expo-image-picker";
-import Colors from "../../constants/Colors";
-import ToggleButton from "../../components/ToggleButton"
+import Colors from "../../../../constants/Colors";
+import ToggleButton from "../../../../components/ToggleButton"
 import { black } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 
 const UploadMarketplaceItem = () => {
@@ -99,7 +99,8 @@ const UploadMarketplaceItem = () => {
       
               const json = await response.json();
               await DataStorageSingleton.getInstance().fetchClothesData(await getToken(), userId, isLoaded);
-              router.replace({pathname: '/(auth)/marketplace'})
+              // router.replace({pathname: '/(auth)/marketplace'})
+              router.back();
             } catch (error) {
               console.error("Error making POST request:", error);
             }

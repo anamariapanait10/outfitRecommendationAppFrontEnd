@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image, ScrollView, FlatList, Dimensions, TouchableOpacity, ActivityIndicator } from "react-native";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
-import { DataStorageSingleton } from "./data_storage_singleton";
+import { DataStorageSingleton } from "../../../constants/data_storage_singleton";
 import { useAuth } from "@clerk/clerk-expo";
-import SpinnerOverlay from "./spinner_overlay";
-import { ClothingItem } from "./cloth_card";
-import MarketplaceItemDetailsTable from "../../components/MarketplaceItemDetailsTable";
+import SpinnerOverlay from "../../../components/spinner_overlay";
+import { ClothingItem } from "../../../components/cloth_card";
+import MarketplaceItemDetailsTable from "../../../components/MarketplaceItemDetailsTable";
 
 export class MarketplaceItem {
     id: number;

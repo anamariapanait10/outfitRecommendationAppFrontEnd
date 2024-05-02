@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, FlatList, RefreshControl, StyleSheet } from 'react-native';
-import ClothCard, { ClothingItem } from './cloth_card';
+import ClothCard, { ClothingItem } from '../../../components/cloth_card';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import FilterBar from './filter_bar';
+import FilterBar from '../../../components/filter_bar';
 import { router, useFocusEffect } from 'expo-router';
 import { useAuth } from '@clerk/clerk-expo';
 import { Ionicons } from '@expo/vector-icons';
-import { DataStorageSingleton } from './data_storage_singleton';
+import { DataStorageSingleton } from '../../../constants/data_storage_singleton';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const WardrobeScreen = () => {
@@ -57,7 +57,7 @@ const WardrobeScreen = () => {
                 }
             /> 
             <GestureHandlerRootView style={{ position: 'absolute', bottom: 20, right: 20 }}>      
-                <TouchableOpacity style={styles.button} onPress={() => router.replace({pathname: '/(auth)/add_cloth_item'})}>
+                <TouchableOpacity style={styles.button} onPress={() => router.push({pathname: '/(auth)/wardrobe/add_cloth_item'})}>
                     <Ionicons name="add" size={24} color="white" />
                 </TouchableOpacity>
             </GestureHandlerRootView> 

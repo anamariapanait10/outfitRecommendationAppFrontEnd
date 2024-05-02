@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { Image, View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import Colors from "../../constants/Colors";
-import ChooseImageModal from './choose_image_modal';
+import Colors from "../../../constants/Colors";
+import ChooseImageModal from '../../../components/choose_image_modal';
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from "@clerk/clerk-expo";
-import { DataStorageSingleton } from "./data_storage_singleton";
+import { DataStorageSingleton } from "../../../constants/data_storage_singleton";
 import { router } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
-import SpinnerOverlay from './spinner_overlay';
+import SpinnerOverlay from '../../../components/spinner_overlay';
 import Slider from '@react-native-community/slider';
 import { LinearGradient } from 'expo-linear-gradient';
-import ToggleButton from '../../components/ToggleButton';
+import ToggleButton from '../../../components/ToggleButton';
 
 
 const ClothingItemForm = () => {
@@ -162,7 +162,8 @@ const ClothingItemForm = () => {
         const json = await response.json();
         // console.log("POST request response:", json);
         DataStorageSingleton.getInstance().fetchClothesData(await getToken(), userId, isLoaded);
-        router.replace({pathname: '/(auth)/wardrobe'})
+        // router.replace({pathname: '/(auth)/wardrobe'})
+        router.back();
       } catch (error) {
         console.error("Error making POST request:", error);
       }

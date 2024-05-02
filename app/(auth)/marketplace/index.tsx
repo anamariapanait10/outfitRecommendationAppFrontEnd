@@ -3,9 +3,9 @@ import { View, StyleSheet, FlatList, Text, ActivityIndicator, Image, TouchableOp
 import { Card, Button } from 'react-native-paper';
 import { useAuth } from '@clerk/clerk-expo';
 import { router, useFocusEffect } from 'expo-router';
-import MarketplaceItemTable from '../../components/MarketplaceItemTable';
-import Colors from "../../constants/Colors";
-import SpinnerOverlay from './spinner_overlay';
+import MarketplaceItemTable from '../../../components/MarketplaceItemTable';
+import Colors from "../../../constants/Colors";
+import SpinnerOverlay from '../../../components/spinner_overlay';
 
 const MarketplaceScreen = () => {
     const [items, setItems] = useState([]);
@@ -64,7 +64,7 @@ const MarketplaceScreen = () => {
                 <View style={styles.info}>
                 <Image source={{ uri: item.outfit.image }} style={styles.image} />
                 <Card.Actions>
-                    <TouchableOpacity style={styles.button} onPress={() => router.push({pathname: '/(auth)/marketplace_item_details', params: {id: item.id}})}>
+                    <TouchableOpacity style={styles.button} onPress={() => router.push({pathname: '/(auth)/marketplace/marketplace_item_details', params: {id: item.id}})}>
                         <Text style={{color: 'white'}}>View Details</Text>
                     </TouchableOpacity>
                 </Card.Actions>

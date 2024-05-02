@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Pressable, View, Text, ActivityIndicator, TouchableOpacity } from "react-native";
-import styles from "../styles";
-import Colors from "../../constants/Colors";
+import styles from "../app/styles";
+import Colors from "../constants/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 

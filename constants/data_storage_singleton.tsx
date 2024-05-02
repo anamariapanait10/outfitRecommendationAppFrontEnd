@@ -1,8 +1,8 @@
 import { Alert } from "react-native";
-import { ClothingItem } from "./cloth_card";
-import { WeatherItem } from "../../components/WeatherItem";
+import { ClothingItem } from "../components/cloth_card";
+import { WeatherItem } from "../components/WeatherItem";
 import { format } from 'date-fns';
-import { MarketplaceItem } from "./marketplace_item_details";
+import { MarketplaceItem } from "../app/(auth)/marketplace/marketplace_item_details";
 export class DataStorageSingleton {
     static instance: DataStorageSingleton | null = null;
 

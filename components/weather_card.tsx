@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Text, View, SafeAreaView, StyleSheet, Image, Dimensions } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
-import { DataStorageSingleton } from './data_storage_singleton';
-import PaginationDots from '../../components/PaginationDots';
+import { DataStorageSingleton } from '../constants/data_storage_singleton';
+import PaginationDots from './PaginationDots';
 
 const WeatherDiv = React.forwardRef((props, ref) => {
 

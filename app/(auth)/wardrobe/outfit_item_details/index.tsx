@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { View, ScrollView, Pressable, Image, StyleSheet } from 'react-native';
-import styles from '../styles';
+import styles from '../../../styles';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@clerk/clerk-expo';
-import { ClothingItem } from './cloth_card';
-import { DataStorageSingleton } from './data_storage_singleton';
+import { ClothingItem } from '../../../../components/cloth_card';
+import { DataStorageSingleton } from '../../../../constants/data_storage_singleton';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
-import ClothInfoTable from '../../components/ClothInfoTable';
+import ClothInfoTable from '../../../../components/ClothInfoTable';
 
 const OutfitItemDetailsScreen = () => {
   const { id } = useLocalSearchParams();
@@ -49,7 +49,7 @@ const OutfitItemDetailsScreen = () => {
           <ClothInfoTable {...cloth} />
         </View>
       </ScrollView>
-      <Pressable style={styles_2.button} onPress={() => router.replace({pathname: '/(auth)/add_marketplace_item', params: {id: cloth.id}})}>
+      <Pressable style={styles_2.button} onPress={() => router.push({pathname: '/(auth)/wardrobe/outfit_item_details/add_marketplace_item', params: {id: cloth.id}})}>
         <Ionicons name="pricetags-outline" size={20} color="white" />
       </Pressable> 
     </View>

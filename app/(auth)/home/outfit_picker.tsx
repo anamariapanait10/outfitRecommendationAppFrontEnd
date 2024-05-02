@@ -3,11 +3,11 @@ import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, Dimensions
 import { Swipeable } from 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Carousel from 'react-native-snap-carousel';
-import { DataStorageSingleton } from './data_storage_singleton';
+import { DataStorageSingleton } from '../../../constants/data_storage_singleton';
 import { useAuth } from '@clerk/clerk-expo';
-import { ClothingItem } from './cloth_card';
-import Colors from '../../constants/Colors';
-import SpinnerOverlay from './spinner_overlay';
+import { ClothingItem } from '../../../components/cloth_card';
+import Colors from '../../../constants/Colors';
+import SpinnerOverlay from '../../../components/spinner_overlay';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Calendar } from 'react-native-calendars';
 import CustomAlert from '../../components/CustomAlert';

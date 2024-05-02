@@ -1,15 +1,15 @@
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@clerk/clerk-expo';
-import Colors from "../../constants/Colors";
+import Colors from "../../../constants/Colors";
 import { Ionicons } from '@expo/vector-icons';
-import WeatherDiv from './weather_card';
+import WeatherDiv from '../../../components/weather_card';
 import { TouchableOpacity, FlatList } from 'react-native';
 import { router } from 'expo-router';
-import { DataStorageSingleton } from './data_storage_singleton';
-import TransparentClothCard from '../../components/TransparentClothCard';
-import { ClothingItem } from './cloth_card';
-import LocationSelector from './select_location_modal';
+import { DataStorageSingleton } from '../../../constants/data_storage_singleton';
+import TransparentClothCard from '../../../components/TransparentClothCard';
+import { ClothingItem } from '../../../components/cloth_card';
+import LocationSelector from '../../../components/select_location_modal';
 import * as Location from 'expo-location';
 import CustomAlert from '../../components/CustomAlert';
 
@@ -137,7 +137,7 @@ const Home = () => {
             />
           </TouchableOpacity>
           <View>
-            <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => router.replace({pathname: '/(auth)/calendar'})}>
+            <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => router.push({pathname: '/(auth)/home/calendar'})}>
               <Ionicons style={[styles.location, {paddingTop: 1.5, padding: 2, color: Colors.purple}]} name="calendar-outline" size={19}/>
               <Text style={styles.calendar}> See calendar </Text>
             </TouchableOpacity>
@@ -181,7 +181,7 @@ const Home = () => {
           <Text style={styles.noOutfitText}>No recommended outfit found</Text>
         )}
       </View>
-      <TouchableOpacity style={styles.wearAnotherOutfitButton} onPress={() => router.replace({pathname: '/(auth)/outfit_picker'})}>
+      <TouchableOpacity style={styles.wearAnotherOutfitButton} onPress={() => router.push({pathname: '/(auth)/home/outfit_picker'})}>
           <Text style={styles.wearOutfitButtonText}>Or Try Another Outfit</Text>
       </TouchableOpacity>
     </View>

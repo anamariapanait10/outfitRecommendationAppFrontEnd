@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
-import styles from '../styles';
+import styles from '../app/styles';
 import { router } from 'expo-router';
 
 export class ClothingItem {
@@ -45,7 +45,7 @@ export class ClothingItem {
 const ClothCard = ( cloth: ClothingItem ) => {
     return (
         <TouchableOpacity onPress={() => {
-                router.replace({pathname: '/(auth)/outfit_item_details', params: {
+                router.push({pathname: '/(auth)/wardrobe/outfit_item_details', params: {
                         id: cloth.id
                     } 
                 });
