@@ -35,7 +35,7 @@ const Profile = () => {
       const fetchData = async () => {
         const stats = await DataStorageSingleton.getInstance().makeGETRequest('/stats/get_stats?userId='+userId, await getToken(), userId, isLoaded);
         console.log("Stats: ", stats);
-        setClothPercentage(stats.worn_clothes_percentage);
+        setClothPercentage(Math.round(stats.worn_clothes_percentage * 100) / 100);
         setOutfitPercentage(stats.worn_outfits_percentage);
         setWornOutfits(stats.worn_outfits);
         setTotalOutfits(stats.total_outfits);

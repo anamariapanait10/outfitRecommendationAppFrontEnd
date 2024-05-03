@@ -12,9 +12,9 @@ const SliderMarks = ({ minimumValue, maximumValue, step, style }) => {
     console.log("Mark Width: ", markWidth);
     return (
       <View style={[styles.markContainer, style]}>
-        {Array.from({ length: numberOfMarks + 3 }, (_, index) => (
+        {Array.from({ length: numberOfMarks + 1 }, (_, index) => (
           <View key={index} style={styles.mark}>
-            <Text style={styles.markText}>{minimumValue + index * step}</Text>
+            <Text style={styles.markText}>AB{minimumValue + index * step}</Text>
           </View>
         ))}
       </View>
@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
     markContainer: {
         position: 'absolute',
         width: '100%',
+        height: '100%',
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingHorizontal: 20,
@@ -42,6 +43,7 @@ const styles = StyleSheet.create({
         fontSize: 10,
         textAlign: 'center',
         marginTop: 2,
+        color: '#333',
     }
 });
 

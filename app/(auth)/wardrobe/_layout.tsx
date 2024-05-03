@@ -3,6 +3,7 @@ import { Stack, router } from 'expo-router';
 import { TouchableOpacity } from 'react-native';
 import Colors from '../../../constants/Colors';
 import { useAuth } from '@clerk/clerk-expo';
+import { DataStorageSingleton } from "../../../constants/data_storage_singleton";
 
 const headerWithBack =() => (
     <TouchableOpacity

@@ -45,10 +45,10 @@ export default function Layout() {
         <Stack.Screen
           name="index"
           options={{
-            headerTitle: ' My Wardrobe ',
+            headerTitle: ' Marketplace ',
             headerTitleStyle: {
               fontFamily: 'GreatVibes',
-              fontSize: 24,
+              fontSize: 28,
             },
             headerTitleAlign: 'center',
           }}

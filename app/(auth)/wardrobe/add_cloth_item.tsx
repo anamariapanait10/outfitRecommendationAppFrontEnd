@@ -111,6 +111,8 @@ const ClothingItemForm = () => {
       setSelectedOccasions([classification_results['occasions']]);
       setSelectedColor(classification_results['color']);
       setSelectedSeasons([classification_results['season']]);
+      setSelectedMaterial(classification_results['material']);
+      setSelectedPattern(classification_results['pattern']);
 
     } catch (error) {
       throw error;
@@ -173,17 +175,12 @@ const ClothingItemForm = () => {
 
   const categories = ['Topwear', 'Bottomwear', 'Footwear', 'Bodywear', 'Headwear', 'Accessories'];
   const subCategory = { 
-    'Topwear': ['Shirts', 'Tshirts', 'Tops', 'Sweatshirts', 'Waistcoat', 'Blazers', 'Shrug', 'Tunics', 'Jackets', 'Sweaters', 'Suspenders', 'Nehru Jackets', 'Rompers', 'Rain Jacket', 'Suits'], 
-    'Bottomwear': ['Jeans', 'Track Pants', 'Shorts', 'Skirts', 'Trousers', 'Capris', 'Tracksuits', 'Swimwear', 'Leggings', 'Patiala', 'Stockings', 'Tights', 'Salwar', 'Jeggings'], 
-    'Footwear':  ['Casual Shoes', 'Flip Flops', 'Sandals', 'Formal Shoes', 'Flats', 'Sports Shoes', 'Heels', 'Sports Sandals'],
+    'Topwear': ['Shirt', 'Tshirt', 'Sweater', 'Jacket'], 
+    'Bottomwear': ['Jeans', 'Track Pants', 'Shorts', 'Skirt', 'Trousers', 'Leggings'], 
+    'Footwear':  ['Sneakers', 'Flip Flops', 'Sandals', 'Flats', 'Sports Shoes', 'Heels'],
     'Bodywear': ['Dresses', 'Jumpsuit'],
     'Headwear': ['Caps', 'Hat', 'Headband'],
-    'Accessories': [
-      'Watches', 'Belts', 'Handbags', 'Bracelet', 'Pendant', 'Ring', 'Clutches',
-      'Backpacks', 'Earrings', 'Jewellery Set', 'Necklace and Chains', 'Duffel Bag', 'Ties',
-      'Travel Accessory', 'Mobile Pouch', 'Messenger Bag', 'Accessory Gift Set', 'Tablet Sleeve', 
-      'Waist Pouch', 'Hair Accessory', 'Rucksacks', 'Key chain', 'Tshirts', 'Water Bottle'
-    ]
+    'Accessories': ['Tie', 'Watch', 'Belt', 'Jewelry']
   };
   const colors = [
     'White', 'Beige', 'Black', 
@@ -195,10 +192,10 @@ const ClothingItemForm = () => {
     'Light pink', 'Pink', 'Red',
     'Dark red', 'Brown', 'Purple'
   ];
-  const materials = ['Cotton', 'Leather', 'Polyester', 'Nylon'];
-  const patterns = ['Graphic', 'Plain', 'Striped', 'Polka Dot'];
+  const materials = ['Cotton', 'Wool', 'Silk', 'Polyester', 'Nylon'];
+  const patterns = ['Striped', 'Checkered', 'Floral', 'Dotted', 'Plain'];
   const seasons = ['Spring', 'Summer', 'Autumn', 'Winter'];
-  const occasions = ['Casual', 'Ethnic', 'Formal', 'Sports', 'Smart Casual', 'Travel', 'Party'];
+  const occasions = ['Casual', 'Ethnic', 'Formal', 'Sports', 'Smart Casual', 'Party'];
 
   return (
     <ScrollView>
@@ -329,12 +326,12 @@ const ClothingItemForm = () => {
             start={{x: 0, y: 0}}
             end={{x: 1, y: 0}}
             style={styles.gradient}>
-            <SliderMarks minimumValue={-10} maximumValue={30} step={5} style={styles.marksBelow} />
+            <SliderMarks minimumValue={-10} maximumValue={40} step={5} style={styles.marksBelow} />
             <Slider
               style={styles.slider}
               minimumValue={-10}
-              value={10}
-              maximumValue={30}
+              value={15}
+              maximumValue={40}
               minimumTrackTintColor="transparent"
               maximumTrackTintColor="transparent"
               thumbTintColor={Colors.purple}
@@ -377,7 +374,7 @@ const ClothingItemForm = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 10,
     backgroundColor: 'white',
   },
   title: {
@@ -483,7 +480,8 @@ const styles = StyleSheet.create({
   },
   slider: {
     height: 80,
-    margin: 10,
+    // margin: 10,
+    // width: '100%',
   },
   slider_label_temp: {
     fontSize: 16,
@@ -512,7 +510,7 @@ const styles = StyleSheet.create({
     height: 30,
     justifyContent: 'center',
     borderColor: '#FFF',
-    borderWidth: 10
+    borderWidth: 5,
   },
   colorButtonContainer: {
     flexDirection: 'row',
