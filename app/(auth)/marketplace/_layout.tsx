@@ -3,6 +3,7 @@ import Colors from '../../../constants/Colors';
 import { TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@clerk/clerk-expo';
+import { DataStorageSingleton } from '../../../constants/data_storage_singleton';
 
 export default function Layout() {
   const { isLoaded, userId, getToken } = useAuth();
