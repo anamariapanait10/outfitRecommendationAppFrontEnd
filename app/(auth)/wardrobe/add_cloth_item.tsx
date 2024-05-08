@@ -111,7 +111,7 @@ const ClothingItemForm = () => {
       setSelectedSubCategory(classification_results['subcategory']);
       setSelectedOccasions([classification_results['occasions']]);
       setSelectedColor(classification_results['color']);
-      setSelectedSeasons([classification_results['season']]);
+      setSelectedSeasons(classification_results['season'].split(","));
       setSelectedMaterial(classification_results['material']);
       setSelectedPattern(classification_results['pattern']);
 
@@ -177,12 +177,12 @@ const ClothingItemForm = () => {
 
   const categories = ['Topwear', 'Bottomwear', 'Footwear', 'Bodywear', 'Headwear', 'Accessories'];
   const subCategory = { 
-    'Topwear': ['Shirt', 'Tshirt', 'Sweater', 'Jacket'], 
+    'Topwear': ['Shirt', 'T-shirt', 'Polo Shirt', 'Sweater', 'Jacket', 'Hoodie', 'Blazer'], 
     'Bottomwear': ['Jeans', 'Track Pants', 'Shorts', 'Skirt', 'Trousers', 'Leggings'], 
-    'Footwear':  ['Sneakers', 'Flip Flops', 'Sandals', 'Flats', 'Sports Shoes', 'Heels'],
-    'Bodywear': ['Dresses', 'Jumpsuit'],
-    'Headwear': ['Caps', 'Hat', 'Headband'],
-    'Accessories': ['Tie', 'Watch', 'Belt', 'Jewelry']
+    'Footwear': ['Sneakers', 'Slippers', 'Sandals', 'Flats', 'Sports Shoes', 'Heels', "Hiking Shoes", 'Boots', 'Sandal Heels'],
+    'Bodywear': ['Dress', 'Bodysuit', 'Jumpsuit'],
+    'Headwear': ['Cap', 'Hat', 'Beanie'],
+    'Accessories': ['Tie', 'Watch', 'Belt', 'Jewelry', 'Handbag', 'Backpack']
   };
   const colors = [
     'White', 'Beige', 'Black', 
@@ -192,10 +192,10 @@ const ClothingItemForm = () => {
     'Turquoise',  'Orange',
     'Light blue', 'Blue', 'Dark blue',  
     'Light pink', 'Pink', 'Red',
-    'Dark red', 'Brown', 'Purple'
+    'Dark red', 'Brown', 'Purple', 'Multicolor'
   ];
-  const materials = ['Cotton', 'Wool', 'Silk', 'Polyester', 'Nylon'];
-  const patterns = ['Striped', 'Checkered', 'Floral', 'Dotted', 'Plain'];
+  const materials = ['Cotton', 'Wool', 'Silk', 'Synthetic Fibers', 'Leather', 'Linen'];
+  const patterns = ['Striped', 'Checkered', 'Floral', 'Dotted', 'Plain', 'Animal Print', 'Camouflage', 'Graphic'];
   const seasons = ['Spring', 'Summer', 'Autumn', 'Winter'];
   const occasions = ['Casual', 'Ethnic', 'Formal', 'Sports', 'Smart Casual', 'Party'];
 
