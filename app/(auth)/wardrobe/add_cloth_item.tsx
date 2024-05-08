@@ -30,6 +30,7 @@ const ClothingItemForm = () => {
   const { isLoaded, userId, getToken } = useAuth();
   const [selectedTemperature, setTemperature] = useState(10);
   const [selectedWeather, setWeather] = useState(50);
+  const [selectedPreference, setPreference] = useState(50);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -139,7 +140,8 @@ const ClothingItemForm = () => {
           seasons: selectedSeasons.join(","),
           occasions: selectedOccasions.join(","),
           temperature: selectedTemperature,
-          weather: selectedWeather
+          weather: selectedWeather,
+          preference: selectedPreference,
         });
 
         console.log("POST request body:", requestBody);
@@ -360,6 +362,29 @@ const ClothingItemForm = () => {
               maximumTrackTintColor="transparent"
               thumbTintColor={Colors.purple}
               onValueChange={setWeather}
+            /> 
+        </LinearGradient>
+        
+        <Text style={styles.slider_label}>Preference</Text>
+        <View style={styles.iconRow}>
+          <Ionicons name="sad-outline" size={30} color="#214aed" />
+          <Ionicons name="happy-outline" size={30} color="#ff87df" style={styles.iconRight} />
+        </View>  
+        <LinearGradient
+            colors={['#214aed', '#7dcfff', '#ff87df']}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}
+            style={styles.gradient}>
+            <SliderMarks minimumValue={0} maximumValue={30} step={10} style={styles.marksBelow} />
+            <Slider
+              style={styles.slider}
+              minimumValue={0}
+              value={15}
+              maximumValue={30}
+              minimumTrackTintColor="transparent"
+              maximumTrackTintColor="transparent"
+              thumbTintColor={Colors.purple}
+              onValueChange={setPreference}
             /> 
         </LinearGradient>
         
