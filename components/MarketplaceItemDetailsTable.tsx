@@ -5,7 +5,7 @@ import { MarketplaceItem } from '../app/(auth)/marketplace/marketplace_item_deta
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Ionicons } from '@expo/vector-icons';
 
-const MarketplaceItemDetailsTable = (item: MarketplaceItem ) => {
+const MarketplaceItemDetailsTable = (item: MarketplaceItem) => {
   return (
     <DataTable style={styles.container}>
       <DataTable.Row>
@@ -81,6 +81,15 @@ const MarketplaceItemDetailsTable = (item: MarketplaceItem ) => {
             </View>
         </DataTable.Cell>
         <DataTable.Cell>{item.outfit?.material}</DataTable.Cell>
+      </DataTable.Row>
+      <DataTable.Row>
+        <DataTable.Cell>
+            <View style={styles.cellIconLayout}>
+                <MaterialIcons name="phone" size={20} style={styles.icon} />
+                <Text style={styles.boldText}>Phone</Text>
+            </View>
+        </DataTable.Cell>
+        <DataTable.Cell>{item?.phone_number}</DataTable.Cell>
       </DataTable.Row>
     </DataTable>
   );

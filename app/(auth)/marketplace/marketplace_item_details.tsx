@@ -6,6 +6,7 @@ import { useAuth } from "@clerk/clerk-expo";
 import SpinnerOverlay from "../../../components/spinner_overlay";
 import { ClothingItem } from "../../../components/cloth_card";
 import MarketplaceItemDetailsTable from "../../../components/MarketplaceItemDetailsTable";
+import { Button } from "react-native-paper";
 
 export class MarketplaceItem {
     id: number;
@@ -20,6 +21,7 @@ export class MarketplaceItem {
     postedDate: string;
     price: number;
     location: string;
+    phone_number: string;
 
     constructor(
         id: number = Math.random() * 100,
@@ -33,7 +35,8 @@ export class MarketplaceItem {
         brand: string = '',
         postedDate: string = '',
         price: number = 0,
-        location: string = ''
+        location: string = '',
+        phone_number: string = ''
     ) {
         this.id = id;
         this.userId = userId;
@@ -47,6 +50,7 @@ export class MarketplaceItem {
         this.postedDate = postedDate;
         this.price = price;
         this.location = location;
+        this.phone_number = phone_number;
     }
 }
 
@@ -102,6 +106,7 @@ const MarketplaceItemDetails = () => {
             <View style={{width: '95%'}}>
               <MarketplaceItemDetailsTable {...marketplaceItem} />
             </View>
+            {/* <Button onPress={() => console.log(marketplaceItem?.phone_number)}>View seller phone number</Button> */}
           </View>
           <FlatList horizontal
             id="recommendedItemsList"

@@ -8,6 +8,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { DataStorageSingleton } from "../../../constants/data_storage_singleton";
 import { useAuth } from '@clerk/clerk-expo';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
+import MyPieChart from '../../../components/pie_chart';
 
 const Profile = () => {
   const { user } = useUser();
@@ -21,6 +22,8 @@ const Profile = () => {
   const [totalOutfits, setTotalOutfits] = useState(0);
   const [season, setSeason] = useState('');
   const { isLoaded, userId, getToken } = useAuth();
+
+  const [temperatureChartData, setTemperatureChartData] = useState([]);
 
   useEffect(() => {
     if (!user) return;
@@ -78,6 +81,34 @@ const Profile = () => {
 
   }
 
+  const pieData = [
+    {
+      name: 'Bitcoin',
+      population: 63,
+      color: 'orange'
+    },
+    {
+      name: 'Dogecoin',
+      population: 9,
+      color: 'gold'
+    },
+    {
+      name: 'Ethereum',
+      population: 19,
+      color: 'darkblue'
+    },
+    {
+      name: 'Tether',
+      population: 6,
+      color: 'green'
+    },
+    {
+      name: 'Polygon',
+      population: 3,
+      color: 'purple'
+    },
+];
+
   return (
     <ScrollView>
       {user && (
@@ -114,6 +145,36 @@ const Profile = () => {
         </View>
         <Text style={styles.usageText}>You're wearing {clothPercentage}% of your {season} wardrobe</Text>
       </View>
+
+      <View style={styles.card}>
+        {/* <PieChart
+            data={[
+            {
+                key: 'First Data',
+                count: 10,
+                color: 'blue',
+            },
+            {
+                key: 'Second Data',
+                count: 15,
+                color: 'yellow',
+            },
+            {
+                key: 'Third Data',
+                count: 10,
+                color: 'green',
+            },
+            {
+                key: 'Forth Data',
+                count: 10,
+                color: 'orange',
+            },
+            ]}
+            length={200}
+        /> */}
+        <MyPieChart data={pieData}/>
+      </View>
+
       <View style={styles.card}>
         <AnimatedCircularProgress
           size={120}
