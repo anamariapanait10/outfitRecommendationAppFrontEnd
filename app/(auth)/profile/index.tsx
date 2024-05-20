@@ -9,6 +9,7 @@ import { DataStorageSingleton } from "../../../constants/data_storage_singleton"
 import { useAuth } from '@clerk/clerk-expo';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import MyPieChart from '../../../components/pie_chart';
+import { set } from 'date-fns';
 
 const Profile = () => {
   const { user } = useUser();
@@ -22,8 +23,7 @@ const Profile = () => {
   const [totalOutfits, setTotalOutfits] = useState(0);
   const [season, setSeason] = useState('');
   const { isLoaded, userId, getToken } = useAuth();
-
-  const [temperatureChartData, setTemperatureChartData] = useState([]);
+  const [newStatsData, setNewStatsData] = useState({});
 
   useEffect(() => {
     if (!user) return;
@@ -43,6 +43,9 @@ const Profile = () => {
         setWornOutfits(stats.worn_outfits);
         setTotalOutfits(stats.total_outfits);
         setSeason(stats.season);
+
+        const newStats = await DataStorageSingleton.getInstance().getNewStats(await getToken(), userId, isLoaded);
+        setNewStatsData(newStats);
       };
       fetchData();
     }, [])
@@ -80,34 +83,6 @@ const Profile = () => {
     }
 
   }
-
-  const pieData = [
-    {
-      name: 'Bitcoin',
-      population: 63,
-      color: 'orange'
-    },
-    {
-      name: 'Dogecoin',
-      population: 9,
-      color: 'gold'
-    },
-    {
-      name: 'Ethereum',
-      population: 19,
-      color: 'darkblue'
-    },
-    {
-      name: 'Tether',
-      population: 6,
-      color: 'green'
-    },
-    {
-      name: 'Polygon',
-      population: 3,
-      color: 'purple'
-    },
-];
 
   return (
     <ScrollView>
@@ -147,32 +122,31 @@ const Profile = () => {
       </View>
 
       <View style={styles.card}>
-        {/* <PieChart
-            data={[
-            {
-                key: 'First Data',
-                count: 10,
-                color: 'blue',
-            },
-            {
-                key: 'Second Data',
-                count: 15,
-                color: 'yellow',
-            },
-            {
-                key: 'Third Data',
-                count: 10,
-                color: 'green',
-            },
-            {
-                key: 'Forth Data',
-                count: 10,
-                color: 'orange',
-            },
-            ]}
-            length={200}
-        /> */}
-        <MyPieChart data={pieData}/>
+        <Text style={styles.title}>Clothes temperature distribution</Text>
+        {newStatsData?.clothingSeasonDistribution != undefined && <MyPieChart data={newStatsData?.clothingSeasonDistribution}/>}
+      </View>
+      <View style={styles.card}>
+        <Text style={styles.title}>Top 3 most used colors</Text>
+        <View style={{justifyContent: 'flex-start'}}>
+          {newStatsData?.topColors != undefined && Object.entries(newStatsData?.topColors).map(([key, value], index) => (
+            <View style={styles.colorRow} key={index}>
+              <View style={[styles.colorCircle, { backgroundColor: key }]} />
+              <Text style={styles.colorText}>{key}: {value} item{value > 1 ? 's':''}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
+
+      <View style={[styles.leastWornCard]}>
+        <Text style={styles.title}>Least worn items</Text>
+        <View style={{flexDirection: 'row', justifyContent:'center', width: '100%'}}>
+          {newStatsData?.leastWornItems != undefined && Object.entries(newStatsData?.leastWornItems).map(([key, value], index) => (
+            <View style={styles.leastWornColumn} key={index}>
+              <Image source={{ uri: `${value.image}` }} style={styles.image} />
+              <Text style={{alignSelf: 'center', fontWeight: 'bold'}} numberOfLines={1} ellipsizeMode='tail'>{key}</Text>
+            </View>
+          ))}
+        </View>
       </View>
 
       <View style={styles.card}>
@@ -180,8 +154,8 @@ const Profile = () => {
           size={120}
           width={15}
           fill={outfitPercentage}
-          tintColor='orange' //"#FF9500"
-          backgroundColor="#E6E6E6">
+          tintColor={Colors.purple} //"#FF9500"
+          backgroundColor={Colors.light_purple}>
           {
             (fill) => (
               <Text style={styles.percentageText}>
@@ -252,6 +226,25 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginBottom: 10,
   },
+  leastWornCard: {
+    // margin: 20,
+    backgroundColor: 'white',
+    paddingVertical: 24,
+    paddingHorizontal: 2,
+    borderRadius: 16,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    shadowOffset: {
+      width: 1,
+      height: 2,
+    },
+    alignItems: 'center',
+    // gap: 14,
+    marginHorizontal: 20,
+    marginBottom: 10,
+  },
   avatar: {
     width: 100,
     height: 100,
@@ -280,7 +273,7 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: '100%',
-    backgroundColor: 'orange',
+    backgroundColor: Colors.purple,
     borderRadius: 10,
   },
   usageText: {
@@ -291,13 +284,43 @@ const styles = StyleSheet.create({
   percentageText: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#FF9500',
+    color: Colors.dark_purple,
   },
   detailsText: {
     fontSize: 16,
     color: '#666',
     marginTop: 5,
-  }
+  },
+  colorRow: {
+    flexDirection: 'row',
+    marginBottom: 10,
+  },
+  leastWornColumn: {
+    flexDirection: 'column',
+    marginHorizontal: 5,
+    width: '28%'
+  },
+  colorCircle: {
+    height: 20,
+    width: 20,
+    borderRadius: 10,
+    marginRight: 10,
+    borderWidth: 0.5,
+    borderColor: 'black',
+  },
+  colorText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  valueText: {
+    fontSize: 16,
+    color: '#666',
+  },
+  image: {
+    width: '100%',
+    height: 100,
+    borderRadius: 10,
+},
 });
 
 export default Profile;

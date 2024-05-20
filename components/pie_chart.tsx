@@ -12,7 +12,7 @@ export default function MyPieChart(props: { data: any[]; }) {
             chartConfig={{
                 color: (opacity = 3) => `rgba(255, 255, 255, ${opacity})`
             }}
-            accessor="population"
+            accessor="percent"
             backgroundColor="transparent"
             paddingLeft="15"
             absolute
