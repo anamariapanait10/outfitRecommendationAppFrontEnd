@@ -33,7 +33,7 @@ export default function Layout() {
     <Stack.Screen
         name="index"
         options={{
-          headerTitle: ' Profile ',
+          headerTitle: ' My Profile ',
           headerTitleStyle: {
             fontFamily: 'GreatVibes',
             fontSize: 26,

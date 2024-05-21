@@ -8,7 +8,9 @@ import { useFonts } from 'expo-font';
 
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 let customFonts = {
-  'GreatVibes': require('../assets/fonts/GreatVibes-Regular.ttf')
+  'GreatVibes': require('../assets/fonts/GreatVibes-Regular.ttf'),
+  'FabfeltScript': require('../assets/fonts/fabfeltscript-bold.ttf'),
+  'AlexBrush': require('../assets/fonts/alex-brush.regular.ttf'),
 };
 
 const tokenCache = {

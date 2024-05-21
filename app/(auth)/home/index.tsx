@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@clerk/clerk-expo';
 import Colors from "../../../constants/Colors";
@@ -12,12 +12,21 @@ import { ClothingItem } from '../../../components/cloth_card';
 import LocationSelector from '../../../components/select_location_modal';
 import * as Location from 'expo-location';
 import CustomAlert from '../../../components/CustomAlert';
+import Carousel from 'react-native-snap-carousel';
+import PaginationDots from '../../../components/PaginationDots';
+import { useFocusEffect } from '@react-navigation/native';
+import { set } from 'date-fns';
 
 const Home = () => {
   const { isLoaded, userId, getToken } = useAuth();
-  const [clothes, setClothes] = useState<ClothingItem[] | undefined>([]);
+  const [clothes, setClothes] = useState<ClothingItem[][] | undefined>([[]]);
   const [locationModalVisible, setLocationModalVisible] = useState(false);
   const [wearOutfitAlert, setWearOutfitAlert] = useState(false);
+  const [recommendationError, setRecommendationError] = useState('No recommended outfit found');
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [weather, setWeather] = useState('sunny');
+  const [temperature, setTemperature] = useState('hot');
+  const [loading, setLoading] = useState(false);
   
   const weatherDivRef = useRef(null);
 
@@ -54,13 +63,35 @@ const Home = () => {
     } else {
       weatherString = "overcast";
     }
+    setWeather(weatherString);
+    setTemperature(temperatureString.toLowerCase());
     await DataStorageSingleton.getInstance().fetchRecommendations(await getToken(), userId, isLoaded, weatherString, temperatureString);
-    setClothes(DataStorageSingleton.getInstance().recommendations);
+    let recommendations = DataStorageSingleton.getInstance().recommendations;
+    if(recommendations.error){
+      setRecommendationError(recommendations.error);
+    } else {
+      if(recommendations.length == 3) {
+        setActiveSlide(1);
+      }
+      setClothes(DataStorageSingleton.getInstance().recommendations);
+    }
   };
 
   useEffect(() => {
+    console.log("Use effect");
+    setLoading(true);
     fetchClothesData();
+    setLoading(false);
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log("Focus efect");
+      setLoading(true);
+      fetchClothesData();
+      setLoading(false);
+    }, [])
+  );
 
   const wearOutfit = async () => {
     if(clothes != undefined) {
@@ -71,7 +102,7 @@ const Home = () => {
       if (currentDate.toISOString().split('T')[0] in outfits){
         setWearOutfitAlert(true);
       } else {
-        DataStorageSingleton.getInstance().wearOutfit(clothes, currentDate.toISOString().split('T')[0], await getToken(), userId, isLoaded);
+        DataStorageSingleton.getInstance().wearOutfit(clothes[activeSlide], currentDate.toISOString().split('T')[0], await getToken(), userId, isLoaded);
       }
     }
   }
@@ -80,7 +111,7 @@ const Home = () => {
     if(clothes != undefined) {
       const currentDate = new Date().toISOString().split('T')[0];
       await DataStorageSingleton.getInstance().deleteOutfit(currentDate, await getToken(), userId, isLoaded);
-      DataStorageSingleton.getInstance().wearOutfit(clothes, new Date().toISOString().split('T')[0], await getToken(), userId, isLoaded);
+      DataStorageSingleton.getInstance().wearOutfit(clothes[activeSlide], new Date().toISOString().split('T')[0], await getToken(), userId, isLoaded);
     }
  }
 
@@ -109,16 +140,15 @@ const Home = () => {
   
   return (
     <View style={styles.container}>
-
       <View style={styles.weatherAndLocationContainer}>
         <View style={styles.locationAndCalendarContainer}>
           <TouchableOpacity style={styles.locationContainer} onPress={() => setLocationModalVisible(true)}>
             <Ionicons style={styles.location} name="location" size={22}/>
             {DataStorageSingleton.getInstance().selectedLocation &&
-             <Text style={styles.location}>{DataStorageSingleton.getInstance().selectedLocation.city}</Text>}
+            <Text style={styles.location}>{DataStorageSingleton.getInstance().selectedLocation.city}</Text>}
 
             {DataStorageSingleton.getInstance().selectedLocation && !DataStorageSingleton.getInstance().selectedLocation.city &&
-             DataStorageSingleton.getInstance().selectedLocation.county && 
+            DataStorageSingleton.getInstance().selectedLocation.county && 
               <Text style={styles.location}>
                 {DataStorageSingleton.getInstance().selectedLocation.county}
               </Text>
@@ -147,40 +177,54 @@ const Home = () => {
       <View style={{height: 90, width: '100%', marginBottom: 10}}>
         <WeatherDiv ref={weatherDivRef} />
       </View>
-      <View style={styles.recommendedOutfitContainer}>
-        <Text style={styles.recommendedOutfitTitle}>Recommendations for today based on weather</Text>
-        {/* <ImageBackground
-            source={require('../../assets/images/titleBackground.png')}
-            style={styles.image}
-            resizeMode="contain"
-          >
-          <Text style={styles.recommendedOutfitTitle}>Recommendations for today based on weather</Text>
-        </ImageBackground> */}
-        {clothes ? (
-          <View style={{ height: 310, justifyContent: 'center', alignItems: 'center' }}>
-            <FlatList
-              style={{ width: '100%' }}
-              data={clothes}
-              renderItem={({ item }) => <TransparentClothCard {...item} />}
-              numColumns={1}
-            />
-            <CustomAlert
-              visible={wearOutfitAlert}
-              onClose={() => setWearOutfitAlert(false)}
-              onSubmit={() => {
-                replaceOutfit();
-                setWearOutfitAlert(false);
-              }}
-              question="An outfit is already scheduled for this date. Proceeding will overwrite it. Do you want to continue?"
-            />
-            <TouchableOpacity style={styles.wearOutfitButton} onPress={wearOutfit}>
-                <Text style={styles.wearOutfitButtonText}>Wear This Outfit</Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <Text style={styles.noOutfitText}>No recommended outfit found</Text>
-        )}
-      </View>
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <View style={styles.recommendedOutfitContainer}> 
+          <Text style={styles.recommendedOutfitTitle}>Recommendations for today based on weather and temperature ({weather}, {temperature})</Text>
+          {clothes ? (
+            <View style={{ height: 320, justifyContent: 'center', alignItems: 'center' }}>
+              <Carousel
+                data={clothes}
+                renderItem={({ item }) => (
+                  <View>
+                    <FlatList
+                      style={{ width: '100%'}}
+                      data={item}
+                      renderItem={({ item }) => <TransparentClothCard {...item} />}
+                      keyExtractor={(item) => item.id.toString()}
+                      numColumns={1}
+                    />
+                  </View>
+                )}
+                sliderWidth={310}
+                itemWidth={110}
+                firstItem={activeSlide}
+                onSnapToItem={(index) => setActiveSlide(index)}
+                inactiveSlideScale={0.8}
+                inactiveSlideOpacity={0.5}
+                inactiveSlideShift={20}
+              />
+              <Text style={{fontSize: 3}}></Text>
+              <PaginationDots activeIndex={activeSlide} itemCount={clothes.length} />
+              <CustomAlert
+                visible={wearOutfitAlert}
+                onClose={() => setWearOutfitAlert(false)}
+                onSubmit={() => {
+                  replaceOutfit();
+                  setWearOutfitAlert(false);
+                }}
+                question="An outfit is already scheduled for this date. Proceeding will overwrite it. Do you want to continue?"
+              />
+              <TouchableOpacity style={styles.wearOutfitButton} onPress={wearOutfit}>
+                  <Text style={styles.wearOutfitButtonText}>Wear This Outfit</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <Text style={styles.noOutfitText}>{recommendationError}</Text>
+          )}
+        </View> 
+      )}
       <TouchableOpacity style={styles.wearAnotherOutfitButton} onPress={() => router.push({pathname: '/(auth)/home/outfit_picker'})}>
           <Text style={styles.wearOutfitButtonText}>Or Try Another Outfit</Text>
       </TouchableOpacity>
@@ -216,13 +260,13 @@ const styles = StyleSheet.create({
     elevation: 5,
     marginTop: 10,
     width: Dimensions.get('window').width - 50,
-    height: '64%',
+    height: '66%',
   },
   recommendedOutfitTitle: {
     fontSize: 16,
     fontWeight: '500',
-    marginBottom: 30,
-    margin: 20,
+    marginTop: 15,
+    marginBottom: 15,
     textAlign: 'center',
   },
   outfitDetails: {
@@ -245,7 +289,7 @@ const styles = StyleSheet.create({
     color: '#a9a9a9',
   },
   weatherAndLocationContainer: {
-    marginTop: 20,
+    marginTop: 10,
     width: '90%',
   },
   locationAndCalendarContainer: {
@@ -298,7 +342,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 20,
     borderRadius: 10,
-    //marginTop: 30,
+    marginTop: 10,
   },
   wearAnotherOutfitButton: {
     backgroundColor: '#cccccc',

@@ -2,7 +2,7 @@ import { Alert } from "react-native";
 import { ClothingItem } from "../components/cloth_card";
 import { WeatherItem } from "../components/WeatherItem";
 import { format } from 'date-fns';
-import { MarketplaceItem } from "../app/(auth)/marketplace/marketplace_item_details";
+
 export class DataStorageSingleton {
     static instance: DataStorageSingleton | null = null;
 
@@ -10,7 +10,7 @@ export class DataStorageSingleton {
     public weatherItems: WeatherItem[] = [];
     public clothId: number = 0;
     public marketPlaceItemId: number = 0;
-    public recommendations: ClothingItem[] = [];
+    public recommendations: ClothingItem[][] = [[]];
     public selectedLocation = {
         city: 'București',
         county: 'București',
@@ -52,7 +52,6 @@ export class DataStorageSingleton {
             const data = await response.json();
             DataStorageSingleton.getInstance().clothingItems = data;
         } catch (error: any) {
-            // Handle any errors, such as by displaying an alert
             Alert.alert("Error fetching data", error.message);
         }
     };
@@ -95,19 +94,6 @@ export class DataStorageSingleton {
           if (response.status !== '200') {
             const data = await response.json();
             this.processWeatherData(data);
-            // console.log("------------------------------");
-            // console.log(JSON.stringify(data.list, null, 2));
-            // console.log("------------------------------");
-            // console.log(data.list.length);
-            // for(var i = 0; i < data.list.length; i++) 
-            // {
-            //   var date = data.list[i].dt_txt;
-            //   var temperature = data.list[i].main.temp;
-            //   var weather = data.list[i].weather[0].description;
-            //   var icon = data.list[i].weather[0].icon;
-            //   this.weatherItems.push(new WeatherItem(date, temperature, weather, icon));
-            // }
-
           } else {
             console.log("Status code: " + response.status);
           }
@@ -135,7 +121,6 @@ export class DataStorageSingleton {
             const data = await response.json();
             DataStorageSingleton.getInstance().recommendations = data;
         } catch (error: any) {
-            // Handle any errors, such as by displaying an alert
             Alert.alert("Error fetching data", error.message);
         }
     };

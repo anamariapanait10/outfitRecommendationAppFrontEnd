@@ -5,9 +5,8 @@ import { DataStorageSingleton } from '../constants/data_storage_singleton';
 import PaginationDots from './PaginationDots';
 
 const WeatherDiv = React.forwardRef((props, ref) => {
-
     const [state, setState] = React.useState({activeIndex:0, carouselItems: []});
-    const [counter, setCounter] = React.useState(0); // this counter is used just to trigger a state change when it is changed
+    const [counter, setCounter] = React.useState(0);
 
     const fetchWeatherData = async () => {
       await DataStorageSingleton.getInstance().fetchWeatherData();
@@ -25,7 +24,6 @@ const WeatherDiv = React.forwardRef((props, ref) => {
         setCounter(counter + 1);
     };
   
-    // Use useImperativeHandle to expose functions to the parent
     React.useImperativeHandle(ref, () => ({
       updateItems
     }));

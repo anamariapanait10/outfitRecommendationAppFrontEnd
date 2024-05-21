@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
   modal_button: {
     backgroundColor: Colors.light_purple,
     borderRadius: 25,
-    padding: 5,
+    padding: 2,
     elevation: 2,
     // marginTop: 15
   },

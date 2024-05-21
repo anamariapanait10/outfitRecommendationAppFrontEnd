@@ -65,10 +65,10 @@ export default function Layout() {
         <Stack.Screen
             name="add_cloth_item"
             options={{
-                headerTitle: 'Add A Cloth Item',
+                headerTitle: 'Add A Clothing Item',
                 headerTitleStyle: {
-                    fontFamily: 'GreatVibes',
-                    fontSize: 21,
+                    fontFamily: 'AlexBrush',
+                    fontSize: 25,
                 },
                 headerTitleAlign: 'center',
                 headerLeft: headerWithBack,
@@ -119,8 +119,8 @@ export default function Layout() {
         options={{
           headerTitle: ' Add Item To Marketplace ',
           headerTitleStyle: {
-            fontFamily: 'GreatVibes',
-            fontSize: 20,
+            fontFamily: 'AlexBrush',
+            fontSize: 25,
           },
           headerTitleAlign: 'center',
           headerLeft: () => (

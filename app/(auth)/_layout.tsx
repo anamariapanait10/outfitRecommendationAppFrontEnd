@@ -5,7 +5,7 @@ import { useAuth } from '@clerk/clerk-expo';
 import { TouchableOpacity, Text, View } from 'react-native';
 import Colors from "../../constants/Colors";
 import { useRouter } from 'expo-router';
-import { DataStorageSingleton } from '../../constants/data_storage_singleton';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 
 const TabsPage = () => {
@@ -41,7 +41,7 @@ const TabsPage = () => {
             fontSize: 24,
           },
           headerTitleAlign: 'center',
-          tabBarIcon: ({ color, size }) => <Ionicons name="body" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="wardrobe-outline" size={size} color={color} />,
           tabBarLabel: 'Wardrobe',
         }}
         redirect={!isSignedIn}
@@ -55,7 +55,7 @@ const TabsPage = () => {
             fontSize: 26,
           },
           headerTitleAlign: 'center',
-          tabBarIcon: ({ color, size }) => <Ionicons name="home-outline" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => <Ionicons name="body" size={size} color={color} />,
           tabBarLabel: 'Outfits',
         }}
         redirect={!isSignedIn}
@@ -86,7 +86,7 @@ const TabsPage = () => {
           },
           headerTitleAlign: 'center',
           tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" size={size} color={color} />,
-          tabBarLabel: 'My Profile',
+          tabBarLabel: 'Profile',
         }}
         redirect={!isSignedIn}
       />
