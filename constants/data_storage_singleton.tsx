@@ -278,6 +278,10 @@ export class DataStorageSingleton {
         }
     }
 
+    public getNewStats = async (token: string | null, userId: string | null | undefined, isLoaded: boolean) => {
+        return await this.makeGETRequest('/stats/get_new_stats?userId='+userId, token, userId, isLoaded);
+    }
+
     public makeGETRequest = async (endpoint: string, token: string | null, userId: string | null | undefined, isLoaded: boolean, customResponseProcessing?: (data: any) => void) => {
         if (!userId || !isLoaded) {
             console.log('No authenticated user found.');
