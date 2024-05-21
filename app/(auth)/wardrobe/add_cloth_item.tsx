@@ -30,7 +30,7 @@ const ClothingItemForm = () => {
   const { isLoaded, userId, getToken } = useAuth();
   const [selectedTemperature, setTemperature] = useState(10);
   const [selectedWeather, setWeather] = useState(50);
-  const [selectedPreference, setPreference] = useState(50);
+  const [selectedPreference, setPreference] = useState(0.5);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -375,12 +375,12 @@ const ClothingItemForm = () => {
             start={{x: 0, y: 0}}
             end={{x: 1, y: 0}}
             style={styles.gradient}>
-            <SliderMarks minimumValue={0} maximumValue={30} step={10} style={styles.marksBelow} />
+            <SliderMarks minimumValue={0} maximumValue={1} step={0.33} style={styles.marksBelow} />
             <Slider
               style={styles.slider}
               minimumValue={0}
-              value={15}
-              maximumValue={30}
+              value={0.5}
+              maximumValue={1}
               minimumTrackTintColor="transparent"
               maximumTrackTintColor="transparent"
               thumbTintColor={Colors.purple}
