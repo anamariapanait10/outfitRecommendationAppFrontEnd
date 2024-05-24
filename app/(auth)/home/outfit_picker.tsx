@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, Dimensions, Modal, Button } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Carousel from 'react-native-snap-carousel';
@@ -11,13 +11,15 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { Calendar } from 'react-native-calendars';
 import CustomAlert from '../../../components/CustomAlert';
 import {  MaterialIcons } from '@expo/vector-icons';
-import { set } from 'date-fns';
 
 const OutfitPicker = () => {
     const { isLoaded, userId, getToken } = useAuth();
     const [topwearIndex, setTopwearIndex] = useState(0);
     const [bottomwearIndex, setBottomwearIndex] = useState(0);
     const [footwearIndex, setFootwearIndex] = useState(0);
+    const topwearCarouselRef = useRef(null);
+    const bottomwearCarouselRef = useRef(null);
+    const footwearCarouselRef = useRef(null);
     const [topwears, setTopwears] = useState<ClothingItem[]>([]);
     const [bottomwears, setBottomwears] = useState<ClothingItem[]>([]);
     const [footwears, setFootwears] = useState<ClothingItem[]>([]);
@@ -54,6 +56,7 @@ const OutfitPicker = () => {
     const [colorValue, setColorValue] = useState("");
     
     const [occasionItems, setOccasionItems] = useState([
+      { label: 'None', value: null },
       { label: 'Casual', value: 'Casual' },
       { label: 'Ethnic', value: 'Ethnic' },
       { label: 'Formal', value: 'Formal' },
@@ -62,12 +65,14 @@ const OutfitPicker = () => {
       { label: 'Party', value: 'Party' }
     ]);
     const [seasonItems, setSeasonItems] = useState([
+      { label: 'None', value: null },
       { label: 'Spring', value: 'Spring' },
       { label: 'Summer', value: 'Summer' },
       { label: 'Autumn', value: 'Autumn' },
       { label: 'Winter', value: 'Winter' },
     ]);
     const [materialItems, setMaterialItems] = useState([
+      { label: 'None', value: null },
       { label: 'Cotton', value: 'Cotton' },
       { label: 'Polyester', value: 'Polyester' },
       { label: 'Wool', value: 'Wool' },
@@ -77,6 +82,7 @@ const OutfitPicker = () => {
       { label: 'Linen', value: 'Linen' }
     ]);
     const [patternItems, setPatternItems] = useState([
+      { label: 'None', value: null },
       { label: 'Plain', value: 'Plain' },
       { label: 'Striped', value: 'Striped' },
       { label: 'Checkered', value: 'Checkered' },
@@ -87,6 +93,7 @@ const OutfitPicker = () => {
       { label: 'Graphic', value: 'Graphic' }
     ]);
     const [colorItems, setColorItems] = useState([
+      { label: 'None', value: null },
       { label: 'White', value: 'White' },
       { label: 'Black', value: 'Black' },
       { label: 'Multicolor', value: 'Multicolor' },
@@ -136,12 +143,27 @@ const OutfitPicker = () => {
       setLoading(false);
     };
     
-    useEffect(() => {
+    useEffect(() => { // apelat cand se deschide pagina
       fetchClothesData();
       setFilteredTopwears(filterClothes(topwears));
       setFilteredBottomwears(filterClothes(bottomwears));
       setFilteredFootwears(filterClothes(footwears));
     }, []);
+
+    useEffect(() => { // apelat cand se schimba filtrele
+      setFilteredTopwears(filterClothes(topwears));
+      setFilteredBottomwears(filterClothes(bottomwears));
+      setFilteredFootwears(filterClothes(footwears));
+
+      carouselGoToIndex(topwearCarouselRef, Math.floor(filteredTopwears.length / 2));
+      carouselGoToIndex(bottomwearCarouselRef, Math.floor(filteredBottomwears.length / 2));
+      carouselGoToIndex(footwearCarouselRef, Math.floor(filteredFootwears.length / 2));
+
+    }, [filters]);
+
+    const carouselGoToIndex = (carouselRef, index) => {
+      // carouselRef.current.snapToItem(index);
+    };
 
     const openCalendar = () => {
       setIsCalendarVisible(true);
@@ -202,9 +224,6 @@ const OutfitPicker = () => {
     };
     const applyFilters = () => {
       setFilters({'occasion': occasionValue, 'season': seasonValue, 'material': materialValue, 'pattern': patternValue, 'color': colorValue});
-      setFilteredTopwears(filterClothes(topwears));
-      setFilteredBottomwears(filterClothes(bottomwears));
-      setFilteredFootwears(filterClothes(footwears));
       setIsFilterModalVisible(false);
     }
     const resetFilters = () => {
@@ -286,107 +305,106 @@ const OutfitPicker = () => {
               onRequestClose={() => {setIsFilterModalVisible(false)}}
             >
               <TouchableOpacity
-                style={{flex: 1, alignItems: 'center', justifyContent: 'center', alignItems: 'center', width: '90%'}}
+                style={{flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%'}}
                 activeOpacity={1}
                 onPressOut={() => {setIsFilterModalVisible(false)}}
               >
-                <View style={{ justifyContent: 'center', alignItems: 'center', alignContent: 'center', alignSelf: 'center', backgroundColor: Colors.purple, width: '90%' }}>
-                {/*  <View style={styles.filterView}>
-                    <Text style={{ fontSize: 21, paddingBottom: 15 }}>Filter Clothes      </Text>
-                    <View style={styles.filterRow}>
-                      <Text style={styles.label}>Event</Text>
-                      <DropDownPicker
-                        open={isOccasionOpen}
-                        value={occasionValue}
-                        items={occasionItems}
-                        setOpen={setIsOccasionOpen}
-                        setValue={setOccasionValue}
-                        setItems={setOccasionItems}
-                        placeholder="Select Occasion"
-                        zIndex={3000}
-                        zIndexInverse={1000}
-                        style={styles.dropdown}
-                        dropDownContainerStyle={styles.dropdownContainer}
-                      />
-                    </View>
+                <View style={[styles.filterView, {width: '80%'}]}>
+                  <Text style={{ fontSize: 21, paddingBottom: 15, alignSelf: 'center' }}>Filter Clothes</Text>
 
-                    <View style={styles.filterRow}>
-                      <Text style={styles.label}>Season</Text>
-                      <DropDownPicker
-                        open={isSeasonOpen}
-                        value={seasonValue}
-                        items={seasonItems}
-                        setOpen={setIsSeasonOpen}
-                        setValue={setSeasonValue}
-                        setItems={setSeasonItems}
-                        placeholder="Select Season"
-                        zIndex={2500}
-                        zIndexInverse={1000}
-                        style={styles.dropdown}
-                        dropDownContainerStyle={styles.dropdownContainer}
-                      />
-                    </View>
+                  <View style={styles.filterRow}>
+                    <Text style={styles.label}>Event</Text>
+                    <DropDownPicker
+                      open={isOccasionOpen}
+                      value={occasionValue}
+                      items={occasionItems}
+                      setOpen={setIsOccasionOpen}
+                      setValue={setOccasionValue}
+                      setItems={setOccasionItems}
+                      placeholder="Select Occasion"
+                      zIndex={3000}
+                      zIndexInverse={1000}
+                      style={styles.dropdown}
+                      dropDownContainerStyle={styles.dropdownContainer}
+                    />
+                  </View>
 
-                    <View style={styles.filterRow}>
-                      <Text style={styles.label}>Material</Text>
-                      <DropDownPicker
-                        open={isMaterialOpen}
-                        value={materialValue}
-                        items={materialItems}
-                        setOpen={setIsMaterialOpen}
-                        setValue={setMaterialValue}
-                        setItems={setMaterialItems}
-                        placeholder="Select Material"
-                        zIndex={2000}
-                        zIndexInverse={1000}
-                        style={styles.dropdown}
-                        dropDownContainerStyle={styles.dropdownContainer}
-                      />
-                    </View>
+                  <View style={styles.filterRow}>
+                    <Text style={styles.label}>Season</Text>
+                    <DropDownPicker
+                      open={isSeasonOpen}
+                      value={seasonValue}
+                      items={seasonItems}
+                      setOpen={setIsSeasonOpen}
+                      setValue={setSeasonValue}
+                      setItems={setSeasonItems}
+                      placeholder="Select Season"
+                      zIndex={2500}
+                      zIndexInverse={1000}
+                      style={styles.dropdown}
+                      dropDownContainerStyle={styles.dropdownContainer}
+                    />
+                  </View>
 
-                    <View style={styles.filterRow}>
-                      <Text style={styles.label}>Pattern</Text>
-                      <DropDownPicker
-                        open={isPatternOpen}
-                        value={patternValue}
-                        items={patternItems}
-                        setOpen={setIsPatternOpen}
-                        setValue={setPatternValue}
-                        setItems={setPatternItems}
-                        placeholder="Select Pattern"
-                        zIndex={1500}
-                        zIndexInverse={1000}
-                        style={styles.dropdown}
-                        dropDownContainerStyle={styles.dropdownContainer}
-                      />
-                    </View>
+                  <View style={styles.filterRow}>
+                    <Text style={styles.label}>Material</Text>
+                    <DropDownPicker
+                      open={isMaterialOpen}
+                      value={materialValue}
+                      items={materialItems}
+                      setOpen={setIsMaterialOpen}
+                      setValue={setMaterialValue}
+                      setItems={setMaterialItems}
+                      placeholder="Select Material"
+                      zIndex={2000}
+                      zIndexInverse={1000}
+                      style={styles.dropdown}
+                      dropDownContainerStyle={styles.dropdownContainer}
+                    />
+                  </View>
 
-                    <View style={styles.filterRow}>
-                      <Text style={styles.label}>Color</Text>
-                      <DropDownPicker
-                        open={isColorOpen}
-                        value={colorValue}
-                        items={colorItems}
-                        setOpen={setIsColorOpen}
-                        setValue={setColorValue}
-                        setItems={setColorItems}
-                        placeholder="Select Color"
-                        zIndex={1000}
-                        zIndexInverse={1000}
-                        style={styles.dropdown}
-                        dropDownContainerStyle={styles.dropdownContainer}
-                      />
-                    </View>
+                  <View style={styles.filterRow}>
+                    <Text style={styles.label}>Pattern</Text>
+                    <DropDownPicker
+                      open={isPatternOpen}
+                      value={patternValue}
+                      items={patternItems}
+                      setOpen={setIsPatternOpen}
+                      setValue={setPatternValue}
+                      setItems={setPatternItems}
+                      placeholder="Select Pattern"
+                      zIndex={1500}
+                      zIndexInverse={1000}
+                      style={styles.dropdown}
+                      dropDownContainerStyle={styles.dropdownContainer}
+                    />
+                  </View>
 
-                    <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '130%', marginTop: 20, marginRight: 40}}>
-                      <TouchableOpacity style={{backgroundColor: Colors.light_grey, paddingVertical: 10, paddingHorizontal: 10, borderRadius: 20}} onPress={resetFilters}>
-                        <Text style={{color: 'black'}}>Reset Filters</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity style={{backgroundColor: Colors.light_purple, paddingVertical: 10, paddingHorizontal: 17, borderRadius: 20}} onPress={applyFilters}>
-                        <Text style={{color: 'black'}}>    Apply    </Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View> */}
+                  <View style={styles.filterRow}>
+                    <Text style={styles.label}>Color</Text>
+                    <DropDownPicker
+                      open={isColorOpen}
+                      value={colorValue}
+                      items={colorItems}
+                      setOpen={setIsColorOpen}
+                      setValue={setColorValue}
+                      setItems={setColorItems}
+                      placeholder="Select Color"
+                      zIndex={1000}
+                      zIndexInverse={1000}
+                      style={styles.dropdown}
+                      dropDownContainerStyle={styles.dropdownContainer}
+                    />
+                  </View>
+
+                  <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '100%', marginTop: 20}}>
+                    <TouchableOpacity style={{backgroundColor: Colors.light_grey, paddingVertical: 10, paddingHorizontal: 10, borderRadius: 20}} onPress={resetFilters}>
+                      <Text style={{color: 'black'}}>Reset Filters</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{backgroundColor: Colors.light_purple, paddingVertical: 10, paddingHorizontal: 17, borderRadius: 20}} onPress={applyFilters}>
+                      <Text style={{color: 'black'}}>    Apply    </Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </TouchableOpacity>
             </Modal>
@@ -435,9 +453,10 @@ const OutfitPicker = () => {
               <Carousel
               data={filteredTopwears}
               layout={"default"}
+              ref={topwearCarouselRef}
               renderItem={renderCarouselItem}
               sliderWidth={ Dimensions.get('window').width }
-              itemWidth={ 150 }
+              itemWidth={ filteredTopwears.length == 1 ? Dimensions.get('window').width : 150 } 
               firstItem={Math.floor(filteredTopwears.length / 2)}
               onSnapToItem={(index) => setTopwearIndex(index)}
               inactiveSlideScale={0.6}
@@ -452,9 +471,10 @@ const OutfitPicker = () => {
               <Carousel
                 data={filteredBottomwears}
                 layout={"default"}
+                ref={bottomwearCarouselRef}
                 renderItem={renderCarouselItem}
                 sliderWidth={ Dimensions.get('window').width }
-                itemWidth={ 150 }
+                itemWidth={ filteredBottomwears.length == 1 ? Dimensions.get('window').width : 150 }
                 firstItem={Math.floor(filteredBottomwears.length / 2)}
                 onSnapToItem={(index) => setBottomwearIndex(index)}
                 inactiveSlideScale={0.6}
@@ -469,9 +489,10 @@ const OutfitPicker = () => {
               <Carousel
                 data={filteredFootwears}
                 layout={"default"}
+                ref={footwearCarouselRef}
                 renderItem={renderCarouselItem}
                 sliderWidth={ Dimensions.get('window').width }
-                itemWidth={ 150 }
+                itemWidth={ filteredFootwears.length == 1 ? Dimensions.get('window').width : 150 }
                 firstItem={Math.floor(filteredFootwears.length / 2)}
                 onSnapToItem={(index) => setFootwearIndex(index)}
                 inactiveSlideScale={0.6}
@@ -540,6 +561,7 @@ const styles = StyleSheet.create({
     filterRow: {
       flexDirection: 'row',
       alignItems: 'center',
+      justifyContent: 'space-between',
       marginVertical: 10,
     },
     filerButton: {
@@ -569,15 +591,15 @@ const styles = StyleSheet.create({
       elevation: 5,
     },
     filterView: {
-      margin: 20,
+      // margin: 20,
       backgroundColor: "white",
       borderRadius: 20,
-      paddingRight: 30,
+      paddingRight: 10,
       paddingTop: 10,
-      paddingLeft: 80,
+      paddingLeft: 10,
       paddingBottom: 15,
-      alignItems: "center",
-      justifyContent: "space-between",
+      // alignItems: "center",
+      justifyContent: "center",
       shadowColor: "#000",
       shadowOffset: {
         width: 0,
@@ -619,15 +641,16 @@ const styles = StyleSheet.create({
       alignSelf: 'center',
     },
     dropdown: {
-      width: 200,
-      borderColor: '#bdbdbd'
+      width: '60%',
+      borderColor: '#bdbdbd',
     },
     dropdownContainer: {
-      borderColor: '#cccccc'
+      borderColor: '#cccccc',
+      width: '60%'
     },
     label: {
-      width: 90,
-      marginRight: 10,
+      width: '30%',
+      marginHorizontal: 10,
       fontSize: 16,
       color: 'black',
     },
