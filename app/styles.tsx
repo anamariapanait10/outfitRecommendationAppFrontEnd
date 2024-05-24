@@ -89,9 +89,8 @@ export default StyleSheet.create({
         paddingRight: 20,
       },
       details_image: {
-        width: 300,
-        height: 300,
-        borderRadius: 20,
+        width: '100%',
+        height: '100%',
       },
       detailsContainer: {
         marginTop: 20,

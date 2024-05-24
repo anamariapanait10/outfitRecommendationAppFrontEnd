@@ -14,6 +14,7 @@ export class ClothingItem {
     material: string;
     seasons: string;
     occasions: string;
+    itemprobability: any;
     image: string;
 
     constructor(id: number = 0,
@@ -26,6 +27,7 @@ export class ClothingItem {
         material: string = '',
         seasons: string = '',
         occasions: string = '',
+        itemprobability: any = {},
         image: string = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wYAAnMB+wka/dsAAAAASUVORK5CYII='
         ) {
             this.id = id;
@@ -39,6 +41,7 @@ export class ClothingItem {
             this.seasons = seasons;
             this.occasions = occasions;
             this.image = image;
+            this.itemprobability = itemprobability;
         }
 };
 

@@ -285,15 +285,14 @@ const OutfitPicker = () => {
               visible={isFilterModalVisible}
               onRequestClose={() => {setIsFilterModalVisible(false)}}
             >
-              {/* <TouchableOpacity
-                style={{flex: 1, justifyContent: 'center', alignItems: 'center', width: '60%'}}
+              <TouchableOpacity
+                style={{flex: 1, alignItems: 'center', justifyContent: 'center', alignItems: 'center', width: '90%'}}
                 activeOpacity={1}
                 onPressOut={() => {setIsFilterModalVisible(false)}}
-              > */}
-                <View style={{ flex: 1, justifyContent: 'center' }}>
-                  <View style={styles.filterView}>
+              >
+                <View style={{ justifyContent: 'center', alignItems: 'center', alignContent: 'center', alignSelf: 'center', backgroundColor: Colors.purple, width: '90%' }}>
+                {/*  <View style={styles.filterView}>
                     <Text style={{ fontSize: 21, paddingBottom: 15 }}>Filter Clothes      </Text>
-
                     <View style={styles.filterRow}>
                       <Text style={styles.label}>Event</Text>
                       <DropDownPicker
@@ -387,9 +386,9 @@ const OutfitPicker = () => {
                         <Text style={{color: 'black'}}>    Apply    </Text>
                       </TouchableOpacity>
                     </View>
-                  </View>
+                  </View> */}
                 </View>
-              {/* </TouchableOpacity> */}
+              </TouchableOpacity>
             </Modal>
           </GestureHandlerRootView>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between'}}>

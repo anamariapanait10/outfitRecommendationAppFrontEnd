@@ -3,7 +3,6 @@ import { View, ScrollView, Pressable, Image, StyleSheet } from 'react-native';
 import styles from '../../../styles';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useAuth } from '@clerk/clerk-expo';
 import { ClothingItem } from '../../../../components/cloth_card';
 import { DataStorageSingleton } from '../../../../constants/data_storage_singleton';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
@@ -11,7 +10,6 @@ import ClothInfoTable from '../../../../components/ClothInfoTable';
 
 const OutfitItemDetailsScreen = () => {
   const { id } = useLocalSearchParams();
-  const { isLoaded, userId, getToken } = useAuth();
   const placeholderImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/B8AAwAB/QL8T0LgAAAABJRU5ErkJggg==";
   const [ cloth, setCloth ] = useState(new ClothingItem(0, 0, "", "", "", "", "", "", "", "", placeholderImage));
   const isFocused = useIsFocused();
@@ -42,8 +40,12 @@ const OutfitItemDetailsScreen = () => {
   return (
     <View style={styles_2.container}>
       <ScrollView contentContainerStyle={styles.details_container}>
-        {
-          cloth.image ?  <Image source={{ uri: cloth.image.toString() }} style={styles.details_image} resizeMode="contain" /> : ""
+        {   
+          cloth.image ? (
+            <View style={styles_2.image_container}>
+              <Image source={{ uri: cloth.image.toString() }} style={styles.details_image} resizeMode="cover" />
+            </View>
+          ) : null
         }
         <View style={{width: '95%'}}>
           <ClothInfoTable {...cloth} />
@@ -73,6 +75,14 @@ const styles_2 = StyleSheet.create({
     bottom: 10,
     right: 10,
   },
+  image_container: {
+    width: 300,
+    height: 300,
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 20
+  }
 });
 
 export default OutfitItemDetailsScreen;

@@ -81,6 +81,24 @@ const ClothInfoTable = (cloth: ClothingItem) => {
             <DataTable.Cell>{cloth.description}</DataTable.Cell>
         </DataTable.Row>
       }
+      <DataTable.Row>
+        <DataTable.Cell>
+            <View style={styles.cellIconLayout}>
+                <MaterialIcons name="cloud-queue" size={20} style={styles.icon} />
+                <Text style={styles.boldText}>Ideal weather conditions</Text>
+            </View>
+        </DataTable.Cell>
+        <DataTable.Cell>{cloth.itemprobability.max_probability_name}</DataTable.Cell>
+      </DataTable.Row>
+      <DataTable.Row>
+        <DataTable.Cell>
+            <View style={styles.cellIconLayout}>
+                <MaterialIcons name="thumb-up-alt" size={20} style={styles.icon} />
+                <Text style={styles.boldText}>Liking scale</Text>
+            </View>
+        </DataTable.Cell>
+        <DataTable.Cell>{cloth.itemprobability.preference}</DataTable.Cell>
+      </DataTable.Row>
     </DataTable>
   );
 };

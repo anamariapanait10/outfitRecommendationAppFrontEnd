@@ -1,6 +1,5 @@
 import { Tabs, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable } from 'react-native';
 import { useAuth } from '@clerk/clerk-expo';
 import { TouchableOpacity, Text, View } from 'react-native';
 import Colors from "../../constants/Colors";

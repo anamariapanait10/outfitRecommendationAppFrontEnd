@@ -9,7 +9,6 @@ import { DataStorageSingleton } from "../../../constants/data_storage_singleton"
 import { useAuth } from '@clerk/clerk-expo';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import MyPieChart from '../../../components/pie_chart';
-import { set } from 'date-fns';
 
 const Profile = () => {
   const { user } = useUser();
