@@ -97,7 +97,7 @@ const ClothInfoTable = (cloth: ClothingItem) => {
                 <Text style={styles.boldText}>Liking scale</Text>
             </View>
         </DataTable.Cell>
-        <DataTable.Cell>{cloth.itemprobability.preference}</DataTable.Cell>
+        <DataTable.Cell>{cloth.itemprobability.preference_grade}</DataTable.Cell>
       </DataTable.Row>
     </DataTable>
   );

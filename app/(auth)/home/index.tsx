@@ -21,6 +21,7 @@ const Home = () => {
   const [clothes, setClothes] = useState<ClothingItem[][] | undefined>([[]]);
   const [locationModalVisible, setLocationModalVisible] = useState(false);
   const [wearOutfitAlert, setWearOutfitAlert] = useState(false);
+  const [wearOutfitSuccessAlert, setWearOutfitSuccessAlert] = useState(false);
   const [recommendationError, setRecommendationError] = useState('No recommended outfit found');
   const [activeSlide, setActiveSlide] = useState(0);
   const [weather, setWeather] = useState('sunny');
@@ -99,6 +100,7 @@ const Home = () => {
         setWearOutfitAlert(true);
       } else {
         DataStorageSingleton.getInstance().wearOutfit(clothes[activeSlide], currentDate.toISOString().split('T')[0], await getToken(), userId, isLoaded);
+        setWearOutfitSuccessAlert(true);
       }
     }
   }
@@ -211,6 +213,13 @@ const Home = () => {
                   setWearOutfitAlert(false);
                 }}
                 question="An outfit is already scheduled for this date. Proceeding will overwrite it. Do you want to continue?"
+              />
+              <CustomAlert
+                visible={wearOutfitSuccessAlert}
+                onClose={() => setWearOutfitSuccessAlert(false)}
+                onSubmit={() => setWearOutfitSuccessAlert(false)}
+                question="Outfit successfully scheduled for today!"
+                button="Close"
               />
               <TouchableOpacity style={styles.wearOutfitButton} onPress={wearOutfit}>
                   <Text style={styles.wearOutfitButtonText}>Wear This Outfit</Text>

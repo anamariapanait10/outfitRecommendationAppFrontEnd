@@ -6,11 +6,8 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { ClothingItem } from '../../../../components/cloth_card';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { useAuth } from "@clerk/clerk-expo";
-import ChooseImageModal from '../../../../components/choose_image_modal';
-import * as ImagePicker from "expo-image-picker";
 import Colors from "../../../../constants/Colors";
 import ToggleButton from "../../../../components/ToggleButton"
-import { black } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 
 const UploadMarketplaceItem = () => {
     const [itemDetails, setItemDetails] = useState({

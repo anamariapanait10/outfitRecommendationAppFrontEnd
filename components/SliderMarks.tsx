@@ -5,11 +5,11 @@ const SliderMarks = ({ minimumValue, maximumValue, step, style }) => {
     const numberOfMarks = (maximumValue - minimumValue) / step;
     const markWidth = 100 / numberOfMarks; 
 
-    console.log("Minimum Value: ", minimumValue);
-    console.log("Maximum Value: ", maximumValue);
-    console.log("Step: ", step);
-    console.log("Number of Marks: ", numberOfMarks);
-    console.log("Mark Width: ", markWidth);
+    // console.log("Minimum Value: ", minimumValue);
+    // console.log("Maximum Value: ", maximumValue);
+    // console.log("Step: ", step);
+    // console.log("Number of Marks: ", numberOfMarks);
+    // console.log("Mark Width: ", markWidth);
     return (
       <View style={[styles.markContainer, style]}>
         {Array.from({ length: numberOfMarks + 1 }, (_, index) => (

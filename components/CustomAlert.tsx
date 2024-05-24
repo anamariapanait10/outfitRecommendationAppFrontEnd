@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Colors from '../constants/Colors';
 
-const CustomAlert = ({ visible, onClose, onSubmit, question }) => {
+const CustomAlert = ({ visible, onClose, onSubmit, question, button="Yes/No" }) => {
   return (
     <Modal
       visible={visible}
@@ -19,16 +19,21 @@ const CustomAlert = ({ visible, onClose, onSubmit, question }) => {
           style={styles.modalView}
           activeOpacity={1}
           onPress={(e) => e.stopPropagation()}
-        >
+        > 
           <Text style={{textAlign: 'center'}}>{question}</Text>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={[styles.button, styles.buttonClose]} onPress={onClose}>
-              <Text style={styles.textStyle}>No</Text>
+          { button === "Yes/No" ? 
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={[styles.button, styles.buttonClose]} onPress={onClose}>
+                <Text style={styles.textStyle}>No</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.button, styles.buttonDelete]} onPress={onSubmit}>
+                <Text style={styles.textStyle}>Yes</Text>
+              </TouchableOpacity>
+            </View> :
+            <TouchableOpacity style={[styles.button, styles.buttonClose, {marginTop: 30}]} onPress={onClose}>
+              <Text style={styles.textStyle}>Close</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, styles.buttonDelete]} onPress={onSubmit}>
-              <Text style={styles.textStyle}>Yes</Text>
-            </TouchableOpacity>
-          </View>
+          }         
         </TouchableOpacity>
       </TouchableOpacity>
     </Modal>

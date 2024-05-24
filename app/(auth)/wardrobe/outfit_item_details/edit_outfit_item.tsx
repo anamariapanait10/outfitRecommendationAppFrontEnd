@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Image, View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import Colors from "../../../constants/Colors";
-import ChooseImageModal from '../../../components/choose_image_modal';
+import Colors from "../../../../constants/Colors";
+import ChooseImageModal from '../../../../components/choose_image_modal';
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from "@clerk/clerk-expo";
-import { DataStorageSingleton } from "../../../constants/data_storage_singleton";
-import { router } from 'expo-router';
-import { useFocusEffect } from '@react-navigation/native';
-import SpinnerOverlay from '../../../components/spinner_overlay';
+import { DataStorageSingleton } from "../../../../constants/data_storage_singleton";
+import { router, useLocalSearchParams } from 'expo-router';
+import SpinnerOverlay from '../../../../components/spinner_overlay';
 import Slider from '@react-native-community/slider';
 import { LinearGradient } from 'expo-linear-gradient';
-import ToggleButton from '../../../components/ToggleButton';
-import SliderMarks from '../../../components/SliderMarks';
+import ToggleButton from '../../../../components/ToggleButton';
+import SliderMarks from '../../../../components/SliderMarks';
 
-
-const ClothingItemForm = () => {
+const EditClothingItemForm = () => {
+  const { id } = useLocalSearchParams();
+  const placeholderImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/B8AAwAB/QL8T0LgAAAABJRU5ErkJggg==";
   const [description, setDescription] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
@@ -24,26 +24,36 @@ const ClothingItemForm = () => {
   const [selectedPattern, setSelectedPattern] = useState("");
   const [selectedSeasons, setSelectedSeasons] = useState([]);
   const [selectedOccasions, setSelectedOccasions] = useState([]);
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState(placeholderImage);
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const { isLoaded, userId, getToken } = useAuth();
   const [selectedTemperature, setTemperature] = useState(10);
-  const [selectedWeather, setWeather] = useState(50);
+  const [selectedWeather, setWeather] = useState(15);
   const [selectedPreference, setPreference] = useState(0.5);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      setDescription("");
-      setSelectedCategory("");
-      setSelectedColor("");
-      setSelectedMaterial("");
-      setSelectedPattern("");
-      setSelectedSeasons([]);
-      setSelectedOccasions([]);
-      setImage("");
-    }, [])
-  );
+  useEffect(() => {
+    if (id) {
+      const clothingItem = DataStorageSingleton.getInstance().clothingItems.find(i => i.id === parseInt(id));
+      if (clothingItem) {
+        setDescription(clothingItem.description);
+        setSelectedCategory(clothingItem.category);
+        setSelectedSubCategory(clothingItem.subCategory);
+        setSelectedColor(clothingItem.color);
+        setSelectedMaterial(clothingItem.material);
+        setSelectedPattern(clothingItem.pattern);
+        setSelectedSeasons(clothingItem.seasons.split(","));
+        setSelectedOccasions(clothingItem.occasions.split(","));
+        setImage(clothingItem.image);
+        console.log("temp ", clothingItem.itemprobability.temperatureSliderValue);
+        console.log("weather ", clothingItem.itemprobability.weatherSliderValue);
+        console.log("pref ", clothingItem.itemprobability.preference);
+        setTemperature(clothingItem.itemprobability.temperatureSliderValue);
+        setWeather(clothingItem.itemprobability.weatherSliderValue);
+        setPreference(clothingItem.itemprobability.preference);
+      }
+    }
+  }, [id]);
 
   const handleToggle = (selection, selectionsList, setSelectionsList) => {
     if (selectionsList.includes(selection)) {
@@ -53,7 +63,7 @@ const ClothingItemForm = () => {
     }
   };
 
-  const uploadImage = async (mode: string) => {
+  const uploadImage = async (mode) => {
     try {
       let result = {};
       if (mode === "gallery") {
@@ -61,7 +71,6 @@ const ClothingItemForm = () => {
         result = await ImagePicker.launchImageLibraryAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.Images,
           allowsEditing: true,
-          // aspect: [1, 1],
           quality: 1,
           base64: true,
         });
@@ -70,7 +79,6 @@ const ClothingItemForm = () => {
         result = await ImagePicker.launchCameraAsync({
           cameraType: ImagePicker.CameraType.front,
           allowsEditing: true,
-          // aspect: [1, 1],
           quality: 1,
           base64: true,
         });
@@ -78,21 +86,19 @@ const ClothingItemForm = () => {
       if (!result.canceled) {
         sendImageForProcessing('data:image/jpeg;base64,' + result.assets[0].base64);
       }
-    } catch (error: any) {
+    } catch (error) {
       alert("Error uploading image: " + error.message);
       setModalVisible(false);
     }
   };
 
-  const sendImageForProcessing = async (image: any) => {
+  const sendImageForProcessing = async (image) => {
     try {
       setImage(image);
       setModalVisible(false);
       setLoading(true);
       const token = await getToken();
-      const requestBody = JSON.stringify({
-        image: image,
-      });
+      const requestBody = JSON.stringify({ image: image });
       const response = await fetch(
         process.env.EXPO_PUBLIC_BASE_API_URL + "/outfit-items/classify/",
         {
@@ -106,7 +112,6 @@ const ClothingItemForm = () => {
       );
       let classification_results = await response.json();
       setLoading(false);
-      console.log("POST request response:", classification_results);
       setSelectedCategory(classification_results['category']);
       setSelectedSubCategory(classification_results['subcategory']);
       setSelectedOccasions([classification_results['occasions']]);
@@ -114,21 +119,19 @@ const ClothingItemForm = () => {
       setSelectedSeasons(classification_results['season'].split(","));
       setSelectedMaterial(classification_results['material']);
       setSelectedPattern(classification_results['pattern']);
-
     } catch (error) {
       throw error;
     }
   };
 
   const handleSubmit = () => {
-    const makePostRequest = async () => {
+    const makePutRequest = async () => {
       if (!userId || !isLoaded) {
         console.log("No authenticated user found.");
         return;
       }
       try {
         const token = await getToken();
-
         const requestBody = JSON.stringify({
           category: selectedCategory,
           subCategory: selectedSubCategory,
@@ -144,12 +147,12 @@ const ClothingItemForm = () => {
           preference: selectedPreference,
         });
 
-        console.log("POST request body:", requestBody);
+        console.log("PUT request body:", requestBody);
 
         const response = await fetch(
-          process.env.EXPO_PUBLIC_BASE_API_URL + "/outfit-items/",
+          `${process.env.EXPO_PUBLIC_BASE_API_URL}/outfit-items/${id}/`,
           {
-            method: "POST",
+            method: "PUT",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
@@ -163,16 +166,14 @@ const ClothingItemForm = () => {
         }
 
         const json = await response.json();
-        // console.log("POST request response:", json);
         DataStorageSingleton.getInstance().fetchClothesData(await getToken(), userId, isLoaded);
-        // router.replace({pathname: '/(auth)/wardrobe'})
         router.back();
       } catch (error) {
-        console.error("Error making POST request:", error);
+        console.error("Error making PUT request:", error);
       }
     };
 
-    makePostRequest();
+    makePutRequest();
   };
 
   const categories = ['Topwear', 'Bottomwear', 'Footwear', 'Bodywear', 'Headwear', 'Accessories'];
@@ -204,7 +205,7 @@ const ClothingItemForm = () => {
       <SpinnerOverlay isVisible={loading} />
       <View style={styles.container}>
         {/* Image picker */}
-        <TouchableOpacity onPress={() => setModalVisible(true)} style={[styles.imagePicker, image? styles.imagePickerAfterSelection : styles.imagePickerBeforeSelection]}>
+        <TouchableOpacity onPress={() => setModalVisible(true)} style={[styles.imagePicker, image ? styles.imagePickerAfterSelection : styles.imagePickerBeforeSelection]}>
           {image ? (
             <Image source={{ uri: image }} style={styles.imagePreview} />
           ) : (
@@ -222,26 +223,26 @@ const ClothingItemForm = () => {
               key={category}
               label={category}
               isActive={selectedCategory == category}
-              onPress={() => {setSelectedCategory(category)}}
+              onPress={() => { setSelectedCategory(category) }}
             />
           ))}
         </View>
 
         {selectedCategory && (
-        <View style={styles.subcategoryContainer}>
-          <Text style={styles.subcategoryHeader}>{selectedCategory}</Text>
-          <View style={styles.toggleButtonGroup}>
-            {subCategory[selectedCategory].map((subcategory) => (
-              <ToggleButton
-              key={subcategory}
-              label={subcategory}
-              isActive={selectedSubCategory == subcategory}
-              onPress={() => {setSelectedSubCategory(subcategory)}}
-              />
-            ))}
+          <View style={styles.subcategoryContainer}>
+            <Text style={styles.subcategoryHeader}>{selectedCategory}</Text>
+            <View style={styles.toggleButtonGroup}>
+              {subCategory[selectedCategory].map((subcategory) => (
+                <ToggleButton
+                  key={subcategory}
+                  label={subcategory}
+                  isActive={selectedSubCategory == subcategory}
+                  onPress={() => { setSelectedSubCategory(subcategory) }}
+                />
+              ))}
+            </View>
           </View>
-        </View>
-      )}
+        )}
         
         {/* Color selection */}
         <Text style={styles.label}>Color</Text>
@@ -324,21 +325,21 @@ const ClothingItemForm = () => {
           <Ionicons name="sunny-outline" size={30} color="#FFD700" style={styles.iconRight} />
         </View>
         <LinearGradient
-            colors={['#2222FF', '#55AA55', '#FF2222']}
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 0}}
-            style={styles.gradient}>
-            <SliderMarks minimumValue={-10} maximumValue={40} step={5} style={styles.marksBelow} />
-            <Slider
-              style={styles.slider}
-              minimumValue={-10}
-              value={15}
-              maximumValue={40}
-              minimumTrackTintColor="transparent"
-              maximumTrackTintColor="transparent"
-              thumbTintColor={Colors.purple}
-              onValueChange={setTemperature}
-            />
+          colors={['#2222FF', '#55AA55', '#FF2222']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.gradient}>
+          <SliderMarks minimumValue={-10} maximumValue={40} step={5} style={styles.marksBelow} />
+          <Slider
+            style={styles.slider}
+            minimumValue={-10}
+            value={selectedTemperature}
+            maximumValue={40}
+            minimumTrackTintColor="transparent"
+            maximumTrackTintColor="transparent"
+            thumbTintColor={Colors.purple}
+            onValueChange={setTemperature}
+          />
         </LinearGradient>
         
         <Text style={styles.slider_label}>Weather</Text>
@@ -348,21 +349,21 @@ const ClothingItemForm = () => {
           <Ionicons name="sunny-outline" size={30} color="#FFD700" style={styles.iconRight} />
         </View>  
         <LinearGradient
-            colors={['#FFFFFF', '#55AA55', '#FFD700']}
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 0}}
-            style={styles.gradient}>
-            <SliderMarks minimumValue={0} maximumValue={30} step={5} style={styles.marksBelow} />
-            <Slider
-              style={styles.slider}
-              minimumValue={0}
-              value={15}
-              maximumValue={30}
-              minimumTrackTintColor="transparent"
-              maximumTrackTintColor="transparent"
-              thumbTintColor={Colors.purple}
-              onValueChange={setWeather}
-            /> 
+          colors={['#FFFFFF', '#55AA55', '#FFD700']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.gradient}>
+          <SliderMarks minimumValue={0} maximumValue={30} step={5} style={styles.marksBelow} />
+          <Slider
+            style={styles.slider}
+            minimumValue={0}
+            value={selectedWeather}
+            maximumValue={30}
+            minimumTrackTintColor="transparent"
+            maximumTrackTintColor="transparent"
+            thumbTintColor={Colors.purple}
+            onValueChange={setWeather}
+          /> 
         </LinearGradient>
         
         <Text style={styles.slider_label}>Preference</Text>
@@ -371,25 +372,25 @@ const ClothingItemForm = () => {
           <Ionicons name="happy-outline" size={30} color="#ff87df" style={styles.iconRight} />
         </View>  
         <LinearGradient
-            colors={['#214aed', '#7dcfff', '#ff87df']}
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 0}}
-            style={styles.gradient}>
-            <SliderMarks minimumValue={0} maximumValue={1} step={0.33} style={styles.marksBelow} />
-            <Slider
-              style={styles.slider}
-              minimumValue={0}
-              value={0.5}
-              maximumValue={1}
-              minimumTrackTintColor="transparent"
-              maximumTrackTintColor="transparent"
-              thumbTintColor={Colors.purple}
-              onValueChange={setPreference}
-            /> 
+          colors={['#214aed', '#7dcfff', '#ff87df']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.gradient}>
+          <SliderMarks minimumValue={0} maximumValue={1} step={0.33} style={styles.marksBelow} />
+          <Slider
+            style={styles.slider}
+            minimumValue={0}
+            value={selectedPreference}
+            maximumValue={1}
+            minimumTrackTintColor="transparent"
+            maximumTrackTintColor="transparent"
+            thumbTintColor={Colors.purple}
+            onValueChange={setPreference}
+          /> 
         </LinearGradient>
         
         <TouchableOpacity style={styles.saveButton} onPress={handleSubmit}>
-            <Text style={styles.saveButtonText}>Save Item</Text>
+          <Text style={styles.saveButtonText}>Save Changes</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -452,13 +453,12 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     backgroundColor: Colors.purple,
-    paddingVertical: 9,
-    paddingHorizontal: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     borderRadius: 10,
     marginTop: 30,
-    // marginBottom: 50,
     alignSelf: 'flex-end',
-    width: '35%',
+    width: '45%'
   },
   saveButtonText: {
     fontSize: 17,
@@ -508,8 +508,6 @@ const styles = StyleSheet.create({
   },
   slider: {
     height: 80,
-    // margin: 10,
-    // width: '100%',
   },
   slider_label_temp: {
     fontSize: 16,
@@ -545,8 +543,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   marksBelow: {
-  //  top: 45,
   },
 });
 
-export default ClothingItemForm;
+export default EditClothingItemForm;
