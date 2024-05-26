@@ -36,6 +36,7 @@ const Home = () => {
   };
 
   const fetchClothesData = async (refreshWeatherData=false) => {
+    setLoading(true);
     if(DataStorageSingleton.getInstance().weatherItems.length == 0 || refreshWeatherData) {
       await DataStorageSingleton.getInstance().fetchWeatherData();
       await DataStorageSingleton.getInstance().updateCarouselWeatherItems();
@@ -75,19 +76,16 @@ const Home = () => {
       }
       setClothes(DataStorageSingleton.getInstance().recommendations);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
-    setLoading(true);
     fetchClothesData();
-    setLoading(false);
   }, [isOnePiece]);
 
   useFocusEffect(
     React.useCallback(() => {
-      setLoading(true);
       fetchClothesData();
-      setLoading(false);
     }, [isOnePiece])
   );
 
@@ -176,13 +174,14 @@ const Home = () => {
       <View style={{height: 90, width: '100%', marginBottom: 10}}>
         <WeatherDiv ref={weatherDivRef} />
       </View>
-      {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
-      ) : (
+      
         <View style={styles.recommendedOutfitContainer}> 
           <Text style={styles.recommendedOutfitTitle}>Recommendations for today based on weather and temperature ({weather}, {temperature})</Text>
           {clothes ? (
             <View style={{ height: 320, justifyContent: 'center', alignItems: 'center' }}>
+              {loading ? (
+                <ActivityIndicator size="large" color="#0000ff" style={{width: '100%', height: 249}}/>
+              ) : (
               <Carousel
                 data={clothes}
                 renderItem={({ item }) => (
@@ -203,7 +202,7 @@ const Home = () => {
                 inactiveSlideScale={0.8}
                 inactiveSlideOpacity={0.5}
                 inactiveSlideShift={20}
-              />
+              />)}
               <Text style={{fontSize: 3}}></Text>
               <PaginationDots activeIndex={activeSlide} itemCount={clothes.length} />
               <CustomAlert
@@ -235,7 +234,6 @@ const Home = () => {
             <Text style={styles.noOutfitText}>{recommendationError}</Text>
           )}
         </View> 
-      )}
       <View style={styles.switchContainer}>
         <Text style={styles.switchLabel}>Two-piece / One-piece Outfits</Text>
         <Switch
