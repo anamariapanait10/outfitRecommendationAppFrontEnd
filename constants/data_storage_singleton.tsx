@@ -119,7 +119,11 @@ export class DataStorageSingleton {
                 }
             });
             const data = await response.json();
+            if ('error' in data){
+                return data;
+            }
             DataStorageSingleton.getInstance().recommendations = data;
+            return data;
         } catch (error: any) {
             Alert.alert("Error fetching data", error.message);
         }

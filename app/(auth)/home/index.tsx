@@ -22,7 +22,7 @@ const Home = () => {
   const [locationModalVisible, setLocationModalVisible] = useState(false);
   const [wearOutfitAlert, setWearOutfitAlert] = useState(false);
   const [wearOutfitSuccessAlert, setWearOutfitSuccessAlert] = useState(false);
-  const [recommendationError, setRecommendationError] = useState('No recommended outfit found');
+  const [recommendationError, setRecommendationError] = useState('');
   const [activeSlide, setActiveSlide] = useState(0);
   const [weather, setWeather] = useState('sunny');
   const [temperature, setTemperature] = useState('hot');
@@ -65,11 +65,12 @@ const Home = () => {
     }
     setWeather(weatherString);
     setTemperature(temperatureString.toLowerCase());
-    await DataStorageSingleton.getInstance().fetchRecommendations(await getToken(), userId?.toString(), isLoaded, weatherString, temperatureString, isOnePiece.toString());
-    let recommendations = DataStorageSingleton.getInstance().recommendations;
-    if(recommendations.error){
-      setRecommendationError(recommendations.error);
+    let err = await DataStorageSingleton.getInstance().fetchRecommendations(await getToken(), userId?.toString(), isLoaded, weatherString, temperatureString, isOnePiece.toString());
+    if(err.error !== undefined){
+      setRecommendationError(err.error);
     } else {
+      setRecommendationError('');
+      let recommendations = DataStorageSingleton.getInstance().recommendations;
       if(recommendations.length == 3) {
         setActiveSlide(1);
       }
@@ -181,8 +182,8 @@ const Home = () => {
       ) : (
         <View style={styles.recommendedOutfitContainer}> 
           <Text style={styles.recommendedOutfitTitle}>Recommendations for today based on weather and temperature ({weather}, {temperature})</Text>
-          {clothes ? (
-            <View style={{ height: 320, justifyContent: 'center', alignItems: 'center' }}>
+          {(clothes && recommendationError === '') ? (
+            <View style={{ height: 320, justifyContent: 'center', alignItems: 'center'}}>
               <Carousel
                 data={clothes}
                 renderItem={({ item }) => (
@@ -232,7 +233,12 @@ const Home = () => {
               </View>
             </View>
           ) : (
-            <Text style={styles.noOutfitText}>{recommendationError}</Text>
+            <View style={{paddingHorizontal: 20, marginTop: 70}}>
+              <Text style={styles.noOutfitText}>{recommendationError}</Text>
+              <TouchableOpacity style={[styles.wearAnotherOutfitButton, {marginTop: 130}]} onPress={() => router.push({pathname: '/(auth)/home/outfit_picker'})}>
+                <Text style={styles.wearOutfitButtonText}>Try Another Outfits</Text>
+              </TouchableOpacity>
+            </View>
           )}
         </View> 
       )}
@@ -305,7 +311,8 @@ const styles = StyleSheet.create({
   },
   noOutfitText: {
     fontSize: 14,
-    color: '#a9a9a9',
+    color: Colors.black,
+    textAlign: 'center'
   },
   weatherAndLocationContainer: {
     marginTop: 10,

@@ -25,4 +25,5 @@ export default {
   dark_purple: '#6c47ff',
   red: '#eb5058',
   white: '#fff',
+  black: '#000',
 };

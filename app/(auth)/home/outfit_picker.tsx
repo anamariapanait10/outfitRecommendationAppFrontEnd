@@ -522,6 +522,7 @@ const OutfitPicker = () => {
                 setWearOutfitAlert(false);
               }}
               question="An outfit is already scheduled for this date. Proceeding will overwrite it. Do you want to continue?"
+              button="Yes/No"
             />
           <View style={styles.outfitContainer}>
             {isOnePieceEnabled ? (
