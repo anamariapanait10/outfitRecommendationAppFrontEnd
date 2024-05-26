@@ -22,7 +22,7 @@ const Profile = () => {
   const [totalOutfits, setTotalOutfits] = useState(0);
   const [season, setSeason] = useState('');
   const { isLoaded, userId, getToken } = useAuth();
-  const [newStatsData, setNewStatsData] = useState({});
+  const [newStatsData, setNewStatsData] = useState("empty");
 
   useEffect(() => {
     if (!user) return;
@@ -44,6 +44,10 @@ const Profile = () => {
         setSeason(stats.season);
 
         const newStats = await DataStorageSingleton.getInstance().getNewStats(await getToken(), userId, isLoaded);
+        if(newStats == undefined || newStats.status == 'wardrobe empty'){
+          setNewStatsData("empty");
+          return;
+        }
         setNewStatsData(newStats);
       };
       fetchData();
@@ -112,59 +116,69 @@ const Profile = () => {
           <Text>Since {user?.createdAt?.toLocaleDateString()}</Text>
         </View>
       )}
-      <View style={styles.card}> 
-        <Text style={styles.title}>Wardrobe Usage</Text>
-        <View style={styles.progressBarContainer}>
-          <View style={[styles.progressBar, { width: `${clothPercentage}%` }]} />
+      { newStatsData !== "empty" ? (<>
+        <View style={styles.card}> 
+          <Text style={styles.title}>Wardrobe Usage</Text>
+          <View style={styles.progressBarContainer}>
+            <View style={[styles.progressBar, { width: `${clothPercentage}%` }]} />
+          </View>
+          <Text style={styles.usageText}>You're wearing {clothPercentage}% of your {season} wardrobe</Text>
         </View>
-        <Text style={styles.usageText}>You're wearing {clothPercentage}% of your {season} wardrobe</Text>
-      </View>
 
-      <View style={styles.card}>
-        <Text style={styles.title}>Clothes temperature distribution</Text>
-        {newStatsData?.clothingSeasonDistribution != undefined && <MyPieChart data={newStatsData?.clothingSeasonDistribution}/>}
-      </View>
-      <View style={styles.card}>
-        <Text style={styles.title}>Top 3 most used colors</Text>
-        <View style={{justifyContent: 'flex-start'}}>
-          {newStatsData?.topColors != undefined && Object.entries(newStatsData?.topColors).map(([key, value], index) => (
-            <View style={styles.colorRow} key={index}>
-              <View style={[styles.colorCircle, { backgroundColor: key }]} />
-              <Text style={styles.colorText}>{key}: {value} item{value > 1 ? 's':''}</Text>
-            </View>
-          ))}
+        <View style={styles.card}>
+          <Text style={styles.title}>Clothes temperature distribution</Text>
+          {newStatsData?.clothingSeasonDistribution != undefined && <MyPieChart data={newStatsData?.clothingSeasonDistribution}/>}
         </View>
-      </View>
-
-      <View style={[styles.leastWornCard]}>
-        <Text style={styles.title}>Least worn items</Text>
-        <View style={{flexDirection: 'row', justifyContent:'center', width: '100%'}}>
-          {newStatsData?.leastWornItems != undefined && Object.entries(newStatsData?.leastWornItems).map(([key, value], index) => (
-            <View style={styles.leastWornColumn} key={index}>
-              <Image source={{ uri: `${value.image}` }} style={styles.image} />
-              <Text style={{alignSelf: 'center', fontWeight: 'bold'}} numberOfLines={1} ellipsizeMode='tail'>{key}</Text>
-            </View>
-          ))}
+        <View style={styles.card}>
+          <Text style={styles.title}>Top 3 most used colors</Text>
+          <View style={{justifyContent: 'flex-start'}}>
+            {newStatsData?.topColors != undefined && Object.entries(newStatsData?.topColors).map(([key, value], index) => (
+              <View style={styles.colorRow} key={index}>
+                <View style={[styles.colorCircle, { backgroundColor: key }]} />
+                <Text style={styles.colorText}>{key}: {value} item{value > 1 ? 's':''}</Text>
+              </View>
+            ))}
+          </View>
         </View>
-      </View>
 
-      <View style={styles.card}>
-        <AnimatedCircularProgress
-          size={120}
-          width={15}
-          fill={outfitPercentage}
-          tintColor={Colors.purple} //"#FF9500"
-          backgroundColor={Colors.light_purple}>
-          {
-            (fill) => (
-              <Text style={styles.percentageText}>
-                {`${Math.round(fill)}%`}
-              </Text>
-            )
-          }
-        </AnimatedCircularProgress>
-        <Text style={styles.detailsText}>{`${wornOutfits}/${totalOutfits} outfits worn`}</Text>
-      </View>
+        <View style={[styles.leastWornCard]}>
+          <Text style={styles.title}>Least worn items</Text>
+          <View style={{flexDirection: 'row', justifyContent:'center', width: '100%'}}>
+            {newStatsData?.leastWornItems != undefined && Object.entries(newStatsData?.leastWornItems).map(([key, value], index) => (
+              <View style={styles.leastWornColumn} >
+                { value?.image != undefined && value?.image != '' &&
+                    <>
+                      <Image source={{ uri: `${value.image}` }} style={styles.image} />
+                      <Text style={{alignSelf: 'center', fontWeight: 'bold'}} numberOfLines={1} ellipsizeMode='tail'>{key}</Text>
+                    </>
+                }
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {totalOutfits > 1 && <View style={styles.card}>
+          <AnimatedCircularProgress
+            size={120}
+            width={15}
+            fill={outfitPercentage}
+            tintColor={Colors.purple} //"#FF9500"
+            backgroundColor={Colors.light_purple}>
+            {
+              (fill) => (
+                <Text style={styles.percentageText}>
+                  {`${Math.round(fill)}%`}
+                </Text>
+              )
+            }
+          </AnimatedCircularProgress>
+          <Text style={styles.detailsText}>{`${wornOutfits}/${totalOutfits} outfits worn`}</Text>
+        </View>}
+      </>) : (
+        <View style={{marginTop: 20, backgroundColor: 'white', width: '80%', alignSelf: 'center', padding: 10, borderRadius: 10}}>
+          <Text style={{textAlign: 'center'}}>Your wardrobe does not contain any clothes. Wardrobe statistics cannot be generated. </Text>
+        </View>
+      )}
     </ScrollView>
   );
 };

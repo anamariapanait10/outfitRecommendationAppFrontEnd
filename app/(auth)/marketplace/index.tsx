@@ -8,9 +8,11 @@ import Colors from "../../../constants/Colors";
 import SpinnerOverlay from '../../../components/spinner_overlay';
 
 const MarketplaceScreen = () => {
-    const [items, setItems] = useState([]);
+    const [allItems, setItems] = useState([]);
+    const [filteredItems, setFilteredItems] = useState([]);
     const { isLoaded, userId, getToken } = useAuth();
     const [loading, setLoading] = useState(false);
+    const [activeTab, setActiveTab] = useState('marketplace items');
 
     useFocusEffect(
         React.useCallback(() => {
@@ -28,7 +30,7 @@ const MarketplaceScreen = () => {
                 const token = await getToken();
         
                 const response = await fetch(
-                    process.env.EXPO_PUBLIC_BASE_API_URL + `/marketplace-items/get_available_items_for_user?userId=${userId}`,
+                    process.env.EXPO_PUBLIC_BASE_API_URL + `/marketplace-items/get_available_items_for_user`,
                     {
                         method: "GET",
                         headers: {
@@ -45,6 +47,8 @@ const MarketplaceScreen = () => {
                 const json = await response.json();
                 // console.log("GET request response:", json);
                 setItems(json);
+                let filteredItems = json.filter(item => item.user_id !== userId);
+                setFilteredItems(filteredItems);
             } catch (error) {
                 console.error("Error making POST request:", error);
             }
@@ -91,13 +95,27 @@ const MarketplaceScreen = () => {
                 )}
             </View> */
     return (
-        <View>  
+        <View> 
+            <View style={styles.tabContainer}>
+                <TouchableOpacity
+                style={[styles.tabButton, activeTab === 'marketplace items' && styles.activeTab]}
+                onPress={() => {setActiveTab('marketplace items'); setFilteredItems(allItems.filter(item => item.user_id !== userId));}}
+                >
+                    <Text style={styles.tabText}>Marketplace Items</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                style={[styles.tabButton, activeTab === 'my items' && styles.activeTab]}
+                onPress={() => {setActiveTab('my items'); setFilteredItems(allItems.filter(item => item.user_id === userId));}}
+                >
+                    <Text style={styles.tabText}>My Items</Text>
+                </TouchableOpacity>
+            </View>
             <View style={styles.container}>
-                {!items ? (
+                {!filteredItems ? (
                     <ActivityIndicator size="large" color="#0000ff" />
                 ) : (
                     <FlatList
-                        data={items}
+                        data={filteredItems}
                         renderItem={renderItem}
                         keyExtractor={item => item.id.toString()}
                     />
@@ -111,6 +129,7 @@ const styles = StyleSheet.create({
     card: {
         margin: 8,
         overflow: 'hidden',
+        backgroundColor: '#ffffff',
     },
     container: {
         flexDirection: 'row',
@@ -164,6 +183,25 @@ const styles = StyleSheet.create({
     },
     imagePickerBeforeSelection: {
         borderStyle: 'dashed',
+    },
+    tabContainer: {
+        flexDirection: 'row',
+        paddingVertical: 5
+    },
+    tabButton: {
+        width: '50%',
+        padding: 10,
+        backgroundColor: '#f0f0f0',
+        // marginHorizontal: 5,
+    },
+    activeTab: {
+        // backgroundColor: '#007bff',
+        borderBottomWidth: 2,
+        borderBottomColor: '#000',
+    },
+    tabText: {
+        color: '#000',
+        textAlign: 'center',
     },
 });
 

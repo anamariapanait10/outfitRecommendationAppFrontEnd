@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Image, View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import Colors from "../../../../constants/Colors";
 import ChooseImageModal from '../../../../components/choose_image_modal';
@@ -28,6 +28,7 @@ const EditClothingItemForm = () => {
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const { isLoaded, userId, getToken } = useAuth();
+
   const [selectedTemperature, setTemperature] = useState(10);
   const [selectedWeather, setWeather] = useState(15);
   const [selectedPreference, setPreference] = useState(0.5);
@@ -45,12 +46,12 @@ const EditClothingItemForm = () => {
         setSelectedSeasons(clothingItem.seasons.split(","));
         setSelectedOccasions(clothingItem.occasions.split(","));
         setImage(clothingItem.image);
-        console.log("temp ", clothingItem.itemprobability.temperatureSliderValue);
-        console.log("weather ", clothingItem.itemprobability.weatherSliderValue);
-        console.log("pref ", clothingItem.itemprobability.preference);
-        setTemperature(clothingItem.itemprobability.temperatureSliderValue);
-        setWeather(clothingItem.itemprobability.weatherSliderValue);
-        setPreference(clothingItem.itemprobability.preference);
+        // console.log("temp ", clothingItem.itemprobability.temperatureSliderValue);
+        // console.log("weather ", clothingItem.itemprobability.weatherSliderValue);
+        // console.log("pref ", clothingItem.itemprobability.preference);
+        setTemperature(parseFloat(clothingItem.itemprobability.temperatureSliderValue));
+        setWeather(parseFloat(clothingItem.itemprobability.weatherSliderValue));
+        setPreference(parseFloat(clothingItem.itemprobability.preference));
       }
     }
   }, [id]);

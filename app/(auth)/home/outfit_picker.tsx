@@ -775,7 +775,8 @@ const styles = StyleSheet.create({
     },
     dropdownContainer: {
       borderColor: '#cccccc',
-      width: '60%'
+      width: '60%',
+      zIndex: 5000
     },
     label: {
       width: '30%',
