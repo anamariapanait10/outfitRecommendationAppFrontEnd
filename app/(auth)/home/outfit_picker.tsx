@@ -240,10 +240,10 @@ const OutfitPicker = () => {
       );
     }
 
-    const renderOutfitItem = (item) => {
+    const renderOutfitItem = (item, bigImage=false) => {
       return (
         <View style={{}}>
-          <Image source={{ uri: item?.image }} style={styles.outfitImage} />
+          <Image source={{ uri: item?.image }} style={bigImage ? styles.outfitImageBig : styles.outfitImage} />
         </View>
       );
     };
@@ -302,11 +302,20 @@ const OutfitPicker = () => {
               <View style={{flex: 1, justifyContent: 'center'}}>
                 <View style={styles.modalView}>
                   <Text style={{fontSize: 25}}>AI Expert's Decision:</Text>
-                  {renderOutfitItem(topwears[topwearIndex])}
-                  {renderOutfitItem(bottomwears[bottomwearIndex])}
-                  {renderOutfitItem(footwears[footwearIndex])}
+                  {isOnePieceEnabled ? (
+                    <>
+                      {renderOutfitItem(bodywears[bodywearIndex], true)}
+                      {renderOutfitItem(footwears[footwearIndex])}
+                    </>
+                  ) : (
+                    <>
+                      {renderOutfitItem(topwears[topwearIndex])}
+                      {renderOutfitItem(bottomwears[bottomwearIndex])}
+                      {renderOutfitItem(footwears[footwearIndex])}
+                    </>
+                  )}
                   <Text style={{fontSize: 16, textAlign: 'center', backgroundColor: Colors.light_purple, borderRadius: 15, padding: 5, margin: 5}}>
-                    {expertResponse.decision == 'Yes' ? 'The outfit looks great!' : 'This outfit is not be the best, maybe try another one.'}
+                    {expertResponse.decision == 'yes' ? 'The outfit looks great!' : 'This outfit is not the best, maybe try another one.'}
                   </Text>
                   <Text>
                     {expertResponse.reason}
@@ -725,7 +734,7 @@ const styles = StyleSheet.create({
     },
     modalView: {
       margin: 20,
-      height: Dimensions.get('window').height - 200,
+      // height: Dimensions.get('window').height - 200,
       backgroundColor: "white",
       borderRadius: 20,
       paddingVertical: 10,
@@ -751,6 +760,12 @@ const styles = StyleSheet.create({
     outfitImage: {
       width: 90,
       height: 90,
+      borderRadius: 7,
+      alignSelf: 'center',
+    },
+    outfitImageBig: {
+      width: 90,
+      height: 180,
       borderRadius: 7,
       alignSelf: 'center',
     },

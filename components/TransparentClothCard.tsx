@@ -1,21 +1,22 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { router } from 'expo-router';
+import { View, Image, StyleSheet } from 'react-native';
 
 export class TransparentClothingItem {
     image: string;
+    category: string;
 
     constructor(
-        image: string
+        image: string, category: string
         ) {
             this.image = image;
+            this.category = category;
         }
 };
 
 const TransparentClothCard = ( cloth: TransparentClothingItem ) => {
     return (
         <View style={styles.card}>
-            <Image source={{ uri: `${cloth.image}` }} style={styles.image} />
+            <Image source={{ uri: `${cloth.image}` }} style={cloth.category!=="Bodywear"?styles.image:styles.longImage} />
         </View>
     );
 };
@@ -24,14 +25,15 @@ const styles = StyleSheet.create({
     card: {
         backgroundColor: 'transparent',
         borderRadius: 5,
-        height: 70,
-        // padding: 5,
-        marginLeft: 15,
-        marginRight: 15,
-        marginBottom: 15,
+        margin: 1,
     },
     image: {
         height: 80,
+        width: 80,
+        borderRadius: 5,
+    },
+    longImage: {
+        height: 160,
         width: 80,
         borderRadius: 5,
     }

@@ -102,14 +102,14 @@ export class DataStorageSingleton {
         }
     };
 
-    public fetchRecommendations = async (token: string | null, userId: string | null | undefined, isLoaded: boolean, weather: string, temperature: string) => {
+    public fetchRecommendations = async (token: string | null, userId: string | null | undefined, isLoaded: boolean, weather: string, temperature: string, isOnePiece: string) => {
         if (!userId || !isLoaded) {
             console.log('No authenticated user found.');
             return;
         }
         try {
             const baseUrl = process.env.EXPO_PUBLIC_BASE_API_URL + '/outfit-items/get_recommendations/';
-            const queryParams = `?weather=${encodeURIComponent(weather)}&temperature=${encodeURIComponent(temperature)}`;
+            const queryParams = `?weather=${encodeURIComponent(weather)}&temperature=${encodeURIComponent(temperature)}&onePiece=${isOnePiece}`;
             const urlWithParams = baseUrl + queryParams;
             const response = await fetch(urlWithParams, {
                 method: 'GET',

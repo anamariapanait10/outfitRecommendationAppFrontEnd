@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, ActivityIndicator, Switch } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@clerk/clerk-expo';
 import Colors from "../../../constants/Colors";
@@ -27,6 +27,7 @@ const Home = () => {
   const [weather, setWeather] = useState('sunny');
   const [temperature, setTemperature] = useState('hot');
   const [loading, setLoading] = useState(false);
+  const [isOnePiece, setIsOnePiece] = useState(false);
   
   const weatherDivRef = useRef(null);
 
@@ -64,7 +65,7 @@ const Home = () => {
     }
     setWeather(weatherString);
     setTemperature(temperatureString.toLowerCase());
-    await DataStorageSingleton.getInstance().fetchRecommendations(await getToken(), userId, isLoaded, weatherString, temperatureString);
+    await DataStorageSingleton.getInstance().fetchRecommendations(await getToken(), userId, isLoaded, weatherString, temperatureString, isOnePiece.toString());
     let recommendations = DataStorageSingleton.getInstance().recommendations;
     if(recommendations.error){
       setRecommendationError(recommendations.error);
@@ -80,14 +81,14 @@ const Home = () => {
     setLoading(true);
     fetchClothesData();
     setLoading(false);
-  }, []);
+  }, [isOnePiece]);
 
   useFocusEffect(
     React.useCallback(() => {
       setLoading(true);
       fetchClothesData();
       setLoading(false);
-    }, [])
+    }, [isOnePiece])
   );
 
   const wearOutfit = async () => {
@@ -187,7 +188,7 @@ const Home = () => {
                 renderItem={({ item }) => (
                   <View>
                     <FlatList
-                      style={{ width: '100%'}}
+                      style={{ width: '100%' }}
                       data={item}
                       renderItem={({ item }) => <TransparentClothCard {...item} />}
                       keyExtractor={(item) => item.id.toString()}
@@ -221,18 +222,29 @@ const Home = () => {
                 question="Outfit successfully scheduled for today!"
                 button="Close"
               />
-              <TouchableOpacity style={styles.wearOutfitButton} onPress={wearOutfit}>
-                  <Text style={styles.wearOutfitButtonText}>Wear This Outfit</Text>
-              </TouchableOpacity>
+              <View style={styles.buttonsContainer}>
+                <TouchableOpacity style={styles.wearAnotherOutfitButton} onPress={() => router.push({pathname: '/(auth)/home/outfit_picker'})}>
+                  <Text style={styles.wearOutfitButtonText}>Wear Another</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.wearOutfitButton} onPress={wearOutfit}>
+                  <Text style={styles.wearOutfitButtonText}>Wear This</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           ) : (
             <Text style={styles.noOutfitText}>{recommendationError}</Text>
           )}
         </View> 
       )}
-      <TouchableOpacity style={styles.wearAnotherOutfitButton} onPress={() => router.push({pathname: '/(auth)/home/outfit_picker'})}>
-          <Text style={styles.wearOutfitButtonText}>Or Try Another Outfit</Text>
-      </TouchableOpacity>
+      <View style={styles.switchContainer}>
+        <Text style={styles.switchLabel}>Two-piece / One-piece Outfits</Text>
+        <Switch
+          value={isOnePiece}
+          onValueChange={() => setIsOnePiece(!isOnePiece)}
+          trackColor={{false: '#767577', true: Colors.purple}}
+          thumbColor={isOnePiece ? Colors.light_purple : '#f4f3f4'}
+        />
+      </View>
     </View>
   );
 };
@@ -252,7 +264,8 @@ const styles = StyleSheet.create({
   recommendedOutfitContainer: {
     alignItems: 'center',
     paddingTop: 0,
-    padding: 20,
+    paddingBottom: 10,
+    paddingHorizontal: 10,
     borderRadius: 10,
     backgroundColor: '#ffffff', 
     shadowColor: '#000',
@@ -268,6 +281,7 @@ const styles = StyleSheet.create({
     height: '66%',
   },
   recommendedOutfitTitle: {
+    paddingHorizontal: 20,
     fontSize: 16,
     fontWeight: '500',
     marginTop: 15,
@@ -345,14 +359,14 @@ const styles = StyleSheet.create({
   wearOutfitButton: {
     backgroundColor: Colors.purple,
     paddingVertical: 5,
-    paddingHorizontal: 20,
+    paddingHorizontal: 28,
     borderRadius: 10,
     marginTop: 10,
   },
   wearAnotherOutfitButton: {
     backgroundColor: '#cccccc',
     paddingVertical: 5,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     borderRadius: 10,
     marginTop: 10,
   },
@@ -364,6 +378,23 @@ const styles = StyleSheet.create({
   image: {
     height: 160,
     justifyContent: 'center',
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
+    marginTop: 10,
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  switchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginVertical: 7,
+    width: '70%',
+  },
+  switchLabel: {
+    fontSize: 16,
+    //marginHorizontal: 10,
   },
 });
 
