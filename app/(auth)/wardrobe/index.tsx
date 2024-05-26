@@ -17,7 +17,8 @@ const WardrobeScreen = () => {
     const fetchClothesData = async () => {
         setRefreshing(true);
         await DataStorageSingleton.getInstance().fetchClothesData(await getToken(), userId, isLoaded);
-        setFilteredClothes(DataStorageSingleton.getInstance().clothingItems);
+
+        handleFilterChange('category', DataStorageSingleton.getInstance().lastWardrobeFilter);
 
         setRefreshing(false);
     };
@@ -29,6 +30,7 @@ const WardrobeScreen = () => {
             const filtered = DataStorageSingleton.getInstance().clothingItems.filter(cloth => cloth[filterType] === value);
             setFilteredClothes(filtered);
         }
+        DataStorageSingleton.getInstance().lastWardrobeFilter = value;
     };
 
     // useEffect(() => {

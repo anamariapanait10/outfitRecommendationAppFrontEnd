@@ -29,6 +29,9 @@ export class DataStorageSingleton {
 
     public lastAIExpertResponse = '';
 
+    public lastWardrobeFilter = 'All';
+    public lastMarketplaceTab = 'marketplace items';
+
     static getInstance() {
         if (DataStorageSingleton.instance === null) {
             DataStorageSingleton.instance = new DataStorageSingleton();

@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { View, Text, StyleSheet, Image, ScrollView, FlatList, Dimensions, TouchableOpacity, ActivityIndicator } from "react-native";
-import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams, useNavigation } from "expo-router";
 import { DataStorageSingleton } from "../../../constants/data_storage_singleton";
 import { useAuth } from "@clerk/clerk-expo";
 import SpinnerOverlay from "../../../components/spinner_overlay";
 import { ClothingItem } from "../../../components/cloth_card";
 import MarketplaceItemDetailsTable from "../../../components/MarketplaceItemDetailsTable";
 import { Button } from "react-native-paper";
+import { Ionicons } from "@expo/vector-icons";
 
 export class MarketplaceItem {
     id: number;
@@ -56,12 +57,14 @@ export class MarketplaceItem {
 
 const MarketplaceItemDetails = () => {
     const { isLoaded, userId, getToken } = useAuth();
+    const navigation = useNavigation();
     const { id } = useLocalSearchParams();
     const [itemId, setItemId] = useState('');
     const [marketplaceItem, setMarketplaceItem] = useState<MarketplaceItem | undefined>();
     const [loading, setLoading] = useState(false);
-    const [recommendationsLoading, setRecommendatiopsLoading] = useState(false);
+    const [recommendationsLoading, setRecommendationsLoading] = useState(false);
     const [similarItems, setSimilarItems] = useState<MarketplaceItem[] | undefined>([new MarketplaceItem(), new MarketplaceItem(), new MarketplaceItem()]);
+    const [showDeleteButton, setShowDeleteButton] = useState(false);
 
     const fetchData = async () => {
         if(typeof itemId === 'string' && itemId !== '') {
@@ -70,13 +73,44 @@ const MarketplaceItemDetails = () => {
             let item = await DataStorageSingleton.getInstance().getMarketplaceItemById(itemId, await getToken(), userId, isLoaded);
             setMarketplaceItem(item);
             DataStorageSingleton.getInstance().marketPlaceItemId = item.id;
+            
+            if (userId && item.user_id === userId) {
+              setShowDeleteButton(true);
+            } else {
+              setShowDeleteButton(false);
+            }
             setLoading(false);
-            setRecommendatiopsLoading(true);
+            setRecommendationsLoading(true);
             let similarItems = await DataStorageSingleton.getInstance().fetchSimilarItems(itemId,  await getToken(), userId, isLoaded);
             setSimilarItems(similarItems);
-            setRecommendatiopsLoading(false);
+            setRecommendationsLoading(false);
         }
     }
+
+    const handleDeleteMarketplaceItem = async () => {
+      if (!userId || !isLoaded) {
+        console.log('No authenticated user found.');
+        return;
+      }
+      try {
+        const token = await getToken();
+        const response = await fetch(`${process.env.EXPO_PUBLIC_BASE_API_URL}/marketplace-items/${DataStorageSingleton.getInstance().marketPlaceItemId}/`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to delete the marketplace item');
+        }
+    
+        router.back();
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
     useFocusEffect(React.useCallback(() => {
       if(typeof id === 'string') {
@@ -88,6 +122,31 @@ const MarketplaceItemDetails = () => {
     useEffect(() => {
         fetchData();
     }, [itemId])
+
+    useLayoutEffect(() => {
+      navigation.setOptions({
+        headerRight: () => (
+          <>
+            {showDeleteButton ?
+            <TouchableOpacity
+              onPress={handleDeleteMarketplaceItem}
+              style={{
+                marginRight: 10,
+                paddingLeft: 4,
+                paddingRight: 4,
+                paddingTop: 3,
+                paddingBottom: 3,
+                borderColor: '#fff',
+                borderWidth: 1,
+                borderRadius: 15,
+                backgroundColor: '#fff',  
+              }}>
+              <Ionicons name="trash-outline" size={24} color={'black'} />
+            </TouchableOpacity> : null}
+          </>
+        ),
+      });
+    }, [navigation, showDeleteButton]);
 
     return (
         <ScrollView>

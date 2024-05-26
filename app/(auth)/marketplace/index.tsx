@@ -6,13 +6,14 @@ import { router, useFocusEffect } from 'expo-router';
 import MarketplaceItemTable from '../../../components/MarketplaceItemTable';
 import Colors from "../../../constants/Colors";
 import SpinnerOverlay from '../../../components/spinner_overlay';
+import { DataStorageSingleton } from '../../../constants/data_storage_singleton';
 
 const MarketplaceScreen = () => {
     const [allItems, setItems] = useState([]);
     const [filteredItems, setFilteredItems] = useState([]);
     const { isLoaded, userId, getToken } = useAuth();
     const [loading, setLoading] = useState(false);
-    const [activeTab, setActiveTab] = useState('marketplace items');
+    const [activeTab, setActiveTab] = useState(DataStorageSingleton.getInstance().lastMarketplaceTab);
 
     useFocusEffect(
         React.useCallback(() => {
@@ -47,9 +48,13 @@ const MarketplaceScreen = () => {
                 const json = await response.json();
                 // console.log("GET request response:", json);
                 setItems(json);
-                let filteredItems = json.filter(item => item.user_id !== userId);
-                setFilteredItems(filteredItems);
-                setActiveTab('marketplace items');
+                setActiveTab(DataStorageSingleton.getInstance().lastMarketplaceTab);
+                if (DataStorageSingleton.getInstance().lastMarketplaceTab === 'my items') {
+                    setFilteredItems(json.filter(item => item.user_id === userId));
+                } else {
+                    setFilteredItems(json.filter(item => item.user_id !== userId));
+                }
+                
             } catch (error) {
                 console.error("Error making POST request:", error);
             }
@@ -100,13 +105,15 @@ const MarketplaceScreen = () => {
             <View style={styles.tabContainer}>
                 <TouchableOpacity
                 style={[styles.tabButton, activeTab === 'marketplace items' && styles.activeTab]}
-                onPress={() => {setActiveTab('marketplace items'); setFilteredItems(allItems.filter(item => item.user_id !== userId));}}
+                onPress={() => {setActiveTab('marketplace items'); setFilteredItems(allItems.filter(item => item.user_id !== userId));
+                            DataStorageSingleton.getInstance().lastMarketplaceTab = 'marketplace items';}}
                 >
                     <Text style={styles.tabText}>Marketplace Items</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                 style={[styles.tabButton, activeTab === 'my items' && styles.activeTab]}
-                onPress={() => {setActiveTab('my items'); setFilteredItems(allItems.filter(item => item.user_id === userId));}}
+                onPress={() => {setActiveTab('my items'); setFilteredItems(allItems.filter(item => item.user_id === userId));
+                            DataStorageSingleton.getInstance().lastMarketplaceTab = 'my items';}}
                 >
                     <Text style={styles.tabText}>My Items</Text>
                 </TouchableOpacity>
