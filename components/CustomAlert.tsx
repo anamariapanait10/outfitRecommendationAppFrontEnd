@@ -29,10 +29,21 @@ const CustomAlert = ({ visible, onClose, onSubmit, question, button="Yes/No" }) 
               <TouchableOpacity style={[styles.button, styles.buttonDelete]} onPress={onSubmit}>
                 <Text style={styles.textStyle}>Yes</Text>
               </TouchableOpacity>
-            </View> :
-            <TouchableOpacity style={[styles.button, styles.buttonClose, {marginTop: 30}]} onPress={onClose}>
-              <Text style={styles.textStyle}>Close</Text>
-            </TouchableOpacity>
+            </View> 
+            : button === "Close" ?
+              <TouchableOpacity style={[styles.button, styles.buttonClose, {marginTop: 30}]} onPress={onClose}>
+                <Text style={styles.textStyle}>Close</Text>
+              </TouchableOpacity>
+              : button === "See calendar/Close" ?
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity style={[styles.button, styles.buttonDelete, {marginTop: 30}]} onPress={onClose}>
+                    <Text style={styles.textStyle}>Close</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.button, styles.buttonClose, {marginTop: 30}]} onPress={onSubmit}>
+                    <Text style={styles.textStyle}>See Calendar</Text>
+                  </TouchableOpacity>
+                </View>
+              : null
           }         
         </TouchableOpacity>
       </TouchableOpacity>

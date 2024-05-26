@@ -226,19 +226,27 @@ export class DataStorageSingleton {
         }
     }
 
-    public askAiExpert = async (top: ClothingItem, bottom: ClothingItem, foot: ClothingItem, event: string, token: string | null, userId: string | null | undefined, isLoaded: boolean) => {
+    public askAiExpert = async (top: ClothingItem | null, bottom: ClothingItem | null, foot: ClothingItem, body: ClothingItem | null, event: string, token: string | null, userId: string | null | undefined, isLoaded: boolean) => {
         if (!userId || !isLoaded) {
             console.log('No authenticated user found.');
             return;
         }
         try {
             const baseUrl = process.env.EXPO_PUBLIC_BASE_API_URL + '/ai-expert/ask/';
-            const requestBody = JSON.stringify({
-                topwear: top,
-                bottomwear: bottom,
+
+            let requestBody = {
                 footwear: foot,
                 event: event
-            });
+            } as any;
+            if (body) {
+                requestBody.bodywear = body;
+
+            } else {
+                requestBody.topwear = top;
+                requestBody.bottomwear = bottom;
+            }
+            requestBody = JSON.stringify(requestBody);
+
             const response = await fetch(baseUrl, {
                 method: 'POST',
                 headers: {

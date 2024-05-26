@@ -14,7 +14,7 @@ import { useFocusEffect } from '@react-navigation/native';
 const OutfitCalendar = () => {
   const { isLoaded, userId, getToken } = useAuth();
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedDayOutfit, setSelectedDayOutfit] = useState({top: null, bottom: null, shoes: null, date: null});
+  const [selectedDayOutfit, setSelectedDayOutfit] = useState({top: null, bottom: null, shoes: null, body: null, date: null});
   const [outfits, setOutfits] = useState({});
   const currentDate = new Date();
   const currentYearMonth = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}`;
@@ -62,25 +62,35 @@ const OutfitCalendar = () => {
     fetchMonthOutfits();
   }, [yearMonth]);
 
-  const renderOutfitItem = (item) => {
+  const renderOutfitItem = (item, bigImage=false) => {
     return (
       <View>
-        <Image source={{ uri: item?.image }} style={styles.outfitImage} />
+        <Image source={{ uri: item?.image }} style={bigImage ? styles.bodywearImage : styles.outfitImage} />
       </View>
     );
   };
+
 
   const renderOutfitsForDay = (day) => {
     const dateOutfits = outfits[day.dateString] || {};
     
     if(dateOutfits) {
-      return (
-        <View>
-          <Image source={{ uri: dateOutfits?.top?.image }} style={styles.outfitImageSmall} />
-          <Image source={{ uri: dateOutfits?.bottom?.image }} style={styles.outfitImageSmall} />
-          <Image source={{ uri: dateOutfits?.shoes?.image }} style={styles.outfitImageSmall} />
-        </View>
-      );
+      if(dateOutfits.body){
+        return (
+          <View>
+            <Image source={{ uri: dateOutfits?.body?.image }} style={styles.outfitImageBig} />
+            <Image source={{ uri: dateOutfits?.shoes?.image }} style={styles.outfitImageSmall} />
+          </View>
+        );
+      } else {
+        return (
+          <View>
+            <Image source={{ uri: dateOutfits?.top?.image }} style={styles.outfitImageSmall} />
+            <Image source={{ uri: dateOutfits?.bottom?.image }} style={styles.outfitImageSmall} />
+            <Image source={{ uri: dateOutfits?.shoes?.image }} style={styles.outfitImageSmall} />
+          </View>
+        );
+      }
     }
   };
 
@@ -132,9 +142,18 @@ const OutfitCalendar = () => {
                 <Ionicons style={{color: Colors.purple}} name="close-outline" size={28}/>
               </TouchableOpacity>
             </View>
-            {renderOutfitItem(selectedDayOutfit?.top)}
-            {renderOutfitItem(selectedDayOutfit?.bottom)}
-            {renderOutfitItem(selectedDayOutfit?.shoes)}
+            {selectedDayOutfit?.body ? (
+              <>
+                {renderOutfitItem(selectedDayOutfit?.body, true)}
+                {renderOutfitItem(selectedDayOutfit?.shoes)}
+              </>
+            ) : (
+              <>
+                {renderOutfitItem(selectedDayOutfit?.top)}
+                {renderOutfitItem(selectedDayOutfit?.bottom)}
+                {renderOutfitItem(selectedDayOutfit?.shoes)}
+              </>
+            )}
           </TouchableOpacity>
         </TouchableOpacity>
       </Modal>
@@ -234,6 +253,14 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     marginTop: 2,
   },
+  bodywearImage: {
+    width: 100,
+    height: 200,
+    marginRight: 2,
+    alignSelf: 'center',
+    borderRadius: 7,
+    marginTop: 2,
+  },
   outfitImageSmall: {
     width: 29,
     height: 29,
@@ -241,6 +268,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     borderRadius: 3,
     // marginTop: 2,
+  },
+  outfitImageBig: {
+    width: 29,
+    height: 58,
+    marginRight: 2,
+    alignSelf: 'center',
+    borderRadius: 7,
   },
   modalView: {
     margin: 20,

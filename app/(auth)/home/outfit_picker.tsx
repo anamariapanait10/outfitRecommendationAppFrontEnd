@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView, Dimensions, Modal, Button } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Image, Dimensions, Modal, Switch } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Carousel from 'react-native-snap-carousel';
 import { DataStorageSingleton } from '../../../constants/data_storage_singleton';
@@ -10,19 +10,23 @@ import SpinnerOverlay from '../../../components/spinner_overlay';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Calendar } from 'react-native-calendars';
 import CustomAlert from '../../../components/CustomAlert';
-import {  MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 const OutfitPicker = () => {
     const { isLoaded, userId, getToken } = useAuth();
     const [topwearIndex, setTopwearIndex] = useState(0);
     const [bottomwearIndex, setBottomwearIndex] = useState(0);
     const [footwearIndex, setFootwearIndex] = useState(0);
+    const [bodywearIndex, setBodywearIndex] = useState(0);
     const topwearCarouselRef = useRef(null);
     const bottomwearCarouselRef = useRef(null);
     const footwearCarouselRef = useRef(null);
+    const bodywearCarouselRef = useRef(null);
     const [topwears, setTopwears] = useState<ClothingItem[]>([]);
     const [bottomwears, setBottomwears] = useState<ClothingItem[]>([]);
     const [footwears, setFootwears] = useState<ClothingItem[]>([]);
+    const [bodywears, setBodywears] = useState<ClothingItem[]>([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isCalendarVisible, setIsCalendarVisible] = useState(false);
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
@@ -38,16 +42,19 @@ const OutfitPicker = () => {
       {label: 'Smart Casual', value: 'Smart Casual'},
       {label: 'Party', value: 'Party'}
     ]);
+    const [isConfirmationModalVisible, setIsConfirmationModalVisible] = useState(false);
     const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
     const [filteredTopwears, setFilteredTopwears] = useState<ClothingItem[]>([]);
     const [filteredBottomwears, setFilteredBottomwears] = useState<ClothingItem[]>([]);
     const [filteredFootwears, setFilteredFootwears] = useState<ClothingItem[]>([]);
+    const [filteredBodywears, setFilteredBodywears] = useState<ClothingItem[]>([]);
     const [wearOutfitAlert, setWearOutfitAlert] = useState(false);
     const [isOccasionOpen, setIsOccasionOpen] = useState(false);
     const [isSeasonOpen, setIsSeasonOpen] = useState(false);
     const [isMaterialOpen, setIsMaterialOpen] = useState(false);
     const [isPatternOpen, setIsPatternOpen] = useState(false);
     const [isColorOpen, setIsColorOpen] = useState(false);
+    const [isOnePieceEnabled, setIsOnePieceEnabled] = useState(false);
 
     const [occasionValue, setOccasionValue] = useState("");
     const [seasonValue, setSeasonValue] = useState("");
@@ -118,14 +125,15 @@ const OutfitPicker = () => {
       { label: 'Brown', value: 'Brown' },
       { label: 'Purple', value: 'Purple' },
     ]);
-
     const [filters, setFilters] = useState({
       occasion: "",
       season: "",
       material: "",
       pattern: "",
-      color: ""
+      color: "",
+      one_piece: false
     });
+    const router = useRouter();
 
     const fetchClothesData = async () => {
       setLoading(true);
@@ -134,12 +142,15 @@ const OutfitPicker = () => {
       let topwears = clothes.filter(cloth => cloth["category"] === "Topwear");
       let bottomwears = clothes.filter(cloth => cloth["category"] === "Bottomwear");
       let footwears = clothes.filter(cloth => cloth["category"] === "Footwear");
+      let bodywears = clothes.filter(cloth => cloth["category"] === "Bodywear");
       setTopwears(topwears);
       setFilteredTopwears(topwears);
       setBottomwears(bottomwears);
       setFilteredBottomwears(bottomwears);
       setFootwears(footwears);
       setFilteredFootwears(footwears);
+      setBodywears(bodywears)
+      setFilteredBodywears(bodywears);
       setLoading(false);
     };
     
@@ -148,16 +159,19 @@ const OutfitPicker = () => {
       setFilteredTopwears(filterClothes(topwears));
       setFilteredBottomwears(filterClothes(bottomwears));
       setFilteredFootwears(filterClothes(footwears));
+      setFilteredBodywears(filterClothes(bodywears));
     }, []);
 
     useEffect(() => { // apelat cand se schimba filtrele
       setFilteredTopwears(filterClothes(topwears));
       setFilteredBottomwears(filterClothes(bottomwears));
       setFilteredFootwears(filterClothes(footwears));
+      setFilteredBodywears(filterClothes(bodywears));
 
       carouselGoToIndex(topwearCarouselRef, Math.floor(filteredTopwears.length / 2));
       carouselGoToIndex(bottomwearCarouselRef, Math.floor(filteredBottomwears.length / 2));
       carouselGoToIndex(footwearCarouselRef, Math.floor(filteredFootwears.length / 2));
+      carouselGoToIndex(bodywearCarouselRef, Math.floor(filteredBodywears.length / 2));
 
     }, [filters]);
 
@@ -173,13 +187,24 @@ const OutfitPicker = () => {
     };
 
     const replaceOutfit = async () => {
-      let clothes = [topwears[topwearIndex], bottomwears[bottomwearIndex], footwears[footwearIndex]];
+      let clothes = [];
+      if (isOnePieceEnabled) {
+        clothes = [bodywears[bodywearIndex], footwears[footwearIndex]];
+      } else {
+        clothes = [topwears[topwearIndex], bottomwears[bottomwearIndex], footwears[footwearIndex]];
+      }
       await DataStorageSingleton.getInstance().deleteOutfit(date, await getToken(), userId, isLoaded);
       DataStorageSingleton.getInstance().wearOutfit(clothes, date, await getToken(), userId, isLoaded);
+      setIsConfirmationModalVisible(true);
    }
 
     const handleSaveOutfit = async () => {
-      let clothes = [topwears[topwearIndex], bottomwears[bottomwearIndex], footwears[footwearIndex]];
+      let clothes = [];
+      if (isOnePieceEnabled) {
+        clothes = [bodywears[bodywearIndex], footwears[footwearIndex]];
+      } else {
+        clothes = [topwears[topwearIndex], bottomwears[bottomwearIndex], footwears[footwearIndex]];
+      }
       let currentYearMonth = date.split('-').slice(0, 2).join('-');
       await DataStorageSingleton.getInstance().fetchOutfitsForMonth(currentYearMonth, await getToken(), userId, isLoaded);
       let outfits = DataStorageSingleton.getInstance().monthOutfits;
@@ -187,6 +212,7 @@ const OutfitPicker = () => {
         setWearOutfitAlert(true);
       } else {
         DataStorageSingleton.getInstance().wearOutfit(clothes, date, await getToken(), userId, isLoaded);
+        setIsConfirmationModalVisible(true);
       }
     };
 
@@ -197,6 +223,23 @@ const OutfitPicker = () => {
             </View>
         );
     };
+
+    const renderBodywearItem = ({item, index}) => {
+      return (
+        <View style={styles.item}>
+          <Image src={item.image} style={{width: 160, height: 300, marginBottom: 10, borderRadius: 12}} />
+        </View>
+      );
+    }
+
+    const renderFootwearItem = ({item, index}) => {
+      return (
+        <View style={styles.item}>
+          <Image src={item.image} style={{width: 160, height: 160, marginBottom: 10, borderRadius: 12}} />
+        </View>
+      );
+    }
+
     const renderOutfitItem = (item) => {
       return (
         <View style={{}}>
@@ -207,7 +250,11 @@ const OutfitPicker = () => {
 
     const askAiExpert = async () => {
       setLoading(true);
-      await DataStorageSingleton.getInstance().askAiExpert(topwears[topwearIndex], bottomwears[bottomwearIndex], footwears[footwearIndex], dropdownValue, await getToken(), userId, isLoaded);
+      if (isOnePieceEnabled) {
+        await DataStorageSingleton.getInstance().askAiExpert(null, null, footwears[footwearIndex], bodywears[bodywearIndex], dropdownValue, await getToken(), userId, isLoaded);
+      } else {
+        await DataStorageSingleton.getInstance().askAiExpert(topwears[topwearIndex], bottomwears[bottomwearIndex], footwears[footwearIndex], null, dropdownValue, await getToken(), userId, isLoaded);
+      }
       setExpertResponse(DataStorageSingleton.getInstance().lastAIExpertResponse);
       setLoading(false);
       setIsModalVisible(true);
@@ -223,20 +270,22 @@ const OutfitPicker = () => {
       });
     };
     const applyFilters = () => {
-      setFilters({'occasion': occasionValue, 'season': seasonValue, 'material': materialValue, 'pattern': patternValue, 'color': colorValue});
+      setFilters({'occasion': occasionValue, 'season': seasonValue, 'material': materialValue, 'pattern': patternValue, 'color': colorValue, one_piece: isOnePieceEnabled});
       setIsFilterModalVisible(false);
     }
     const resetFilters = () => {
-      setFilters({'occasion': '', 'season': '', 'material': '', 'pattern': '', 'color': ''});
+      setFilters({'occasion': '', 'season': '', 'material': '', 'pattern': '', 'color': '', one_piece: false});
       setFilteredTopwears(topwears);
       setFilteredBottomwears(bottomwears);
       setFilteredFootwears(footwears);
+      setFilteredBodywears(bodywears);
       setOccasionValue("");
       setSeasonValue("");
       setMaterialValue("");
       setPatternValue("");
       setColorValue("");
       setIsFilterModalVisible(false);
+      setIsOnePieceEnabled(false);
     }
 
     return (
@@ -291,7 +340,7 @@ const OutfitPicker = () => {
                     <TouchableOpacity style={{backgroundColor: Colors.light_grey, paddingVertical: 10, paddingHorizontal: 10, borderRadius: 20}} onPress={() => setIsCalendarVisible(false)}>
                       <Text style={{color: 'black'}}>Close</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{backgroundColor: Colors.light_purple, paddingVertical: 10, paddingHorizontal: 17, borderRadius: 20}} onPress={() => {handleSaveOutfit(); setIsCalendarVisible(false)}}>
+                    <TouchableOpacity style={{backgroundColor: Colors.light_purple, paddingVertical: 10, paddingHorizontal: 17, borderRadius: 20}} onPress={() => {handleSaveOutfit(); setIsCalendarVisible(false);}}>
                       <Text style={{color: 'black'}}>Add</Text>
                     </TouchableOpacity>
                   </View>
@@ -311,6 +360,16 @@ const OutfitPicker = () => {
               >
                 <View style={[styles.filterView, {width: '80%'}]}>
                   <Text style={{ fontSize: 21, paddingBottom: 15, alignSelf: 'center' }}>Filter Clothes</Text>
+
+                  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginVertical: 10}}>
+                    <Text style={{width: '80%', marginLeft: 10, fontSize: 16, color: 'black',}}>Enable One-piece Clothing</Text>
+                    <Switch
+                      value={isOnePieceEnabled}
+                      onValueChange={() => setIsOnePieceEnabled(previousState => !previousState)}
+                      trackColor={{false: '#767577', true: Colors.purple}}
+                      thumbColor={isOnePieceEnabled ? Colors.light_purple : '#f4f3f4'}
+                    />
+                  </View>
 
                   <View style={styles.filterRow}>
                     <Text style={styles.label}>Event</Text>
@@ -408,6 +467,13 @@ const OutfitPicker = () => {
                 </View>
               </TouchableOpacity>
             </Modal>
+            <CustomAlert
+                visible={isConfirmationModalVisible}
+                onClose={() => setIsConfirmationModalVisible(false)}
+                onSubmit={() => {setIsConfirmationModalVisible(false); router.replace('/(auth)/home/calendar');}}
+                question="Outfit successfully scheduled!"
+                button="See calendar/Close"
+              />
           </GestureHandlerRootView>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between'}}>
             <View style={{width: '50%', marginLeft: 5}}>
@@ -449,68 +515,116 @@ const OutfitPicker = () => {
               question="An outfit is already scheduled for this date. Proceeding will overwrite it. Do you want to continue?"
             />
           <View style={styles.outfitContainer}>
-            {filteredTopwears.length > 0 ? 
-              <Carousel
-              data={filteredTopwears}
-              layout={"default"}
-              ref={topwearCarouselRef}
-              renderItem={renderCarouselItem}
-              sliderWidth={ Dimensions.get('window').width }
-              itemWidth={ filteredTopwears.length == 1 ? Dimensions.get('window').width : 150 } 
-              firstItem={Math.floor(filteredTopwears.length / 2)}
-              onSnapToItem={(index) => setTopwearIndex(index)}
-              inactiveSlideScale={0.6}
-              inactiveSlideOpacity={0.4}
-              inactiveSlideShift={20}
-              />
-              : <View style={{justifyContent: 'center', alignItems: 'center', marginTop:50}}>
-                  <Text style={{textAlign: 'center', height: 150, width: 150}}> Not enough topwears that match the filters</Text>
-                </View>
-              }
-            {filteredBottomwears.length > 0 ? 
-              <Carousel
-                data={filteredBottomwears}
-                layout={"default"}
-                ref={bottomwearCarouselRef}
-                renderItem={renderCarouselItem}
-                sliderWidth={ Dimensions.get('window').width }
-                itemWidth={ filteredBottomwears.length == 1 ? Dimensions.get('window').width : 150 }
-                firstItem={Math.floor(filteredBottomwears.length / 2)}
-                onSnapToItem={(index) => setBottomwearIndex(index)}
-                inactiveSlideScale={0.6}
-                inactiveSlideOpacity={0.4}
-                inactiveSlideShift={20}
-              />
-              : <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                  <Text style={{textAlign: 'center', height: 150, width: 150}}> Not enough bottomwears that match the filters</Text>
-                </View>
-              }
-            {filteredFootwears.length > 0 ? 
-              <Carousel
-                data={filteredFootwears}
-                layout={"default"}
-                ref={footwearCarouselRef}
-                renderItem={renderCarouselItem}
-                sliderWidth={ Dimensions.get('window').width }
-                itemWidth={ filteredFootwears.length == 1 ? Dimensions.get('window').width : 150 }
-                firstItem={Math.floor(filteredFootwears.length / 2)}
-                onSnapToItem={(index) => setFootwearIndex(index)}
-                inactiveSlideScale={0.6}
-                inactiveSlideOpacity={0.4}
-                inactiveSlideShift={20}
-              />
-              : <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                  <Text style={{textAlign: 'center', height: 200, width: 150}}> Not enough footwears that match the filters</Text>
-                </View>
-              }
-          </View> 
+            {isOnePieceEnabled ? (
+              <>
+                {filteredBodywears.length > 0 ? (
+                  <Carousel
+                    data={filteredBodywears}
+                    layout={"default"}
+                    ref={bodywearCarouselRef}
+                    renderItem={renderBodywearItem}
+                    sliderWidth={Dimensions.get('window').width}
+                    itemWidth={filteredBodywears.length == 1 ? Dimensions.get('window').width : 150}
+                    firstItem={Math.floor(filteredBodywears.length / 2)}
+                    onSnapToItem={(index) => setBodywearIndex(index)}
+                    inactiveSlideScale={0.6}
+                    inactiveSlideOpacity={0.4}
+                    inactiveSlideShift={20}
+                  />
+                ) : (
+                  <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 150 }}>
+                    <Text style={{ textAlign: 'center', height: 150, width: 150 }}> Not enough bodywears that match the filters</Text>
+                  </View>
+                )}
+                {filteredFootwears.length > 0 ? (
+                  <Carousel
+                    data={filteredFootwears}
+                    layout={"default"}
+                    ref={footwearCarouselRef}
+                    renderItem={renderFootwearItem}
+                    sliderWidth={Dimensions.get('window').width}
+                    itemWidth={filteredFootwears.length == 1 ? Dimensions.get('window').width : 150}
+                    firstItem={Math.floor(filteredFootwears.length / 2)}
+                    onSnapToItem={(index) => setFootwearIndex(index)}
+                    inactiveSlideScale={0.6}
+                    inactiveSlideOpacity={0.4}
+                    inactiveSlideShift={20}
+                  />
+                ) : (
+                  <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ textAlign: 'center', height: 200, width: 150 }}> Not enough footwears that match the filters</Text>
+                  </View>
+                )}
+              </>
+            ) : (
+              <>
+                {filteredTopwears.length > 0 ? (
+                  <Carousel
+                    data={filteredTopwears}
+                    layout={"default"}
+                    ref={topwearCarouselRef}
+                    renderItem={renderCarouselItem}
+                    sliderWidth={Dimensions.get('window').width}
+                    itemWidth={filteredTopwears.length == 1 ? Dimensions.get('window').width : 150}
+                    firstItem={Math.floor(filteredTopwears.length / 2)}
+                    onSnapToItem={(index) => setTopwearIndex(index)}
+                    inactiveSlideScale={0.6}
+                    inactiveSlideOpacity={0.4}
+                    inactiveSlideShift={20}
+                  />
+                ) : (
+                  <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 50 }}>
+                    <Text style={{ textAlign: 'center', height: 150, width: 150 }}> Not enough topwears that match the filters</Text>
+                  </View>
+                )}
+                {filteredBottomwears.length > 0 ? (
+                  <Carousel
+                    data={filteredBottomwears}
+                    layout={"default"}
+                    ref={bottomwearCarouselRef}
+                    renderItem={renderCarouselItem}
+                    sliderWidth={Dimensions.get('window').width}
+                    itemWidth={filteredBottomwears.length == 1 ? Dimensions.get('window').width : 150}
+                    firstItem={Math.floor(filteredBottomwears.length / 2)}
+                    onSnapToItem={(index) => setBottomwearIndex(index)}
+                    inactiveSlideScale={0.6}
+                    inactiveSlideOpacity={0.4}
+                    inactiveSlideShift={20}
+                  />
+                ) : (
+                  <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ textAlign: 'center', height: 150, width: 150 }}> Not enough bottomwears that match the filters</Text>
+                  </View>
+                )}
+                {filteredFootwears.length > 0 ? (
+                  <Carousel
+                    data={filteredFootwears}
+                    layout={"default"}
+                    ref={footwearCarouselRef}
+                    renderItem={renderCarouselItem}
+                    sliderWidth={Dimensions.get('window').width}
+                    itemWidth={filteredFootwears.length == 1 ? Dimensions.get('window').width : 150}
+                    firstItem={Math.floor(filteredFootwears.length / 2)}
+                    onSnapToItem={(index) => setFootwearIndex(index)}
+                    inactiveSlideScale={0.6}
+                    inactiveSlideOpacity={0.4}
+                    inactiveSlideShift={20}
+                  />
+                ) : (
+                  <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 40 }}>
+                    <Text style={{ textAlign: 'center', height: 200, width: 150 }}> Not enough footwears that match the filters</Text>
+                  </View>
+                )}
+              </>
+            )}
+          </View>
         </View>
-        <View style={{position: 'absolute', bottom: 20, left: 20}}>
-            <TouchableOpacity style={styles.filerButton} onPress={() => {setIsFilterModalVisible(true)}}>
-              <MaterialIcons name="tune" size={24} color="white" />
-            </TouchableOpacity>
+        <View style={{ position: 'absolute', bottom: 20, left: 20 }}>
+          <TouchableOpacity style={styles.filerButton} onPress={() => { setIsFilterModalVisible(true) }}>
+            <MaterialIcons name="tune" size={24} color="white" />
+          </TouchableOpacity>
         </View>
-        <View style={{position: 'absolute', bottom: 20, right: 20}}>
+        <View style={{ position: 'absolute', bottom: 20, right: 20 }}>
           <TouchableOpacity style={styles.button} onPress={openCalendar}>
             <Text style={styles.buttonText}>Save Outfit</Text>
           </TouchableOpacity>
