@@ -109,7 +109,7 @@ export class DataStorageSingleton {
         }
         try {
             const baseUrl = process.env.EXPO_PUBLIC_BASE_API_URL + '/outfit-items/get_recommendations/';
-            const queryParams = `?weather=${encodeURIComponent(weather)}&temperature=${encodeURIComponent(temperature)}&onePiece=${isOnePiece}`;
+            const queryParams = `?weather=${encodeURIComponent(weather)}&temperature=${encodeURIComponent(temperature)}&onePiece=${isOnePiece}&userId=${userId}`;
             const urlWithParams = baseUrl + queryParams;
             const response = await fetch(urlWithParams, {
                 method: 'GET',

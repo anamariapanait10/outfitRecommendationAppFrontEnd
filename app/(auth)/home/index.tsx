@@ -65,7 +65,7 @@ const Home = () => {
     }
     setWeather(weatherString);
     setTemperature(temperatureString.toLowerCase());
-    await DataStorageSingleton.getInstance().fetchRecommendations(await getToken(), userId, isLoaded, weatherString, temperatureString, isOnePiece.toString());
+    await DataStorageSingleton.getInstance().fetchRecommendations(await getToken(), userId?.toString(), isLoaded, weatherString, temperatureString, isOnePiece.toString());
     let recommendations = DataStorageSingleton.getInstance().recommendations;
     if(recommendations.error){
       setRecommendationError(recommendations.error);
