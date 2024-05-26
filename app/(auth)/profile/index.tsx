@@ -145,7 +145,7 @@ const Profile = () => {
           <Text style={styles.title}>Least worn items</Text>
           <View style={{flexDirection: 'row', justifyContent:'center', width: '100%'}}>
             {newStatsData?.leastWornItems != undefined && Object.entries(newStatsData?.leastWornItems).map(([key, value], index) => (
-              <View style={styles.leastWornColumn} >
+              <View style={styles.leastWornColumn} key={key}>
                 { value?.image != undefined && value?.image != '' &&
                     <>
                       <Image source={{ uri: `${value.image}` }} style={styles.image} />

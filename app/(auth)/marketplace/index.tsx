@@ -49,6 +49,7 @@ const MarketplaceScreen = () => {
                 setItems(json);
                 let filteredItems = json.filter(item => item.user_id !== userId);
                 setFilteredItems(filteredItems);
+                setActiveTab('marketplace items');
             } catch (error) {
                 console.error("Error making POST request:", error);
             }
@@ -113,13 +114,23 @@ const MarketplaceScreen = () => {
             <View style={styles.container}>
                 {!filteredItems ? (
                     <ActivityIndicator size="large" color="#0000ff" />
-                ) : (
-                    <FlatList
-                        data={filteredItems}
-                        renderItem={renderItem}
-                        keyExtractor={item => item.id.toString()}
-                    />
-                )}
+                ) : (<>{
+                        (filteredItems.length != 0) ? (
+                            <FlatList
+                                data={filteredItems}
+                                renderItem={renderItem}
+                                keyExtractor={item => item.id.toString()}
+                            />
+                        ) : (
+                            <View style={{ alignContent: 'center', width: '100%'}}>
+                                <View style={{marginTop: 20, backgroundColor: 'white', width: '80%', alignSelf: 'center', padding: 10, borderRadius: 10}}>
+                                    <Text style={{ textAlign: 'center' }}>No items to show</Text>
+                                </View>
+                            </View>
+                        )
+                    }
+                    </>)
+                }
             </View>
         </View>
     );

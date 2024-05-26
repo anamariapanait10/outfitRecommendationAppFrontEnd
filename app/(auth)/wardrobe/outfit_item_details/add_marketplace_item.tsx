@@ -18,6 +18,7 @@ const UploadMarketplaceItem = () => {
         price: '',
         location: '',
         images: null,
+        phone_number: '',
     });
     const { id } = useLocalSearchParams();
     const placeholderImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/B8AAwAB/QL8T0LgAAAABJRU5ErkJggg==";
@@ -74,6 +75,7 @@ const UploadMarketplaceItem = () => {
                 posted_date: new Date().toISOString(),
                 price: parseFloat(itemDetails.price),
                 location: itemDetails.location,
+                phone_number: itemDetails.phone_number,
               });
       
               console.log("POST request body:", requestBody);
@@ -167,6 +169,13 @@ const UploadMarketplaceItem = () => {
                     // label="Location"
                     value={itemDetails.location}
                     onChangeText={text => handleInputChange('location', text)}
+                    style={styles.input}
+                />
+                <Text style={styles.label}>Phone Number</Text>
+                <TextInput
+                    value={itemDetails.phone_number}
+                    keyboardType='phone-pad'
+                    onChangeText={text => handleInputChange('phone_number', text)}
                     style={styles.input}
                 />
                 <TouchableOpacity style={styles.saveButton} onPress={handleSubmit}>
