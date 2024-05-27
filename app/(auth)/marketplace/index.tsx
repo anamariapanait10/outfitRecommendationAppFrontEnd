@@ -118,7 +118,7 @@ const MarketplaceScreen = () => {
                     <Text style={styles.tabText}>My Items</Text>
                 </TouchableOpacity>
             </View>
-            <View style={styles.container}>
+            <View style={{height: '92%'}}>
                 {!filteredItems ? (
                     <ActivityIndicator size="large" color="#0000ff" />
                 ) : (<>{

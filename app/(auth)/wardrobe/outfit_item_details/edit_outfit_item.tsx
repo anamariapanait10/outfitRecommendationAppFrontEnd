@@ -33,6 +33,15 @@ const EditClothingItemForm = () => {
   const [selectedWeather, setWeather] = useState(15);
   const [selectedPreference, setPreference] = useState(0.5);
 
+  const [imageError, setImageError] = useState(false);
+  const [categoryError, setCategoryError] = useState(false);
+  const [subcategoryError, setSubcategoryError] = useState(false);
+  const [colorError, setColorError] = useState(false);
+  const [materialError, setMaterialError] = useState(false);
+  const [patternError, setPatternError] = useState(false);
+  const [seasonError, setSeasonError] = useState(false);
+  const [occasionError, setOccasionError] = useState(false);
+
   useEffect(() => {
     if (id) {
       const clothingItem = DataStorageSingleton.getInstance().clothingItems.find(i => i.id === parseInt(id));
@@ -174,6 +183,28 @@ const EditClothingItemForm = () => {
       }
     };
 
+    let localImageError = image === '';
+    let localCategoryError = selectedCategory === '';
+    let localSubcategoryError = selectedSubCategory === '';
+    let localColorError = selectedColor === '';
+    let localMaterialError = selectedMaterial === '';
+    let localPatternError = selectedPattern === '';
+    let localSeasonError = selectedSeasons.length === 0;
+    let localOccasionError = selectedOccasions.length === 0;
+
+    setImageError(localImageError);
+    setCategoryError(localCategoryError);
+    setSubcategoryError(localSubcategoryError);
+    setColorError(localColorError);
+    setMaterialError(localMaterialError);
+    setPatternError(localPatternError);
+    setSeasonError(localSeasonError);
+    setOccasionError(localOccasionError);
+
+    if (localImageError || localCategoryError || localSubcategoryError || localColorError || localMaterialError || localPatternError || localSeasonError || localOccasionError) {
+      return;
+    }
+
     makePutRequest();
   };
 
@@ -196,7 +227,7 @@ const EditClothingItemForm = () => {
     'Light pink', 'Pink', 'Red',
     'Dark red', 'Brown', 'Purple', 'Multicolor'
   ];
-  const materials = ['Cotton', 'Wool', 'Silk', 'Synthetic Fibers', 'Leather', 'Linen'];
+  const materials = ['Cotton', 'Synthetic Fibers', 'Silk', 'Leather', 'Wool', 'Linen'];
   const patterns = ['Striped', 'Checkered', 'Floral', 'Dotted', 'Plain', 'Animal Print', 'Camouflage', 'Graphic'];
   const seasons = ['Spring', 'Summer', 'Autumn', 'Winter'];
   const occasions = ['Casual', 'Ethnic', 'Formal', 'Sports', 'Smart Casual', 'Party'];
@@ -213,6 +244,7 @@ const EditClothingItemForm = () => {
             <Text>Select an Image</Text>
           )}
         </TouchableOpacity>
+        {imageError && <Text style={styles.errorLabel}>Image is required</Text>}
 
         <Text style={styles.title}>What item is this?</Text>
         
@@ -225,9 +257,11 @@ const EditClothingItemForm = () => {
               label={category}
               isActive={selectedCategory == category}
               onPress={() => { setSelectedCategory(category) }}
+              fixedSize='32%'
             />
           ))}
         </View>
+        {categoryError && <Text style={styles.errorLabel}>Category is required</Text>}
 
         {selectedCategory && (
           <View style={styles.subcategoryContainer}>
@@ -239,25 +273,29 @@ const EditClothingItemForm = () => {
                   label={subcategory}
                   isActive={selectedSubCategory == subcategory}
                   onPress={() => { setSelectedSubCategory(subcategory) }}
+                  fixedSize='30%'
                 />
               ))}
             </View>
           </View>
         )}
+        {subcategoryError && <Text style={styles.errorLabel}>Subcategory is required</Text>}
         
         {/* Color selection */}
         <Text style={styles.label}>Color</Text>
-        <View style={styles.toggleButtonGroup}>
+        <View style={[styles.toggleButtonGroup, {justifyContent: 'center', gap: 2}]}>
           {colors.map((color) => (
             <ToggleButton
               key={color}
-              label={color}
+              label={color.replace('Light ', 'L-').replace('Dark ', 'D-')}
               isActive={selectedColor?.toLowerCase() == color.toLowerCase()}
               onPress={() => setSelectedColor(color)}
               color={color.toLowerCase().replace(' ', '-')}
+              fixedSize='32%'
             />
           ))}
         </View>
+        {colorError && <Text style={styles.errorLabel}>Color is required</Text>}
         
         {/* Material selection */}
         <Text style={styles.label}>Material</Text>
@@ -268,22 +306,26 @@ const EditClothingItemForm = () => {
               label={material}
               isActive={selectedMaterial == material}
               onPress={() => setSelectedMaterial(material)}
+              fixedSize='30%'
             />
           ))}
         </View>
+        {materialError && <Text style={styles.errorLabel}>Material is required</Text>}
         
         {/* Pattern selection */}
         <Text style={styles.label}>Pattern</Text>
-        <View style={styles.toggleButtonGroup}>
+        <View style={[styles.toggleButtonGroup, {justifyContent: 'center'}]}>
           {patterns.map((pattern) => (
             <ToggleButton
               key={pattern}
               label={pattern}
               isActive={selectedPattern == pattern}
               onPress={() => setSelectedPattern(pattern)}
+              fixedSize='30%'
             />
           ))}
         </View>
+        {patternError && <Text style={styles.errorLabel}>Pattern is required</Text>}
 
         <Text style={styles.title}>When will you wear it?</Text>
         
@@ -295,9 +337,11 @@ const EditClothingItemForm = () => {
               label={season}
               isActive={selectedSeasons.includes(season)}
               onPress={() => handleToggle(season, selectedSeasons, setSelectedSeasons)}
+              fixedSize='23%'
             />
           ))}
         </View>
+        {seasonError && <Text style={styles.errorLabel}>Season is required</Text>}
         
         <Text style={styles.label}>Occasions</Text>
         <View style={styles.toggleButtonGroup}>
@@ -307,9 +351,11 @@ const EditClothingItemForm = () => {
               label={occasion}
               isActive={selectedOccasions.includes(occasion)}
               onPress={() => handleToggle(occasion, selectedOccasions, setSelectedOccasions)}
+              fixedSize='32%'
             />
           ))}
         </View>
+        {occasionError && <Text style={styles.errorLabel}>Occasion is required</Text>}
 
         <ChooseImageModal
           modalVisible={modalVisible}
@@ -545,6 +591,10 @@ const styles = StyleSheet.create({
   },
   marksBelow: {
   },
+  errorLabel: {
+    color: 'red',
+    fontSize: 12,
+  }
 });
 
 export default EditClothingItemForm;
