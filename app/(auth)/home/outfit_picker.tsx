@@ -524,7 +524,7 @@ const OutfitPicker = () => {
               question="An outfit is already scheduled for this date. Proceeding will overwrite it. Do you want to continue?"
               button="Yes/No"
             />
-          <View style={styles.outfitContainer}>
+          {!loading && <View style={styles.outfitContainer}>
             {isOnePieceEnabled ? (
               <>
                 {filteredBodywears.length > 0 ? (
@@ -627,7 +627,7 @@ const OutfitPicker = () => {
                 )}
               </>
             )}
-          </View>
+          </View>}
         </View>
         <View style={{ position: 'absolute', bottom: 20, left: 20 }}>
           <TouchableOpacity style={styles.filerButton} onPress={() => { setIsFilterModalVisible(true) }}>

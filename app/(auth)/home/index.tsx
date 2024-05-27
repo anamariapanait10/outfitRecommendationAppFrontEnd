@@ -15,6 +15,7 @@ import CustomAlert from '../../../components/CustomAlert';
 import Carousel from 'react-native-snap-carousel';
 import PaginationDots from '../../../components/PaginationDots';
 import { useFocusEffect } from '@react-navigation/native';
+import { set } from 'date-fns';
 
 const Home = () => {
   const { isLoaded, userId, getToken } = useAuth();
@@ -212,15 +213,16 @@ const Home = () => {
                 onSubmit={() => {
                   replaceOutfit();
                   setWearOutfitAlert(false);
+                  setWearOutfitSuccessAlert(true);
                 }}
                 question="An outfit is already scheduled for this date. Proceeding will overwrite it. Do you want to continue?"
               />
               <CustomAlert
                 visible={wearOutfitSuccessAlert}
                 onClose={() => setWearOutfitSuccessAlert(false)}
-                onSubmit={() => setWearOutfitSuccessAlert(false)}
+                onSubmit={() => {setWearOutfitSuccessAlert(false); router.push({pathname: '/(auth)/home/calendar'});}}
                 question="Outfit successfully scheduled for today!"
-                button="Close"
+                button="See calendar/Close"
               />
               <View style={styles.buttonsContainer}>
                 <TouchableOpacity style={styles.wearAnotherOutfitButton} onPress={() => router.push({pathname: '/(auth)/home/outfit_picker'})}>

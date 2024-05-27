@@ -35,15 +35,14 @@ const Profile = () => {
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
-        const stats = await DataStorageSingleton.getInstance().makeGETRequest('/stats/get_stats?userId='+userId, await getToken(), userId, isLoaded);
-        console.log("Stats: ", stats);
+        const stats = await DataStorageSingleton.getInstance().makeGETRequest('/stats/get_wardrobe_stats?userId='+userId, await getToken(), userId, isLoaded);
         setClothPercentage(Math.round(stats.worn_clothes_percentage * 100) / 100);
         setOutfitPercentage(stats.worn_outfits_percentage);
         setWornOutfits(stats.worn_outfits);
         setTotalOutfits(stats.total_outfits);
         setSeason(stats.season);
 
-        const newStats = await DataStorageSingleton.getInstance().getNewStats(await getToken(), userId, isLoaded);
+        const newStats = await DataStorageSingleton.getInstance().getStats(await getToken(), userId, isLoaded);
         if(newStats == undefined || newStats.status == 'wardrobe empty'){
           setNewStatsData("empty");
           return;
@@ -91,29 +90,33 @@ const Profile = () => {
     <ScrollView>
       {user && (
         <View style={styles.profile}>
-          <TouchableOpacity onPress={onCaptureImage}>
-            <Image source={{ uri: user?.imageUrl }} style={styles.avatar} />
-          </TouchableOpacity>
-          <View style={{flexDirection: 'row', gap: 6}}>
-            {edit ? (
-              <View style={styles.editRow}>
-                <TextInput placeholder='First Name' value={firstName || ''} onChangeText={setFirstName} style={styles.inputField} />
-                <TextInput placeholder='Last Name' value={lastName || ''} onChangeText={setLastName} style={styles.inputField} />
-                <TouchableOpacity onPress={onSaveUser}>
-                  <Ionicons name="checkmark-outline" size={24} color={Colors.dark} />
-                </TouchableOpacity>
+          <View style={{flexDirection: 'row', alignContent: 'space-between', width: '100%'}}>
+            <TouchableOpacity onPress={onCaptureImage}>
+              <Image source={{ uri: user?.imageUrl }} style={styles.avatar} />
+            </TouchableOpacity>
+            <View style={{marginLeft: 10}}>
+              <View style={{flexDirection: 'row', gap: 6}}>
+                {edit ? (
+                  <View style={styles.editRow}>
+                    <TextInput placeholder='First Name' value={firstName || ''} onChangeText={setFirstName} style={styles.inputField} />
+                    <TextInput placeholder='Last Name' value={lastName || ''} onChangeText={setLastName} style={styles.inputField} />
+                    <TouchableOpacity onPress={onSaveUser}>
+                      <Ionicons name="checkmark-outline" size={24} color={Colors.dark} />
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <View style={styles.editRow}>
+                    <Text style={{fontSize: 22 }}>{firstName} {lastName} </Text>
+                    <TouchableOpacity onPress={() => setEdit(true)}>
+                      <Ionicons name="create-outline" size={24} color={Colors.dark} />
+                    </TouchableOpacity>
+                  </View>
+                )}
               </View>
-            ) : (
-              <View style={styles.editRow}>
-                <Text style={{fontSize: 22 }}>{firstName} {lastName} </Text>
-                <TouchableOpacity onPress={() => setEdit(true)}>
-                  <Ionicons name="create-outline" size={24} color={Colors.dark} />
-                </TouchableOpacity>
-              </View>
-            )}
+              <Text>{email}</Text>
+              <Text>Since {user?.createdAt?.toLocaleDateString()}</Text>
+            </View>
           </View>
-          <Text>{email}</Text>
-          <Text>Since {user?.createdAt?.toLocaleDateString()}</Text>
         </View>
       )}
       { newStatsData !== "empty" ? (<>
@@ -195,7 +198,7 @@ const styles = StyleSheet.create({
   },
   profile: {
     alignItems: 'center',
-    padding: 24,
+    padding: 20,
     backgroundColor: '#fff',
     marginBottom: 20,
     elevation: 2,
