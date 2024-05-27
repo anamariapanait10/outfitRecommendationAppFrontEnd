@@ -78,10 +78,11 @@ export class DataStorageSingleton {
                 var temperature = data.list[i].main.temp;
                 var weatherId = data.list[i].weather[0].id;
                 var icon = data.list[i].weather[0].icon;
-                this.weatherItems.push(new WeatherItem(date, temperature, weatherId, icon));
+                this.weatherItems.push(new WeatherItem(date, temperature, weatherId, icon.replace('n', 'd')));
             }
            
         }
+        console.log(this.weatherItems);
     };
 
     public fetchWeatherData = async () => {
@@ -309,10 +310,8 @@ export class DataStorageSingleton {
             });
             const data = await response.json();
             if (customResponseProcessing) {
-                console.log("Custom response processing");
                 customResponseProcessing(data);
             } else {
-                console.log("No custom response processing");
                 return data;
             }
         } catch (error: any) {

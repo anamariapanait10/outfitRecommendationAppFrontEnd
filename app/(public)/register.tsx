@@ -1,8 +1,8 @@
-import { Button, TextInput, View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { Pressable, TextInput, View, StyleSheet, TouchableOpacity, Text, ImageBackground} from 'react-native';
 import { useSignUp } from '@clerk/clerk-expo';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { useState } from 'react';
-import { Stack } from 'expo-router';
+import { Stack, Link } from 'expo-router';
 import Colors from '../../constants/Colors';
 
 const Register = () => {
@@ -61,33 +61,43 @@ const Register = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Stack.Screen options={{ headerBackVisible: !pendingVerification }} />
-      <Spinner visible={loading} />
+    <ImageBackground source={require('../../assets/images/login_screen.jpg')} style={styles.backgroundImage} imageStyle={styles.backgroundImageOpacity}>
+      <View style={styles.container}>
+        <Stack.Screen options={{ headerBackVisible: !pendingVerification }} />
+        <Spinner visible={loading} />
 
-      {!pendingVerification && (
-        <>
-          <TextInput autoCapitalize="none" placeholder="example@domain.com" value={emailAddress} onChangeText={setEmailAddress} style={styles.inputField} />
-          <TextInput placeholder="password" value={password} onChangeText={setPassword} secureTextEntry style={styles.inputField} />
+        <Text style={styles.title}>Register</Text>
 
-          <TouchableOpacity onPress={onSignUpPress} style={styles.button}>
-              <Text style={{color: 'white', fontSize: 18}}>Sign up</Text>
-          </TouchableOpacity>
-        </>
-      )}
+        {!pendingVerification && (
+          <>
+            <TextInput autoCapitalize="none" placeholder="example@domain.com" value={emailAddress} onChangeText={setEmailAddress} style={styles.inputField} />
+            <TextInput placeholder="password" value={password} onChangeText={setPassword} secureTextEntry style={styles.inputField} />
 
-      {pendingVerification && (
-        <>
-          <View>
-            <TextInput value={code} placeholder="Enter sent code" style={styles.inputField} onChangeText={setCode} />
-          </View>
+            <TouchableOpacity onPress={onSignUpPress} style={styles.button}>
+                <Text style={{color: 'white', fontSize: 18}}>Sign up</Text>
+            </TouchableOpacity>
+          </>
+        )}
 
-          <TouchableOpacity onPress={onPressVerify} style={styles.button}>
-              <Text style={{color: 'white', fontSize: 18}}>Verify Email</Text>
-          </TouchableOpacity>
-        </>
-      )}
-    </View>
+        {pendingVerification && (
+          <>
+            <View>
+              <TextInput value={code} placeholder="Enter sent code" style={styles.inputField} onChangeText={setCode} />
+            </View>
+
+            <TouchableOpacity onPress={onPressVerify} style={styles.button}>
+                <Text style={{color: 'white', fontSize: 18}}>Verify Email</Text>
+            </TouchableOpacity>
+          </>
+        )}
+
+        <Link href="/login" asChild>
+          <Pressable style={styles.link}>
+            <Text style={styles.buttonText}>Already have an account? Login</Text>
+          </Pressable>
+        </Link>
+      </View>
+    </ImageBackground>
   );
 };
 
@@ -95,7 +105,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    padding: 20,
+    paddingHorizontal: 20,
+    marginTop: 0,
+  },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
+  },
+  backgroundImageOpacity: {
+    opacity: 0.5, 
   },
   inputField: {
     marginVertical: 4,
@@ -106,6 +124,13 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#fff',
   },
+  link: {
+    margin: 8,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: Colors.purple,
+  },
   button: {
     backgroundColor: Colors.purple,
     padding: 10,
@@ -113,6 +138,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
     marginBottom: 10,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: Colors.purple,
+    textAlign: 'center',
+    marginBottom: 20,
   },
 });
 

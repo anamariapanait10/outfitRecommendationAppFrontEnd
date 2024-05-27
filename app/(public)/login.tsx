@@ -1,7 +1,7 @@
 import { useSignIn } from '@clerk/clerk-expo';
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
-import { View, StyleSheet, TextInput, Pressable, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TextInput, Pressable, Text, TouchableOpacity, ImageBackground } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Colors from '../../constants/Colors';
 
@@ -32,31 +32,42 @@ const Login = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Spinner visible={loading} />
+    <ImageBackground source={require('../../assets/images/login_screen.jpg')} style={styles.backgroundImage} imageStyle={styles.backgroundImageOpacity}>
+      <View style={styles.container}>
+        <Spinner visible={loading} />
 
-      <TextInput autoCapitalize="none" placeholder="example@domain.com" value={emailAddress} onChangeText={setEmailAddress} style={styles.inputField} />
-      <TextInput placeholder="password" value={password} onChangeText={setPassword} secureTextEntry style={styles.inputField} />
+        <Text style={styles.title}>Login</Text>
 
-      <TouchableOpacity onPress={onSignInPress} style={styles.loginButton}>
-        <Text style={{color: 'white', fontSize: 18}}>Login</Text>
-      </TouchableOpacity>
+        <TextInput autoCapitalize="none" placeholder="example@domain.com" value={emailAddress} onChangeText={setEmailAddress} style={styles.inputField} />
+        <TextInput placeholder="password" value={password} onChangeText={setPassword} secureTextEntry style={styles.inputField} />
 
-      <Link href="/reset" asChild>
-        <Pressable style={styles.button}>
-          <Text style={styles.buttonText}>Forgot password?</Text>
-        </Pressable>
-      </Link>
-      <Link href="/register" asChild>
-        <Pressable style={styles.button}>
-          <Text style={styles.buttonText}>Create An Account</Text>
-        </Pressable>
-      </Link>
-    </View>
+        <TouchableOpacity onPress={onSignInPress} style={styles.loginButton}>
+          <Text style={{color: 'white', fontSize: 18}}>Login</Text>
+        </TouchableOpacity>
+
+        <Link href="/reset" asChild>
+          <Pressable style={styles.button}>
+            <Text style={styles.buttonText}>Forgot password?</Text>
+          </Pressable>
+        </Link>
+        <Link href="/register" asChild>
+          <Pressable style={styles.button}>
+            <Text style={styles.buttonText}>Create An Account</Text>
+          </Pressable>
+        </Link>
+      </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
+  },
+  backgroundImageOpacity: {
+    opacity: 0.5, // Adjust the opacity here (0.5 means 50% opacity)
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -72,6 +83,13 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     padding: 10,
     backgroundColor: '#fff',
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: Colors.purple,
+    textAlign: 'center',
+    marginBottom: 20,
   },
   button: {
     margin: 8,

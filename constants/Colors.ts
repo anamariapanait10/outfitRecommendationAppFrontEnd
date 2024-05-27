@@ -26,4 +26,5 @@ export default {
   red: '#eb5058',
   white: '#fff',
   black: '#000',
+  ligh_blue: '#d9edf8',
 };

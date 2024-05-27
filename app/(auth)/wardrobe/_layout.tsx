@@ -37,10 +37,10 @@ export default function Layout() {
         <Stack.Screen
             name="add_cloth_item"
             options={{
-                headerTitle: 'Add A Clothing Item',
+                headerTitle: 'Create a Clothing Item',
                 headerTitleStyle: {
-                    fontFamily: 'AlexBrush',
-                    fontSize: 25,
+                    fontFamily: 'GreatVibes',
+                    fontSize: 26,
                 },
                 headerTitleAlign: 'center',
                 headerLeft: headerWithBack,
@@ -71,9 +71,9 @@ export default function Layout() {
         <Stack.Screen
             name="outfit_item_details/add_marketplace_item"
             options={{
-              headerTitle: ' Add Item To Marketplace ',
+              headerTitle: ' Create a Marketplace Item  ',
               headerTitleStyle: {
-                fontFamily: 'AlexBrush',
+                fontFamily: 'GreatVibes',
                 fontSize: 25,
               },
               headerTitleAlign: 'center',

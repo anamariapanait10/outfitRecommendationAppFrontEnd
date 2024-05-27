@@ -8,6 +8,7 @@ import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { useAuth } from "@clerk/clerk-expo";
 import Colors from "../../../../constants/Colors";
 import ToggleButton from "../../../../components/ToggleButton"
+import SpinnerOverlay from '../../../../components/spinner_overlay';
 
 const UploadMarketplaceItem = () => {
     const [itemDetails, setItemDetails] = useState({
@@ -26,6 +27,7 @@ const UploadMarketplaceItem = () => {
     const isFocused = useIsFocused();
     const { isLoaded, userId, getToken } = useAuth();
     const [image, setImage] = useState("");
+    const [loading, setLoading] = useState(false);
     
     const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
     const conditions = ['Poor', 'Good', 'Like new', 'New'];
@@ -41,6 +43,7 @@ const UploadMarketplaceItem = () => {
             setCloth(ci);
             setImage(ci.image);
             DataStorageSingleton.getInstance().clothId = ci.id;
+            generateDescription(ci.id);
           }
         }
     };
@@ -53,6 +56,36 @@ const UploadMarketplaceItem = () => {
             
         }, [isFocused])
     );
+
+    const generateDescription = async (id) => {
+      try {
+        setLoading(true);
+        if (!userId || !isLoaded) {
+          console.log("No authenticated user found.");
+          return;
+        }
+        const token = await getToken();
+        const requestBody = JSON.stringify({
+          id: id,
+        });
+        const response = await fetch(
+          process.env.EXPO_PUBLIC_BASE_API_URL + "/outfit-items/get_description/",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: requestBody
+          }
+        );
+        let description = await response.text();
+        setLoading(false);
+        setItemDetails({ ...itemDetails, description: description.replaceAll('\"', '')});
+      } catch (error) {
+          console.error('Error generating description:', error);
+      }
+  };
 
     const handleSubmit = () => {
         const makePostRequest = async () => {
@@ -110,6 +143,7 @@ const UploadMarketplaceItem = () => {
 
     return (
         <ScrollView style={styles.container}>
+            <SpinnerOverlay isVisible={loading} />
             <View style={{marginRight: 10, marginLeft: 10}}>
                 {/* Image picker */}
                 <View style={[styles.imagePicker, image? styles.imagePickerAfterSelection : styles.imagePickerBeforeSelection]}>
@@ -154,7 +188,7 @@ const UploadMarketplaceItem = () => {
                     onChangeText={text => handleInputChange('description', text)}
                     multiline
                     numberOfLines={4}
-                    style={styles.input}
+                    style={[styles.input, {height: 80}]}
                 />
                 <Text style={styles.label}>Price</Text>
                 <TextInput

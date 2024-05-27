@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, FlatList, RefreshControl, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, FlatList, RefreshControl, StyleSheet, Text } from 'react-native';
 import ClothCard, { ClothingItem } from '../../../components/cloth_card';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import FilterBar from '../../../components/filter_bar';
@@ -13,11 +13,18 @@ const WardrobeScreen = () => {
     const { isLoaded, userId, getToken } = useAuth();
     const [refreshing, setRefreshing] = useState(true);
     const [filteredClothes, setFilteredClothes] = useState<ClothingItem[] | undefined>();
+    const [wardrobeError, setWardrobeError] = useState<string | undefined>();
 
     const fetchClothesData = async () => {
         setRefreshing(true);
         await DataStorageSingleton.getInstance().fetchClothesData(await getToken(), userId, isLoaded);
-        setFilteredClothes(DataStorageSingleton.getInstance().clothingItems);
+        let clothes = DataStorageSingleton.getInstance().clothingItems;
+        setFilteredClothes(clothes);
+        if (clothes.length === 0) {
+            setWardrobeError("No clothing items in your wardrobe yet. Please add some.");
+        } else {
+            setWardrobeError(undefined);
+        }
 
         setRefreshing(false);
     };
@@ -45,7 +52,8 @@ const WardrobeScreen = () => {
         <View style={{height: '100%'}}>
             <View style={{height: 80}}>
                 <FilterBar onFilterChange={handleFilterChange} />
-            </View>    
+            </View>
+            {wardrobeError && <Text style={{marginTop: 20, backgroundColor: 'white', width: '80%', alignSelf: 'center', padding: 10, borderRadius: 10}}>{wardrobeError}</Text>}    
             <FlatList
                 style={{ width: '100%'}}
                 data={filteredClothes}

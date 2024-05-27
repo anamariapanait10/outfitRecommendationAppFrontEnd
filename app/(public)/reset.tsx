@@ -1,4 +1,4 @@
-import { View, StyleSheet, TextInput, Button, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, TextInput, ImageBackground, TouchableOpacity, Text } from 'react-native';
 import React, { useState } from 'react';
 import { Stack } from 'expo-router';
 import { useSignIn } from '@clerk/clerk-expo';
@@ -42,31 +42,34 @@ const PwReset = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Stack.Screen options={{ headerBackVisible: !successfulCreation }} />
+    <ImageBackground source={require('../../assets/images/login_screen.jpg')} style={styles.backgroundImage} imageStyle={styles.backgroundImageOpacity}>
+      <View style={styles.container}>
+        <Stack.Screen options={{ headerBackVisible: !successfulCreation }} />
 
-      {!successfulCreation && (
-        <>
-          <TextInput autoCapitalize="none" placeholder="example@domain.com" value={emailAddress} onChangeText={setEmailAddress} style={styles.inputField} />
+        <Text style={styles.title}>Reset Password</Text>
+        {!successfulCreation && (
+          <>
+            <TextInput autoCapitalize="none" placeholder="example@domain.com" value={emailAddress} onChangeText={setEmailAddress} style={styles.inputField} />
 
-          <TouchableOpacity onPress={onRequestReset} style={styles.button}>
-              <Text style={{color: 'white', fontSize: 18}}>Send Reset Email</Text>
-          </TouchableOpacity>
-        </>
-      )}
+            <TouchableOpacity onPress={onRequestReset} style={styles.button}>
+                <Text style={{color: 'white', fontSize: 18}}>Send Reset Password</Text>
+            </TouchableOpacity>
+          </>
+        )}
 
-      {successfulCreation && (
-        <>
-          <View>
-            <TextInput value={code} placeholder="Enter sent code" style={styles.inputField} onChangeText={setCode} />
-            <TextInput placeholder="New password" value={password} onChangeText={setPassword} secureTextEntry style={styles.inputField} />
-          </View>
-          <TouchableOpacity onPress={onReset} style={styles.button}>
-              <Text style={{color: 'white', fontSize: 18}}>Set new Password</Text>
-          </TouchableOpacity>
-        </>
-      )}
-    </View>
+        {successfulCreation && (
+          <>
+            <View>
+              <TextInput value={code} placeholder="Enter sent code" style={styles.inputField} onChangeText={setCode} />
+              <TextInput placeholder="New password" value={password} onChangeText={setPassword} secureTextEntry style={styles.inputField} />
+            </View>
+            <TouchableOpacity onPress={onReset} style={styles.button}>
+                <Text style={{color: 'white', fontSize: 18}}>Set new Password</Text>
+            </TouchableOpacity>
+          </>
+        )}
+      </View>
+    </ImageBackground>
   );
 };
 
@@ -75,6 +78,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 20,
+  },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
+  },
+  backgroundImageOpacity: {
+    opacity: 0.5, 
   },
   inputField: {
     marginVertical: 4,
@@ -92,6 +102,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
     marginBottom: 10,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: Colors.purple,
+    textAlign: 'center',
+    marginBottom: 20,
   },
 });
 

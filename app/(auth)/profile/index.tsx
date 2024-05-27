@@ -1,4 +1,4 @@
-import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, Image, Dimensions } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useUser } from '@clerk/clerk-expo';
 import { Ionicons } from '@expo/vector-icons';
@@ -22,7 +22,7 @@ const Profile = () => {
   const [totalOutfits, setTotalOutfits] = useState(0);
   const [season, setSeason] = useState('');
   const { isLoaded, userId, getToken } = useAuth();
-  const [newStatsData, setNewStatsData] = useState("empty");
+  const [statsData, setStatsData] = useState("empty");
 
   useEffect(() => {
     if (!user) return;
@@ -35,19 +35,17 @@ const Profile = () => {
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
-        const stats = await DataStorageSingleton.getInstance().makeGETRequest('/stats/get_wardrobe_stats?userId='+userId, await getToken(), userId, isLoaded);
-        setClothPercentage(Math.round(stats.worn_clothes_percentage * 100) / 100);
-        setOutfitPercentage(stats.worn_outfits_percentage);
-        setWornOutfits(stats.worn_outfits);
-        setTotalOutfits(stats.total_outfits);
-        setSeason(stats.season);
-
-        const newStats = await DataStorageSingleton.getInstance().getStats(await getToken(), userId, isLoaded);
-        if(newStats == undefined || newStats.status == 'wardrobe empty'){
-          setNewStatsData("empty");
+        const stats = await DataStorageSingleton.getInstance().getStats(await getToken(), userId, isLoaded);
+        if(stats == undefined || stats.status == 'wardrobe empty'){
+          setStatsData("empty");
           return;
         }
-        setNewStatsData(newStats);
+        setStatsData(stats);
+        setClothPercentage(Math.round(stats.wardrobeUsage.worn_clothes_percentage * 100) / 100);
+        setOutfitPercentage(stats.wardrobeUsage.worn_outfits_percentage);
+        setWornOutfits(stats.wardrobeUsage.worn_outfits);
+        setTotalOutfits(stats.wardrobeUsage.total_outfits);
+        setSeason(stats.wardrobeUsage.season);
       };
       fetchData();
     }, [])
@@ -89,13 +87,13 @@ const Profile = () => {
   return (
     <ScrollView>
       {user && (
-        <View style={styles.profile}>
+        <View style={[styles.profile]}>
           <View style={{flexDirection: 'row', alignContent: 'space-between', width: '100%'}}>
             <TouchableOpacity onPress={onCaptureImage}>
               <Image source={{ uri: user?.imageUrl }} style={styles.avatar} />
             </TouchableOpacity>
-            <View style={{marginLeft: 10}}>
-              <View style={{flexDirection: 'row', gap: 6}}>
+            <View style={{marginLeft: 15, width: Dimensions.get('window').width - 140}}>
+              <View style={{flexDirection: 'row', gap: 6, marginLeft: 0}}>
                 {edit ? (
                   <View style={styles.editRow}>
                     <TextInput placeholder='First Name' value={firstName || ''} onChangeText={setFirstName} style={styles.inputField} />
@@ -119,8 +117,9 @@ const Profile = () => {
           </View>
         </View>
       )}
-      { newStatsData !== "empty" ? (<>
-        <View style={styles.card}> 
+  
+      { statsData !== "empty" ? (<>
+        <View style={[styles.card, {marginTop: 20}]}> 
           <Text style={styles.title}>Wardrobe Usage</Text>
           <View style={styles.progressBarContainer}>
             <View style={[styles.progressBar, { width: `${clothPercentage}%` }]} />
@@ -130,12 +129,13 @@ const Profile = () => {
 
         <View style={styles.card}>
           <Text style={styles.title}>Clothes temperature distribution</Text>
-          {newStatsData?.clothingSeasonDistribution != undefined && <MyPieChart data={newStatsData?.clothingSeasonDistribution}/>}
+          {statsData?.clothingSeasonDistribution != undefined && <MyPieChart data={statsData?.clothingSeasonDistribution}/>}
         </View>
+
         <View style={styles.card}>
           <Text style={styles.title}>Top 3 most used colors</Text>
           <View style={{justifyContent: 'flex-start'}}>
-            {newStatsData?.topColors != undefined && Object.entries(newStatsData?.topColors).map(([key, value], index) => (
+            {statsData?.topColors != undefined && Object.entries(statsData?.topColors).map(([key, value], index) => (
               <View style={styles.colorRow} key={index}>
                 <View style={[styles.colorCircle, { backgroundColor: key }]} />
                 <Text style={styles.colorText}>{key}: {value} item{value > 1 ? 's':''}</Text>
@@ -143,11 +143,31 @@ const Profile = () => {
             ))}
           </View>
         </View>
+        
+        {totalOutfits > 1 && 
+          <View style={styles.card}>
+            <Text style={styles.title}>Outfits Usage</Text>
+            <AnimatedCircularProgress
+              size={120}
+              width={15}
+              fill={outfitPercentage}
+              tintColor={Colors.purple} //"#FF9500"
+              backgroundColor={Colors.light_purple}>
+              {
+                (fill) => (
+                  <Text style={styles.percentageText}>
+                    {`${Math.round(fill)}%`}
+                  </Text>
+                )
+              }
+            </AnimatedCircularProgress>
+            <Text style={styles.detailsText}>{`${wornOutfits}/${totalOutfits} outfits worn`}</Text>
+          </View>}
 
         <View style={[styles.leastWornCard]}>
           <Text style={styles.title}>Least worn items</Text>
           <View style={{flexDirection: 'row', justifyContent:'center', width: '100%'}}>
-            {newStatsData?.leastWornItems != undefined && Object.entries(newStatsData?.leastWornItems).map(([key, value], index) => (
+            {statsData?.leastWornItems != undefined && Object.entries(statsData?.leastWornItems).map(([key, value], index) => (
               <View style={styles.leastWornColumn} key={key}>
                 { value?.image != undefined && value?.image != '' &&
                     <>
@@ -159,24 +179,7 @@ const Profile = () => {
             ))}
           </View>
         </View>
-
-        {totalOutfits > 1 && <View style={styles.card}>
-          <AnimatedCircularProgress
-            size={120}
-            width={15}
-            fill={outfitPercentage}
-            tintColor={Colors.purple} //"#FF9500"
-            backgroundColor={Colors.light_purple}>
-            {
-              (fill) => (
-                <Text style={styles.percentageText}>
-                  {`${Math.round(fill)}%`}
-                </Text>
-              )
-            }
-          </AnimatedCircularProgress>
-          <Text style={styles.detailsText}>{`${wornOutfits}/${totalOutfits} outfits worn`}</Text>
-        </View>}
+        
       </>) : (
         <View style={{marginTop: 20, backgroundColor: 'white', width: '80%', alignSelf: 'center', padding: 10, borderRadius: 10}}>
           <Text style={{textAlign: 'center'}}>Your wardrobe does not contain any clothes. Wardrobe statistics cannot be generated. </Text>
@@ -198,16 +201,20 @@ const styles = StyleSheet.create({
   },
   profile: {
     alignItems: 'center',
-    padding: 20,
+    paddingVertical: 20,
+    paddingLeft: 20,
     backgroundColor: '#fff',
-    marginBottom: 20,
     elevation: 2,
     shadowColor: '#000',
     shadowOpacity: 0.2,
+    //shadowRadius: 6,
     shadowOffset: {
       width: 1,
       height: 2,
-    },
+    },    
+    //borderRadius: 16,
+    //marginHorizontal: 15,
+    //marginVertical: 15,
   },
   container: {
     flex: 1,
@@ -239,7 +246,7 @@ const styles = StyleSheet.create({
     },
     alignItems: 'center',
     // gap: 14,
-    marginHorizontal: 20,
+    marginHorizontal: 15,
     marginBottom: 10,
   },
   leastWornCard: {
@@ -262,17 +269,18 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   avatar: {
-    width: 100,
-    height: 100,
+    width: 90,
+    height: 90,
     borderRadius: 50,
     backgroundColor: Colors.grey,
+    marginTop: 5
   },
   editRow: {
     height: 50,
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     gap: 8,
   },
   title: {
@@ -310,6 +318,7 @@ const styles = StyleSheet.create({
   colorRow: {
     flexDirection: 'row',
     marginBottom: 10,
+    alignItems: 'center',
   },
   leastWornColumn: {
     flexDirection: 'column',
@@ -323,6 +332,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     borderWidth: 0.5,
     borderColor: 'black',
+    marginTop: 3,
   },
   colorText: {
     fontSize: 16,
