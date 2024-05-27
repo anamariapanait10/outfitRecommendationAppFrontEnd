@@ -123,7 +123,9 @@ const ClothingItemForm = () => {
       setSelectedSeasons(classification_results['season'].split(","));
       setSelectedMaterial(classification_results['material']);
       setSelectedPattern(classification_results['pattern']);
-
+      setTemperature(classification_results['temperature']);
+      setWeather(classification_results['weather']);
+      setPreference(classification_results['preference']);
     } catch (error) {
       throw error;
     }
@@ -230,7 +232,7 @@ const ClothingItemForm = () => {
   const seasons = ['Spring', 'Summer', 'Autumn', 'Winter'];
   const occasions = ['Casual', 'Ethnic', 'Formal', 'Sports', 'Smart Casual', 'Party'];
 
-  const majorTempMarks = [-10, 0, 10, 20, 30, 40];
+  const majorTempMarks = [5, 21];
 
   return (
     <ScrollView>
@@ -380,19 +382,21 @@ const ClothingItemForm = () => {
             style={styles.gradient}>
             <SliderMarks minimumValue={-10} maximumValue={40} step={5} style={styles.marksBelow} />
             {majorTempMarks.map((mark) => {
-              const position = ((mark + 12) / 50) * Dimensions.get('window').width;
+              const position = ((mark + 10) / 50) * Dimensions.get('window').width;
               return (
-                <View key={mark} style={[styles.majorMark, { left: position }]} />
+                <View key={mark} style={[styles.majorMark, { left: position }]}>
+                  <Text>cur</Text>
+                </View>
               );
             })}
             <Slider
               style={styles.slider}
               minimumValue={-10}
-              value={15}
+              value={selectedTemperature}
               maximumValue={40}
               minimumTrackTintColor="transparent"
               maximumTrackTintColor="transparent"
-              thumbTintColor={Colors.purple}
+              thumbTintColor={Colors.dark_purple}
               onValueChange={setTemperature}
             />
         </LinearGradient>
@@ -400,6 +404,7 @@ const ClothingItemForm = () => {
         <Text style={styles.slider_label}>Weather</Text>
         <View style={styles.iconRow}>
           <Ionicons name="snow-outline" size={30} color="#708090" />
+          <Ionicons name="rainy-outline" size={30} color="#708090" style={styles.iconCenter} />
           <Ionicons name="cloudy-outline" size={30} color="#708090" style={styles.iconCenter} />
           <Ionicons name="sunny-outline" size={30} color="#FFD700" style={styles.iconRight} />
         </View>  
@@ -412,7 +417,7 @@ const ClothingItemForm = () => {
             <Slider
               style={styles.slider}
               minimumValue={0}
-              value={15}
+              value={selectedWeather}
               maximumValue={30}
               minimumTrackTintColor="transparent"
               maximumTrackTintColor="transparent"
@@ -423,11 +428,11 @@ const ClothingItemForm = () => {
         
         <Text style={styles.slider_label}>Preference</Text>
         <View style={styles.iconRow}>
-          <Ionicons name="sad-outline" size={30} color="#214aed" />
-          <Ionicons name="happy-outline" size={30} color="#ff87df" style={styles.iconRight} />
+          <Ionicons name="sad-outline" size={30} color={Colors.purple} />
+          <Ionicons name="happy-outline" size={30} color={Colors.light_purple} style={styles.iconRight} />
         </View>  
         <LinearGradient
-            colors={['#214aed', '#7dcfff', '#ff87df']}
+            colors={[Colors.purple, Colors.light_purple]}
             start={{x: 0, y: 0}}
             end={{x: 1, y: 0}}
             style={styles.gradient}>
@@ -435,7 +440,7 @@ const ClothingItemForm = () => {
             <Slider
               style={styles.slider}
               minimumValue={0}
-              value={0.5}
+              value={selectedPreference}
               maximumValue={1}
               minimumTrackTintColor="transparent"
               maximumTrackTintColor="transparent"
@@ -593,7 +598,7 @@ const styles = StyleSheet.create({
     marginLeft: 'auto',
   },
   gradient: {
-    borderRadius: 20,
+    borderRadius:7,
     height: 30,
     justifyContent: 'center',
     borderColor: '#FFF',
@@ -605,7 +610,7 @@ const styles = StyleSheet.create({
   },
   majorMark: {
     position: 'absolute',
-    // bottom: 20,
+    // bottom: -20,
     width: 2,
     height: 20,
     backgroundColor: '#000',

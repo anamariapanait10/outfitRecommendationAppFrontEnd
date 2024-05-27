@@ -3,19 +3,13 @@ import Colors from "../constants/Colors";
 
 const SliderMarks = ({ minimumValue, maximumValue, step, style }) => {
     const numberOfMarks = (maximumValue - minimumValue) / step;
-    const markWidth = 100 / numberOfMarks; 
 
-    // console.log("Minimum Value: ", minimumValue);
-    // console.log("Maximum Value: ", maximumValue);
-    // console.log("Step: ", step);
-    // console.log("Number of Marks: ", numberOfMarks);
-    // console.log("Mark Width: ", markWidth);
     return (
       <View style={[styles.markContainer, style]}>
         {Array.from({ length: numberOfMarks + 1 }, (_, index) => (
-          <View key={index} style={styles.mark}>
-            <Text style={styles.markText}>AB{minimumValue + index * step}</Text>
-          </View>
+          index !== 0 && index !== numberOfMarks ? (
+            <View key={index} style={styles.mark} />
+          ) : null
         ))}
       </View>
     );
@@ -28,10 +22,10 @@ const styles = StyleSheet.create({
         height: '100%',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingHorizontal: 20,
+        // paddingHorizontal: 20,
         marginTop: 20,
         borderColor: Colors.purple,
-        borderRadius: 10,
+        borderRadius: 7,
         borderWidth: 1,
     },
     mark: {

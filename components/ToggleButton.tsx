@@ -15,16 +15,16 @@ const colorMap = {
     orange: '#FFA500',
     'light-blue': '#ADD8E6',
     'light-gray': '#D3D3D3',
-    'dark-red': '#8B0000',
-    'dark-yellow': '#9B870C',
-    'dark-gray': '#A9A9A9',
-    pink: '#FFC0CB',
+    'dark-red': '#cc0000',
+    'dark-yellow': '#cccc00',
+    'dark-gray': '#505050',
+    pink: '#ff80ff',
     'dark-blue': '#00008B',
     gray: '#808080',
     green: '#008000',
     yellow: '#FFFF00',
     red: '#FF0000',
-    'light-pink': '#FFB6C1'
+    'light-pink': '#ffccff'
 };
 
 const ToggleButton = ({ label, isActive, onPress, color="", fixedSize='45%' }) => {
