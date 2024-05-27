@@ -368,77 +368,90 @@ const EditClothingItemForm = () => {
         <Text style={styles.slider_label_temp}>Temperature: {Math.round(selectedTemperature)}°</Text>
         
         <View style={styles.iconRow}>
-          <Ionicons name="snow-outline" size={30} color="#0000FF" />
-          <Ionicons name="sunny-outline" size={30} color="#FFD700" style={styles.iconRight} />
+          <Ionicons name="thermometer-outline" size={30} color="#0000FF" />
+          <Ionicons name="thermometer-outline" size={30} color={Colors.red} style={styles.iconRight} />
         </View>
         <LinearGradient
-          colors={['#2222FF', '#55AA55', '#FF2222']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.gradient}>
-          <SliderMarks minimumValue={-10} maximumValue={40} step={5} style={styles.marksBelow} />
-          <Slider
-            style={styles.slider}
-            minimumValue={-10}
-            value={selectedTemperature}
-            maximumValue={40}
-            minimumTrackTintColor="transparent"
-            maximumTrackTintColor="transparent"
-            thumbTintColor={Colors.purple}
-            onValueChange={setTemperature}
-          />
+            colors={['#2222FF', '#FFD700', '#FF2222']}
+            start={{x: 0.05, y: 0}}
+            end={{x: 0.95, y: 0}}
+            style={styles.gradient}>
+            <SliderMarks minimumValue={-10} maximumValue={40} step={16.6} style={styles.marksBelow} />
+            {/* {majorTempMarks.map((mark) => {
+              const position = ((mark + 10) / 50) * Dimensions.get('window').width;
+              return (
+                <View key={mark} style={[styles.majorMark, { left: position }]}>
+                  <Text>cur</Text>
+                </View>
+              );
+            })} */}
+            <Slider
+              style={styles.slider}
+              minimumValue={-10}
+              value={selectedTemperature}
+              maximumValue={40}
+              minimumTrackTintColor="transparent"
+              maximumTrackTintColor="transparent"
+              thumbTintColor={Colors.dark_purple}
+              onValueChange={setTemperature}
+            />
         </LinearGradient>
         
         <Text style={styles.slider_label}>Weather</Text>
         <View style={styles.iconRow}>
           <Ionicons name="snow-outline" size={30} color="#708090" />
+          <Ionicons name="rainy-outline" size={30} color="#708090" style={styles.iconCenter} />
           <Ionicons name="cloudy-outline" size={30} color="#708090" style={styles.iconCenter} />
           <Ionicons name="sunny-outline" size={30} color="#FFD700" style={styles.iconRight} />
         </View>  
         <LinearGradient
-          colors={['#FFFFFF', '#55AA55', '#FFD700']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.gradient}>
-          <SliderMarks minimumValue={0} maximumValue={30} step={5} style={styles.marksBelow} />
-          <Slider
-            style={styles.slider}
-            minimumValue={0}
-            value={selectedWeather}
-            maximumValue={30}
-            minimumTrackTintColor="transparent"
-            maximumTrackTintColor="transparent"
-            thumbTintColor={Colors.purple}
-            onValueChange={setWeather}
-          /> 
+            colors={['#FFFFFF', '#2222FF', '#55AA55', '#FFD700']}
+            start={{x: 0.05, y: 0}}
+            end={{x: 0.95, y: 0}}
+            style={styles.gradient}>
+            <SliderMarks minimumValue={0} maximumValue={30} step={7.5} style={styles.marksBelow} />
+            <Slider
+              style={styles.slider}
+              minimumValue={0}
+              value={selectedWeather}
+              maximumValue={30}
+              minimumTrackTintColor="transparent"
+              maximumTrackTintColor="transparent"
+              thumbTintColor={Colors.dark_purple}
+              onValueChange={setWeather}
+            /> 
         </LinearGradient>
         
         <Text style={styles.slider_label}>Preference</Text>
         <View style={styles.iconRow}>
-          <Ionicons name="sad-outline" size={30} color="#214aed" />
-          <Ionicons name="happy-outline" size={30} color="#ff87df" style={styles.iconRight} />
+          <Ionicons name="sad-outline" size={30} color={Colors.purple} />
+          <Ionicons name="happy-outline" size={30} color={Colors.light_purple} style={styles.iconRight} />
         </View>  
         <LinearGradient
-          colors={['#214aed', '#7dcfff', '#ff87df']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.gradient}>
-          <SliderMarks minimumValue={0} maximumValue={1} step={0.33} style={styles.marksBelow} />
-          <Slider
-            style={styles.slider}
-            minimumValue={0}
-            value={selectedPreference}
-            maximumValue={1}
-            minimumTrackTintColor="transparent"
-            maximumTrackTintColor="transparent"
-            thumbTintColor={Colors.purple}
-            onValueChange={setPreference}
-          /> 
+            colors={[Colors.purple, Colors.light_purple]}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}
+            style={styles.gradient}>
+            <SliderMarks minimumValue={0} maximumValue={1} step={0.33} style={styles.marksBelow} />
+            <Slider
+              style={styles.slider}
+              minimumValue={0}
+              value={selectedPreference}
+              maximumValue={1}
+              minimumTrackTintColor="transparent"
+              maximumTrackTintColor="transparent"
+              thumbTintColor={Colors.dark_purple}
+              onValueChange={setPreference}
+            /> 
         </LinearGradient>
-        
-        <TouchableOpacity style={styles.saveButton} onPress={handleSubmit}>
-          <Text style={styles.saveButtonText}>Save Changes</Text>
-        </TouchableOpacity>
+        <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
+          <TouchableOpacity style={[styles.saveButton, {backgroundColor: Colors.grey,}]} onPress={() => router.back()}>
+              <Text style={styles.saveButtonText}>Cancel</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.saveButton, {backgroundColor: Colors.purple,}]} onPress={handleSubmit}>
+              <Text style={styles.saveButtonText}>Save Item</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );

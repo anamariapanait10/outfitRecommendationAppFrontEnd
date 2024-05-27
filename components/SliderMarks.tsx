@@ -2,14 +2,12 @@ import {View, StyleSheet, Text, Dimensions} from 'react-native';
 import Colors from "../constants/Colors";
 
 const SliderMarks = ({ minimumValue, maximumValue, step, style }) => {
-    const numberOfMarks = (maximumValue - minimumValue) / step;
+    const numberOfMarks = Math.floor((maximumValue - minimumValue) / step);
 
     return (
       <View style={[styles.markContainer, style]}>
-        {Array.from({ length: numberOfMarks + 1 }, (_, index) => (
-          index !== 0 && index !== numberOfMarks ? (
-            <View key={index} style={styles.mark} />
-          ) : null
+        {Array.from({ length: numberOfMarks + 1}, (_, index) => (
+            <View key={index} style={index !== 0 && index !== numberOfMarks ? styles.mark : styles.transparentMark} />
         ))}
       </View>
     );
@@ -32,6 +30,11 @@ const styles = StyleSheet.create({
         width: 1,
         height: 10,
         backgroundColor: '#333',
+    },
+    transparentMark: {
+      width: 1,
+      height: 10,
+      opacity: 0,
     },
     markText: {
         fontSize: 10,

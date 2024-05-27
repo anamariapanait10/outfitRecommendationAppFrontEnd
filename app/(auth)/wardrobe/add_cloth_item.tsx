@@ -372,23 +372,23 @@ const ClothingItemForm = () => {
         <Text style={styles.slider_label_temp}>Temperature: {Math.round(selectedTemperature)}°</Text>
         
         <View style={styles.iconRow}>
-          <Ionicons name="snow-outline" size={30} color="#0000FF" />
-          <Ionicons name="sunny-outline" size={30} color="#FFD700" style={styles.iconRight} />
+          <Ionicons name="thermometer-outline" size={30} color="#0000FF" />
+          <Ionicons name="thermometer-outline" size={30} color={Colors.red} style={styles.iconRight} />
         </View>
         <LinearGradient
-            colors={['#2222FF', '#55AA55', '#FF2222']}
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 0}}
+            colors={['#2222FF', '#FFD700', '#FF2222']}
+            start={{x: 0.05, y: 0}}
+            end={{x: 0.95, y: 0}}
             style={styles.gradient}>
-            <SliderMarks minimumValue={-10} maximumValue={40} step={5} style={styles.marksBelow} />
-            {majorTempMarks.map((mark) => {
+            <SliderMarks minimumValue={-10} maximumValue={40} step={16.6} style={styles.marksBelow} />
+            {/* {majorTempMarks.map((mark) => {
               const position = ((mark + 10) / 50) * Dimensions.get('window').width;
               return (
                 <View key={mark} style={[styles.majorMark, { left: position }]}>
                   <Text>cur</Text>
                 </View>
               );
-            })}
+            })} */}
             <Slider
               style={styles.slider}
               minimumValue={-10}
@@ -409,11 +409,11 @@ const ClothingItemForm = () => {
           <Ionicons name="sunny-outline" size={30} color="#FFD700" style={styles.iconRight} />
         </View>  
         <LinearGradient
-            colors={['#FFFFFF', '#55AA55', '#FFD700']}
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 0}}
+            colors={['#FFFFFF', '#2222FF', '#55AA55', '#FFD700']}
+            start={{x: 0.05, y: 0}}
+            end={{x: 0.95, y: 0}}
             style={styles.gradient}>
-            <SliderMarks minimumValue={0} maximumValue={30} step={5} style={styles.marksBelow} />
+            <SliderMarks minimumValue={0} maximumValue={30} step={7.5} style={styles.marksBelow} />
             <Slider
               style={styles.slider}
               minimumValue={0}
@@ -421,7 +421,7 @@ const ClothingItemForm = () => {
               maximumValue={30}
               minimumTrackTintColor="transparent"
               maximumTrackTintColor="transparent"
-              thumbTintColor={Colors.purple}
+              thumbTintColor={Colors.dark_purple}
               onValueChange={setWeather}
             /> 
         </LinearGradient>
@@ -444,7 +444,7 @@ const ClothingItemForm = () => {
               maximumValue={1}
               minimumTrackTintColor="transparent"
               maximumTrackTintColor="transparent"
-              thumbTintColor={Colors.purple}
+              thumbTintColor={Colors.dark_purple}
               onValueChange={setPreference}
             /> 
         </LinearGradient>
