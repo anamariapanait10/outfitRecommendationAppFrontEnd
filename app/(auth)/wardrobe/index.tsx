@@ -26,6 +26,8 @@ const WardrobeScreen = () => {
             setWardrobeError(undefined);
         }
 
+        handleFilterChange('category', DataStorageSingleton.getInstance().lastWardrobeFilter);
+
         setRefreshing(false);
     };
 
@@ -36,6 +38,7 @@ const WardrobeScreen = () => {
             const filtered = DataStorageSingleton.getInstance().clothingItems.filter(cloth => cloth[filterType] === value);
             setFilteredClothes(filtered);
         }
+        DataStorageSingleton.getInstance().lastWardrobeFilter = value;
     };
 
     // useEffect(() => {

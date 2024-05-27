@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image, View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { Image, View, Text, TouchableOpacity, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import Colors from "../../../constants/Colors";
 import ChooseImageModal from '../../../components/choose_image_modal';
 import * as ImagePicker from "expo-image-picker";
@@ -31,6 +31,15 @@ const ClothingItemForm = () => {
   const [selectedTemperature, setTemperature] = useState(10);
   const [selectedWeather, setWeather] = useState(50);
   const [selectedPreference, setPreference] = useState(0.5);
+
+  const [imageError, setImageError] = useState(false);
+  const [categoryError, setCategoryError] = useState(false);
+  const [subcategoryError, setSubcategoryError] = useState(false);
+  const [colorError, setColorError] = useState(false);
+  const [materialError, setMaterialError] = useState(false);
+  const [patternError, setPatternError] = useState(false);
+  const [seasonError, setSeasonError] = useState(false);
+  const [occasionError, setOccasionError] = useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -114,7 +123,9 @@ const ClothingItemForm = () => {
       setSelectedSeasons(classification_results['season'].split(","));
       setSelectedMaterial(classification_results['material']);
       setSelectedPattern(classification_results['pattern']);
-
+      setTemperature(classification_results['temperature']);
+      setWeather(classification_results['weather']);
+      setPreference(classification_results['preference']);
     } catch (error) {
       throw error;
     }
@@ -172,6 +183,28 @@ const ClothingItemForm = () => {
       }
     };
 
+    let localImageError = image === '';
+    let localCategoryError = selectedCategory === '';
+    let localSubcategoryError = selectedSubCategory === '';
+    let localColorError = selectedColor === '';
+    let localMaterialError = selectedMaterial === '';
+    let localPatternError = selectedPattern === '';
+    let localSeasonError = selectedSeasons.length === 0;
+    let localOccasionError = selectedOccasions.length === 0;
+
+    setImageError(localImageError);
+    setCategoryError(localCategoryError);
+    setSubcategoryError(localSubcategoryError);
+    setColorError(localColorError);
+    setMaterialError(localMaterialError);
+    setPatternError(localPatternError);
+    setSeasonError(localSeasonError);
+    setOccasionError(localOccasionError);
+
+    if (localImageError || localCategoryError || localSubcategoryError || localColorError || localMaterialError || localPatternError || localSeasonError || localOccasionError) {
+      return;
+    }
+
     makePostRequest();
   };
 
@@ -194,10 +227,12 @@ const ClothingItemForm = () => {
     'Light pink', 'Pink', 'Red',
     'Dark red', 'Brown', 'Purple', 'Multicolor'
   ];
-  const materials = ['Cotton', 'Wool', 'Silk', 'Synthetic Fibers', 'Leather', 'Linen'];
+  const materials = ['Cotton', 'Synthetic Fibers', 'Silk', 'Leather', 'Wool', 'Linen'];
   const patterns = ['Striped', 'Checkered', 'Floral', 'Dotted', 'Plain', 'Animal Print', 'Camouflage', 'Graphic'];
   const seasons = ['Spring', 'Summer', 'Autumn', 'Winter'];
   const occasions = ['Casual', 'Ethnic', 'Formal', 'Sports', 'Smart Casual', 'Party'];
+
+  const majorTempMarks = [5, 21];
 
   return (
     <ScrollView>
@@ -211,21 +246,26 @@ const ClothingItemForm = () => {
             <Text>Select an Image</Text>
           )}
         </TouchableOpacity>
+        {imageError && <Text style={styles.errorLabel}>Image is required</Text>}
+        
+        {/* Description */}
 
         <Text style={styles.title}>What item is this?</Text>
         
         {/* Category selection */}
         <Text style={styles.label}>Category</Text>
-        <View style={styles.toggleButtonGroup}>
+        <View style={[styles.toggleButtonGroup, {gap: 0}]}>
           {categories.map((category) => (
             <ToggleButton
               key={category}
               label={category}
               isActive={selectedCategory == category}
               onPress={() => {setSelectedCategory(category)}}
+              fixedSize='32%'
             />
           ))}
         </View>
+        {categoryError && <Text style={styles.errorLabel}>Category is required</Text>}
 
         {selectedCategory && (
         <View style={styles.subcategoryContainer}>
@@ -237,25 +277,29 @@ const ClothingItemForm = () => {
               label={subcategory}
               isActive={selectedSubCategory == subcategory}
               onPress={() => {setSelectedSubCategory(subcategory)}}
+              fixedSize='30%'
               />
             ))}
           </View>
+          {subcategoryError && <Text style={styles.errorLabel}>Subcategory is required</Text>}
         </View>
       )}
         
         {/* Color selection */}
         <Text style={styles.label}>Color</Text>
-        <View style={styles.toggleButtonGroup}>
+        <View style={[styles.toggleButtonGroup, {justifyContent: 'center', gap: 2}]}>
           {colors.map((color) => (
             <ToggleButton
               key={color}
-              label={color}
+              label={color.replace('Light ', 'L-').replace('Dark ', 'D-')}
               isActive={selectedColor?.toLowerCase() == color.toLowerCase()}
               onPress={() => setSelectedColor(color)}
               color={color.toLowerCase().replace(' ', '-')}
+              fixedSize={'32%'}
             />
           ))}
         </View>
+        {colorError && <Text style={styles.errorLabel}>Color is required</Text>}
         
         {/* Material selection */}
         <Text style={styles.label}>Material</Text>
@@ -266,22 +310,26 @@ const ClothingItemForm = () => {
               label={material}
               isActive={selectedMaterial == material}
               onPress={() => setSelectedMaterial(material)}
+              fixedSize='30%'
             />
           ))}
         </View>
+        {materialError && <Text style={styles.errorLabel}>Material is required</Text>}
         
         {/* Pattern selection */}
         <Text style={styles.label}>Pattern</Text>
-        <View style={styles.toggleButtonGroup}>
+        <View style={[styles.toggleButtonGroup, {justifyContent: 'center'}]}>
           {patterns.map((pattern) => (
             <ToggleButton
               key={pattern}
               label={pattern}
               isActive={selectedPattern == pattern}
               onPress={() => setSelectedPattern(pattern)}
+              fixedSize='30%'
             />
           ))}
         </View>
+        {patternError && <Text style={styles.errorLabel}>Pattern is required</Text>}
 
         <Text style={styles.title}>When will you wear it?</Text>
         
@@ -293,9 +341,11 @@ const ClothingItemForm = () => {
               label={season}
               isActive={selectedSeasons.includes(season)}
               onPress={() => handleToggle(season, selectedSeasons, setSelectedSeasons)}
+              fixedSize='23%'
             />
           ))}
         </View>
+        {seasonError && <Text style={styles.errorLabel}>Season is required</Text>}
         
         <Text style={styles.label}>Occasions</Text>
         <View style={styles.toggleButtonGroup}>
@@ -305,9 +355,11 @@ const ClothingItemForm = () => {
               label={occasion}
               isActive={selectedOccasions.includes(occasion)}
               onPress={() => handleToggle(occasion, selectedOccasions, setSelectedOccasions)}
+              fixedSize='32%'
             />
           ))}
         </View>
+        {occasionError && <Text style={styles.errorLabel}>Occasion is required</Text>}
 
         <ChooseImageModal
           modalVisible={modalVisible}
@@ -329,14 +381,22 @@ const ClothingItemForm = () => {
             end={{x: 1, y: 0}}
             style={styles.gradient}>
             <SliderMarks minimumValue={-10} maximumValue={40} step={5} style={styles.marksBelow} />
+            {majorTempMarks.map((mark) => {
+              const position = ((mark + 10) / 50) * Dimensions.get('window').width;
+              return (
+                <View key={mark} style={[styles.majorMark, { left: position }]}>
+                  <Text>cur</Text>
+                </View>
+              );
+            })}
             <Slider
               style={styles.slider}
               minimumValue={-10}
-              value={15}
+              value={selectedTemperature}
               maximumValue={40}
               minimumTrackTintColor="transparent"
               maximumTrackTintColor="transparent"
-              thumbTintColor={Colors.purple}
+              thumbTintColor={Colors.dark_purple}
               onValueChange={setTemperature}
             />
         </LinearGradient>
@@ -344,6 +404,7 @@ const ClothingItemForm = () => {
         <Text style={styles.slider_label}>Weather</Text>
         <View style={styles.iconRow}>
           <Ionicons name="snow-outline" size={30} color="#708090" />
+          <Ionicons name="rainy-outline" size={30} color="#708090" style={styles.iconCenter} />
           <Ionicons name="cloudy-outline" size={30} color="#708090" style={styles.iconCenter} />
           <Ionicons name="sunny-outline" size={30} color="#FFD700" style={styles.iconRight} />
         </View>  
@@ -356,7 +417,7 @@ const ClothingItemForm = () => {
             <Slider
               style={styles.slider}
               minimumValue={0}
-              value={15}
+              value={selectedWeather}
               maximumValue={30}
               minimumTrackTintColor="transparent"
               maximumTrackTintColor="transparent"
@@ -367,11 +428,11 @@ const ClothingItemForm = () => {
         
         <Text style={styles.slider_label}>Preference</Text>
         <View style={styles.iconRow}>
-          <Ionicons name="sad-outline" size={30} color="#214aed" />
-          <Ionicons name="happy-outline" size={30} color="#ff87df" style={styles.iconRight} />
+          <Ionicons name="sad-outline" size={30} color={Colors.purple} />
+          <Ionicons name="happy-outline" size={30} color={Colors.light_purple} style={styles.iconRight} />
         </View>  
         <LinearGradient
-            colors={['#214aed', '#7dcfff', '#ff87df']}
+            colors={[Colors.purple, Colors.light_purple]}
             start={{x: 0, y: 0}}
             end={{x: 1, y: 0}}
             style={styles.gradient}>
@@ -379,7 +440,7 @@ const ClothingItemForm = () => {
             <Slider
               style={styles.slider}
               minimumValue={0}
-              value={0.5}
+              value={selectedPreference}
               maximumValue={1}
               minimumTrackTintColor="transparent"
               maximumTrackTintColor="transparent"
@@ -387,10 +448,14 @@ const ClothingItemForm = () => {
               onValueChange={setPreference}
             /> 
         </LinearGradient>
-        
-        <TouchableOpacity style={styles.saveButton} onPress={handleSubmit}>
-            <Text style={styles.saveButtonText}>Save Item</Text>
-        </TouchableOpacity>
+        <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
+          <TouchableOpacity style={[styles.saveButton, {backgroundColor: Colors.grey,}]} onPress={() => router.back()}>
+              <Text style={styles.saveButtonText}>Cancel</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.saveButton, {backgroundColor: Colors.purple,}]} onPress={handleSubmit}>
+              <Text style={styles.saveButtonText}>Save Item</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );
@@ -451,14 +516,13 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   saveButton: {
-    backgroundColor: Colors.purple,
     paddingVertical: 9,
     paddingHorizontal: 10,
     borderRadius: 10,
     marginTop: 30,
     // marginBottom: 50,
     alignSelf: 'flex-end',
-    width: '35%',
+    width: '45%',
   },
   saveButtonText: {
     fontSize: 17,
@@ -534,7 +598,7 @@ const styles = StyleSheet.create({
     marginLeft: 'auto',
   },
   gradient: {
-    borderRadius: 20,
+    borderRadius:7,
     height: 30,
     justifyContent: 'center',
     borderColor: '#FFF',
@@ -544,9 +608,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  marksBelow: {
-  //  top: 45,
+  majorMark: {
+    position: 'absolute',
+    // bottom: -20,
+    width: 2,
+    height: 20,
+    backgroundColor: '#000',
   },
+  marksBelow: {
+  
+  },
+  errorLabel: {
+    color: 'red',
+    fontSize: 12,
+  }
 });
 
 export default ClothingItemForm;
