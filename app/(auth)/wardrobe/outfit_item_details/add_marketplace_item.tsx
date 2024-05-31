@@ -302,7 +302,7 @@ const UploadMarketplaceItem = () => {
                 />
                 {phoneError && <Text style={styles.errorLabel}>Phone number should have 10 numbers</Text>}
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
-                  <TouchableOpacity style={[styles.saveButton, {backgroundColor: Colors.grey,}]} onPress={() => router.back()}>
+                  <TouchableOpacity style={[styles.saveButton, {backgroundColor: Colors.cancel_btn,}]} onPress={() => router.back()}>
                       <Text style={styles.saveButtonText}>Cancel</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={[styles.saveButton, {backgroundColor: Colors.purple,}]} onPress={handleSubmit}>

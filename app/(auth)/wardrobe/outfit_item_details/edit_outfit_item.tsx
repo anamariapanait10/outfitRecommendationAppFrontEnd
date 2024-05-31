@@ -445,7 +445,7 @@ const EditClothingItemForm = () => {
             /> 
         </LinearGradient>
         <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
-          <TouchableOpacity style={[styles.saveButton, {backgroundColor: Colors.grey,}]} onPress={() => router.back()}>
+          <TouchableOpacity style={[styles.saveButton, {backgroundColor: Colors.cancel_btn,}]} onPress={() => router.back()}>
               <Text style={styles.saveButtonText}>Cancel</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.saveButton, {backgroundColor: Colors.purple,}]} onPress={handleSubmit}>
@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 11,
     borderRadius: 17,
     borderWidth: 1,
-    borderColor: Colors.grey,
+    borderColor: Colors.black,
     margin: 5,
   },
   toggleButtonColor: {
@@ -491,7 +491,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 11,
     borderRadius: 17,
     borderWidth: 1,
-    borderColor: Colors.grey,
+    borderColor: Colors.black,
     marginTop: 5,
     marginBottom: 5
   },

@@ -100,7 +100,7 @@ const Home = () => {
       if (currentDate.toISOString().split('T')[0] in outfits){
         setWearOutfitAlert(true);
       } else {
-        DataStorageSingleton.getInstance().wearOutfit(clothes[activeSlide], currentDate.toISOString().split('T')[0], await getToken(), userId, isLoaded);
+        DataStorageSingleton.getInstance().wearOutfit(clothes[activeSlide], currentDate.toISOString().split('T')[0], await getToken(), userId, isLoaded, true);
         setWearOutfitSuccessAlert(true);
       }
     }
@@ -110,7 +110,7 @@ const Home = () => {
     if(clothes != undefined) {
       const currentDate = new Date().toISOString().split('T')[0];
       await DataStorageSingleton.getInstance().deleteOutfit(currentDate, await getToken(), userId, isLoaded);
-      DataStorageSingleton.getInstance().wearOutfit(clothes[activeSlide], new Date().toISOString().split('T')[0], await getToken(), userId, isLoaded);
+      DataStorageSingleton.getInstance().wearOutfit(clothes[activeSlide], new Date().toISOString().split('T')[0], await getToken(), userId, isLoaded, true);
     }
  }
 

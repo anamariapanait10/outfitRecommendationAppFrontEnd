@@ -186,7 +186,7 @@ export class DataStorageSingleton {
         }
     }
 
-    public wearOutfit = async (clothes: ClothingItem[], date: string, token: string | null, userId: string | null | undefined, isLoaded: boolean) => {
+    public wearOutfit = async (clothes: ClothingItem[], date: string, token: string | null, userId: string | null | undefined, isLoaded: boolean, recommended: boolean = false) => {
         if (!userId || !isLoaded) {
             console.log('No authenticated user found.');
             return;
@@ -195,7 +195,8 @@ export class DataStorageSingleton {
             const baseUrl = process.env.EXPO_PUBLIC_BASE_API_URL + '/worn-outfits/wear/';
             const requestBody = JSON.stringify({
                 outfit: clothes,
-                date: date
+                date: date,
+                was_recommended: recommended
             });
             const response = await fetch(baseUrl, {
                 method: 'POST',

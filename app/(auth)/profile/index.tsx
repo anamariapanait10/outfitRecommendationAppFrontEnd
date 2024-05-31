@@ -9,6 +9,7 @@ import { DataStorageSingleton } from "../../../constants/data_storage_singleton"
 import { useAuth } from '@clerk/clerk-expo';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import MyPieChart from '../../../components/pie_chart';
+import { set } from 'date-fns';
 
 const Profile = () => {
   const { user } = useUser();
@@ -23,6 +24,8 @@ const Profile = () => {
   const [season, setSeason] = useState('');
   const { isLoaded, userId, getToken } = useAuth();
   const [statsData, setStatsData] = useState("empty");
+  const [wardrobeUsageError, setWardrobeUsageError] = useState("");
+  const [outfitUsageError, setOutfitUsageError] = useState("");
 
   useEffect(() => {
     if (!user) return;
@@ -41,10 +44,18 @@ const Profile = () => {
           return;
         }
         setStatsData(stats);
-        setClothPercentage(Math.round(stats.wardrobeUsage.worn_clothes_percentage * 100) / 100);
-        setOutfitPercentage(stats.wardrobeUsage.worn_outfits_percentage);
-        setWornOutfits(stats.wardrobeUsage.worn_outfits);
-        setTotalOutfits(stats.wardrobeUsage.total_outfits);
+        if (stats.wardrobeUsage.worn_clothes_percentage.error != undefined) {
+          setWardrobeUsageError(stats.wardrobeUsage.worn_clothes_percentage.error);
+        } else {
+          setClothPercentage(Math.round(stats.wardrobeUsage.worn_clothes_percentage * 100) / 100);
+        }
+        if(stats.wardrobeUsage.worn_outfits_percentage.error != undefined) {
+          setOutfitUsageError(stats.wardrobeUsage.worn_outfits_percentage.error);
+        } else {
+          setOutfitPercentage(stats.wardrobeUsage.worn_outfits_percentage);
+          setWornOutfits(stats.wardrobeUsage.worn_outfits);
+          setTotalOutfits(stats.wardrobeUsage.total_outfits);
+        }
         setSeason(stats.wardrobeUsage.season);
       };
       fetchData();
@@ -121,10 +132,17 @@ const Profile = () => {
       { statsData !== "empty" ? (<>
         <View style={[styles.card, {marginTop: 20}]}> 
           <Text style={styles.title}>Wardrobe Usage</Text>
-          <View style={styles.progressBarContainer}>
-            <View style={[styles.progressBar, { width: `${clothPercentage}%` }]} />
-          </View>
-          <Text style={styles.usageText}>You're wearing {clothPercentage}% of your {season} wardrobe</Text>
+          { wardrobeUsageError != "" ? 
+            <View style={{marginTop: 20, backgroundColor: 'white', width: '80%', alignSelf: 'center', padding: 10, borderRadius: 10}}>
+              <Text style={{textAlign: 'center'}}>{wardrobeUsageError}</Text>
+            </View> :
+            <>
+              <View style={styles.progressBarContainer}>
+                <View style={[styles.progressBar, { width: `${clothPercentage}%` }]} />
+              </View>
+              <Text style={styles.usageText}>You're wearing {clothPercentage}% of your {season} wardrobe</Text>
+            </>
+          }
         </View>
 
         <View style={styles.card}>
@@ -147,21 +165,29 @@ const Profile = () => {
         {totalOutfits > 1 && 
           <View style={styles.card}>
             <Text style={styles.title}>Outfits Usage</Text>
-            <AnimatedCircularProgress
-              size={120}
-              width={15}
-              fill={outfitPercentage}
-              tintColor={Colors.purple} //"#FF9500"
-              backgroundColor={Colors.light_purple}>
-              {
-                (fill) => (
-                  <Text style={styles.percentageText}>
-                    {`${Math.round(fill)}%`}
-                  </Text>
-                )
-              }
-            </AnimatedCircularProgress>
-            <Text style={styles.detailsText}>{`${wornOutfits}/${totalOutfits} outfits worn`}</Text>
+            { outfitUsageError != "" ? 
+              <View style={{marginTop: 20, backgroundColor: 'white', width: '80%', alignSelf: 'center', padding: 10, borderRadius: 10}}>
+                <Text style={{textAlign: 'center'}}>{outfitUsageError}</Text>
+              </View> :
+              <>
+                <AnimatedCircularProgress
+                  size={120}
+                  width={15}
+                  fill={outfitPercentage}
+                  tintColor={Colors.purple} //"#FF9500"
+                  backgroundColor={Colors.light_purple}>
+                  {
+                    (fill) => (
+                      <Text style={styles.percentageText}>
+                        {`${Math.round(fill)}%`}
+                      </Text>
+                    )
+                  }
+                </AnimatedCircularProgress>
+                <Text style={styles.detailsText}>{`${wornOutfits}/${totalOutfits} recommended outfits worn`}</Text>
+              </>
+            }
+            
           </View>}
 
         <View style={[styles.leastWornCard]}>

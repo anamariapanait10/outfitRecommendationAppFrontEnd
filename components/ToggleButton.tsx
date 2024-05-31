@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 4,
         borderRadius: 14,
         borderWidth: 1,
-        borderColor: "#AAAAAA",
+        borderColor: Colors.grey,
         margin: 2,
     },
     toggleButtonColor: {
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 7,
         borderRadius: 10,
         borderWidth: 1,
-        borderColor: "#AAAAAA",
+        borderColor: Colors.grey,
         marginTop: 2,
         marginBottom: 2,
     },

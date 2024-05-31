@@ -19,7 +19,7 @@ const ClothingItemForm = () => {
   const [description, setDescription] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
-  const [selectedColor, setSelectedColor] = useState("");
+  const [selectedColor, setSelectedColor] = useState([]);
   const [selectedMaterial, setSelectedMaterial] = useState("");
   const [selectedPattern, setSelectedPattern] = useState("");
   const [selectedSeasons, setSelectedSeasons] = useState([]);
@@ -118,8 +118,8 @@ const ClothingItemForm = () => {
       console.log("POST request response:", classification_results);
       setSelectedCategory(classification_results['category']);
       setSelectedSubCategory(classification_results['subcategory']);
-      setSelectedOccasions([classification_results['occasions']]);
-      setSelectedColor(classification_results['color']);
+      setSelectedOccasions(classification_results['occasions'].split(","));
+      setSelectedColor(classification_results['color'].split(","));
       setSelectedSeasons(classification_results['season'].split(","));
       setSelectedMaterial(classification_results['material']);
       setSelectedPattern(classification_results['pattern']);
@@ -144,7 +144,7 @@ const ClothingItemForm = () => {
           category: selectedCategory,
           subCategory: selectedSubCategory,
           description: description || "",
-          color: selectedColor,
+          color: selectedColor.join(","),
           image: image,
           pattern: selectedPattern,
           material: selectedMaterial,
@@ -292,7 +292,7 @@ const ClothingItemForm = () => {
             <ToggleButton
               key={color}
               label={color.replace('Light ', 'L-').replace('Dark ', 'D-')}
-              isActive={selectedColor?.toLowerCase() == color.toLowerCase()}
+              isActive={selectedColor?.includes(color.toLowerCase())}
               onPress={() => setSelectedColor(color)}
               color={color.toLowerCase().replace(' ', '-')}
               fixedSize={'32%'}
@@ -449,7 +449,7 @@ const ClothingItemForm = () => {
             /> 
         </LinearGradient>
         <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
-          <TouchableOpacity style={[styles.saveButton, {backgroundColor: Colors.grey,}]} onPress={() => router.back()}>
+          <TouchableOpacity style={[styles.saveButton, {backgroundColor: Colors.cancel_btn,}]} onPress={() => router.back()}>
               <Text style={styles.saveButtonText}>Cancel</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.saveButton, {backgroundColor: Colors.purple,}]} onPress={handleSubmit}>

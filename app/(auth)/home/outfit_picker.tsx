@@ -346,7 +346,7 @@ const OutfitPicker = () => {
                     markedDates={{ [date]: { selected: true, marked: true, selectedColor: Colors.light_purple } }}
                   />
                   <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
-                    <TouchableOpacity style={{backgroundColor: Colors.light_grey, paddingVertical: 10, paddingHorizontal: 10, borderRadius: 20}} onPress={() => setIsCalendarVisible(false)}>
+                    <TouchableOpacity style={{backgroundColor: Colors.cancel_btn, paddingVertical: 10, paddingHorizontal: 10, borderRadius: 20}} onPress={() => setIsCalendarVisible(false)}>
                       <Text style={{color: 'black'}}>Close</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={{backgroundColor: Colors.light_purple, paddingVertical: 10, paddingHorizontal: 17, borderRadius: 20}} onPress={() => {handleSaveOutfit(); setIsCalendarVisible(false);}}>
@@ -493,7 +493,7 @@ const OutfitPicker = () => {
                 setOpen={setDropdownOpen}
                 setValue={setDropdownValue}
                 setItems={setDropdownItems}
-                placeholder="Select an event"
+                placeholder="Select a style"
                 zIndex={3000}
                 zIndexInverse={1000}
                 style={{ 
