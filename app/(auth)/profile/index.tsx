@@ -26,6 +26,7 @@ const Profile = () => {
   const [statsData, setStatsData] = useState("empty");
   const [wardrobeUsageError, setWardrobeUsageError] = useState("");
   const [outfitUsageError, setOutfitUsageError] = useState("");
+  const [colorsError, setColorsError] = useState("");
 
   useEffect(() => {
     if (!user) return;
@@ -55,6 +56,11 @@ const Profile = () => {
           setOutfitPercentage(stats.wardrobeUsage.worn_outfits_percentage);
           setWornOutfits(stats.wardrobeUsage.worn_outfits);
           setTotalOutfits(stats.wardrobeUsage.total_outfits);
+        }
+        if (stats.topColors.error != undefined) {
+          setColorsError(stats.topColors.error);
+        } else {
+          setColorsError("");
         }
         setSeason(stats.wardrobeUsage.season);
       };
@@ -151,44 +157,51 @@ const Profile = () => {
         </View>
 
         <View style={styles.card}>
-          <Text style={styles.title}>Top 3 most used colors</Text>
-          <View style={{justifyContent: 'flex-start'}}>
-            {statsData?.topColors != undefined && Object.entries(statsData?.topColors).map(([key, value], index) => (
-              <View style={styles.colorRow} key={index}>
-                <View style={[styles.colorCircle, { backgroundColor: key }]} />
-                <Text style={styles.colorText}>{key}: {value} item{value > 1 ? 's':''}</Text>
+          <Text style={styles.title}>Top 3 most used colors this month</Text>
+          { colorsError != "" ? 
+            <View style={{marginTop: 20, backgroundColor: 'white', width: '80%', alignSelf: 'center', padding: 10, borderRadius: 10}}>
+              <Text style={{textAlign: 'center'}}>{colorsError}</Text>
+            </View> :
+            <>
+              <View style={{justifyContent: 'flex-start'}}>
+              {statsData?.topColors != undefined && Object.entries(statsData?.topColors).map(([key, value], index) => (
+                <View style={styles.colorRow} key={index}>
+                  <View style={[styles.colorCircle, { backgroundColor: key }]} />
+                  <Text style={styles.colorText}>{key}: {value} item{value > 1 ? 's':''}</Text>
+                </View>
+              ))}
               </View>
-            ))}
-          </View>
+            </>
+          }
         </View>
         
-        {totalOutfits > 1 && 
-          <View style={styles.card}>
-            <Text style={styles.title}>Outfits Usage</Text>
-            { outfitUsageError != "" ? 
-              <View style={{marginTop: 20, backgroundColor: 'white', width: '80%', alignSelf: 'center', padding: 10, borderRadius: 10}}>
-                <Text style={{textAlign: 'center'}}>{outfitUsageError}</Text>
-              </View> :
-              <>
-                <AnimatedCircularProgress
-                  size={120}
-                  width={15}
-                  fill={outfitPercentage}
-                  tintColor={Colors.purple} //"#FF9500"
-                  backgroundColor={Colors.light_purple}>
-                  {
-                    (fill) => (
-                      <Text style={styles.percentageText}>
-                        {`${Math.round(fill)}%`}
-                      </Text>
-                    )
-                  }
-                </AnimatedCircularProgress>
-                <Text style={styles.detailsText}>{`${wornOutfits}/${totalOutfits} recommended outfits worn`}</Text>
-              </>
-            }
+        
+        <View style={styles.card}>
+          <Text style={styles.title}>Outfits Usage</Text>
+          { outfitUsageError != "" ? 
+            <View style={{marginTop: 20, backgroundColor: 'white', width: '80%', alignSelf: 'center', padding: 10, borderRadius: 10}}>
+              <Text style={{textAlign: 'center'}}>{outfitUsageError}</Text>
+            </View> :
+            <>
+              <AnimatedCircularProgress
+                size={120}
+                width={15}
+                fill={outfitPercentage}
+                tintColor={Colors.purple} //"#FF9500"
+                backgroundColor={Colors.light_purple}>
+                {
+                  (fill) => (
+                    <Text style={styles.percentageText}>
+                      {`${Math.round(fill)}%`}
+                    </Text>
+                  )
+                }
+              </AnimatedCircularProgress>
+              <Text style={styles.detailsText}>{`${wornOutfits}/${totalOutfits} recommended outfits worn`}</Text>
+            </>
+          }
             
-          </View>}
+          </View>
 
         <View style={[styles.leastWornCard]}>
           <Text style={styles.title}>Least worn items</Text>

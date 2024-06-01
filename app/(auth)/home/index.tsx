@@ -15,7 +15,6 @@ import CustomAlert from '../../../components/CustomAlert';
 import Carousel from 'react-native-snap-carousel';
 import PaginationDots from '../../../components/PaginationDots';
 import { useFocusEffect } from '@react-navigation/native';
-import { set } from 'date-fns';
 
 const Home = () => {
   const { isLoaded, userId, getToken } = useAuth();

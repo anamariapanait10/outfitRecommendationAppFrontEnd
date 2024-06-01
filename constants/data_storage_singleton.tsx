@@ -78,7 +78,7 @@ export class DataStorageSingleton {
         {
             if (data.list[i].dt_txt.includes(chosenTime)){
                 var date = data.list[i].dt_txt;
-                var temperature = data.list[i].main.temp;
+                var temperature = (Math.round(parseFloat(data.list[i].main.temp) * 10) / 10).toFixed(1);
                 var weatherId = data.list[i].weather[0].id;
                 var icon = data.list[i].weather[0].icon;
                 this.weatherItems.push(new WeatherItem(date, temperature, weatherId, icon.replace('n', 'd')));
@@ -198,6 +198,7 @@ export class DataStorageSingleton {
                 date: date,
                 was_recommended: recommended
             });
+            console.log(requestBody);
             const response = await fetch(baseUrl, {
                 method: 'POST',
                 headers: {

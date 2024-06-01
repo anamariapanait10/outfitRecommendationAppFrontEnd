@@ -114,11 +114,20 @@ const ClothingItemForm = () => {
         }
       );
       let classification_results = await response.json();
+      let occasions = [];
+      for (let occasion of classification_results['occasions'].split(",")) {
+        if (occasion.includes(" ")) {
+          occasions.push("Smart Casual");
+        } else {
+          occasions.push(occasion.charAt(0).toUpperCase() + occasion.slice(1).toLowerCase());
+        }
+      }
+      
       setLoading(false);
       console.log("POST request response:", classification_results);
       setSelectedCategory(classification_results['category']);
       setSelectedSubCategory(classification_results['subcategory']);
-      setSelectedOccasions(classification_results['occasions'].split(","));
+      setSelectedOccasions(occasions);
       setSelectedColor(classification_results['color'].split(","));
       setSelectedSeasons(classification_results['season'].split(","));
       setSelectedMaterial(classification_results['material']);

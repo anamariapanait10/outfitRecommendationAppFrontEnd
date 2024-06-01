@@ -381,7 +381,7 @@ const OutfitPicker = () => {
                   </View>
 
                   <View style={styles.filterRow}>
-                    <Text style={styles.label}>Event</Text>
+                    <Text style={styles.label}>Style</Text>
                     <DropDownPicker
                       open={isOccasionOpen}
                       value={occasionValue}
@@ -389,7 +389,7 @@ const OutfitPicker = () => {
                       setOpen={setIsOccasionOpen}
                       setValue={setOccasionValue}
                       setItems={setOccasionItems}
-                      placeholder="Select Occasion"
+                      placeholder="Select Style"
                       zIndex={3000}
                       zIndexInverse={1000}
                       style={styles.dropdown}
