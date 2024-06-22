@@ -67,7 +67,7 @@ const Home = () => {
     }
     setWeather(weatherString);
     setTemperature(temperatureString.toLowerCase());
-    let err = await DataStorageSingleton.getInstance().fetchRecommendations(await getToken(), userId?.toString(), isLoaded, weatherString, temperatureString, isOnePiece.toString());
+    let err = await DataStorageSingleton.getInstance().fetchRecommendations(await getToken(), userId?.toString(), isLoaded, weatherString, temperatureString, isOnePiece.toString(), isFormal.toString());
     if(err.error !== undefined){
       setRecommendationError(err.error);
     } else {
@@ -83,12 +83,12 @@ const Home = () => {
 
   useEffect(() => {
     fetchClothesData();
-  }, [isOnePiece]);
+  }, [isOnePiece, isFormal]);
 
   useFocusEffect(
     React.useCallback(() => {
       fetchClothesData();
-    }, [isOnePiece])
+    }, [isOnePiece, isFormal])
   );
 
   const wearOutfit = async () => {
@@ -242,7 +242,7 @@ const Home = () => {
             </View>
           )}
         </View> 
-        <View style={[styles.switchContainer, {marginTop: 5}]}>
+      <View style={[styles.switchContainer, {marginTop: 5}]}>
         <Text style={styles.switchLabel}>Two-piece / One-piece Outfits</Text>
         <Switch
           value={isOnePiece}
@@ -258,7 +258,7 @@ const Home = () => {
           value={isFormal}
           onValueChange={() => setIsFormal(!isFormal)}
           trackColor={{false: '#767577', true: Colors.purple}}
-          thumbColor={isOnePiece ? Colors.light_purple : '#f4f3f4'}
+          thumbColor={isFormal ? Colors.light_purple : '#f4f3f4'}
           style={{height:25}}
         />
       </View>
