@@ -19,11 +19,11 @@ const ClothingItemForm = () => {
   const [description, setDescription] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
-  const [selectedColor, setSelectedColor] = useState([]);
+  const [selectedColor, setSelectedColor] = useState<string[]>([]);
   const [selectedMaterial, setSelectedMaterial] = useState("");
   const [selectedPattern, setSelectedPattern] = useState("");
-  const [selectedSeasons, setSelectedSeasons] = useState([]);
-  const [selectedOccasions, setSelectedOccasions] = useState([]);
+  const [selectedSeasons, setSelectedSeasons] = useState<string[]>([]);
+  const [selectedOccasions, setSelectedOccasions] = useState<string[]>([]);
   const [image, setImage] = useState("");
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -45,7 +45,7 @@ const ClothingItemForm = () => {
     React.useCallback(() => {
       setDescription("");
       setSelectedCategory("");
-      setSelectedColor("");
+      setSelectedColor([]);
       setSelectedMaterial("");
       setSelectedPattern("");
       setSelectedSeasons([]);
@@ -195,7 +195,7 @@ const ClothingItemForm = () => {
     let localImageError = image === '';
     let localCategoryError = selectedCategory === '';
     let localSubcategoryError = selectedSubCategory === '';
-    let localColorError = selectedColor === '';
+    let localColorError = selectedColor.length === 0;
     let localMaterialError = selectedMaterial === '';
     let localPatternError = selectedPattern === '';
     let localSeasonError = selectedSeasons.length === 0;
@@ -301,8 +301,8 @@ const ClothingItemForm = () => {
             <ToggleButton
               key={color}
               label={color.replace('Light ', 'L-').replace('Dark ', 'D-')}
-              isActive={selectedColor?.includes(color.toLowerCase())}
-              onPress={() => setSelectedColor(color)}
+              isActive={Array.isArray(selectedColor) && selectedColor.map(c => c.toLowerCase()).includes(color.toLowerCase())}
+              onPress={() => {selectedColor.includes(color.toLowerCase()) ? setSelectedColor(selectedColor.filter(c => c.toLowerCase() !== color.toLowerCase())) : setSelectedColor([color.toLowerCase(), ...selectedColor])}}
               color={color.toLowerCase().replace(' ', '-')}
               fixedSize={'32%'}
             />

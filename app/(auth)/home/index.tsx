@@ -28,6 +28,7 @@ const Home = () => {
   const [temperature, setTemperature] = useState('hot');
   const [loading, setLoading] = useState(false);
   const [isOnePiece, setIsOnePiece] = useState(false);
+  const [isFormal, setIsFormal] = useState(false);
   
   const weatherDivRef = useRef(null);
 
@@ -241,13 +242,24 @@ const Home = () => {
             </View>
           )}
         </View> 
-      <View style={styles.switchContainer}>
+        <View style={[styles.switchContainer, {marginTop: 5}]}>
         <Text style={styles.switchLabel}>Two-piece / One-piece Outfits</Text>
         <Switch
           value={isOnePiece}
           onValueChange={() => setIsOnePiece(!isOnePiece)}
           trackColor={{false: '#767577', true: Colors.purple}}
           thumbColor={isOnePiece ? Colors.light_purple : '#f4f3f4'}
+          style={{height:25}}
+        />
+      </View>
+      <View style={styles.switchContainer}>
+        <Text style={styles.switchLabel}>       Casual / Formal Outfits</Text>
+        <Switch
+          value={isFormal}
+          onValueChange={() => setIsFormal(!isFormal)}
+          trackColor={{false: '#767577', true: Colors.purple}}
+          thumbColor={isOnePiece ? Colors.light_purple : '#f4f3f4'}
+          style={{height:25}}
         />
       </View>
     </View>
@@ -395,8 +407,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginVertical: 7,
-    width: '70%',
+    width: '75%',
   },
   switchLabel: {
     fontSize: 16,

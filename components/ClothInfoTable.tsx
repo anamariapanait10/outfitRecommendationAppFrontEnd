@@ -32,7 +32,7 @@ const ClothInfoTable = (cloth: ClothingItem) => {
                 <Text style={styles.boldText}>Seasons</Text>
             </View>
         </DataTable.Cell>
-        <DataTable.Cell>{cloth.seasons}</DataTable.Cell>
+        <DataTable.Cell><Text>{cloth.seasons.replaceAll(',', ', ')}</Text></DataTable.Cell>
       </DataTable.Row>
       <DataTable.Row>
         <DataTable.Cell>
@@ -59,7 +59,8 @@ const ClothInfoTable = (cloth: ClothingItem) => {
                 <Text style={styles.boldText}>Color</Text>
             </View>
         </DataTable.Cell>
-        <DataTable.Cell>{cloth.color}</DataTable.Cell>
+        <DataTable.Cell>
+          <Text>{cloth.color.replaceAll('[', '').replaceAll(']', '').replaceAll('\'', '').replaceAll(',', ', ')}</Text></DataTable.Cell>
       </DataTable.Row>
       <DataTable.Row>
         <DataTable.Cell>
@@ -68,7 +69,7 @@ const ClothInfoTable = (cloth: ClothingItem) => {
                 <Text style={styles.boldText}>Occasions</Text>
             </View>
         </DataTable.Cell>
-        <DataTable.Cell>{cloth.occasions}</DataTable.Cell>
+        <DataTable.Cell><Text>{cloth.occasions.replaceAll(',', ', ')}</Text></DataTable.Cell>
       </DataTable.Row>
       {cloth.description &&
         <DataTable.Row>

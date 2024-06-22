@@ -173,18 +173,18 @@ const UploadMarketplaceItem = () => {
               console.error("Error making POST request:", error);
             }
         };
-        const alphanumericRegex = /^[a-zA-Z0-9]+$/;
-        const brandRegex = /^[a-zA-Z0-9\s&]+$/;
-        const locationRegex = /^[a-zA-Z0-9\s,.'-]{1,100}$/;
+        const alphanumericRegex = /^[a-zA-Z0-9\s,.'-ăâîșțĂÂÎȘȚ]+$/;
+        const brandRegex = /^[a-zA-Z0-9\s&ăâîșțĂÂÎȘȚ]+$/;
+        const locationRegex = /^[a-zA-Z0-9\s,.'-ăâîșțĂÂÎȘȚ]{1,100}$/;
         const numericRegex = /^[0-9]*\.?[0-9]+$/;
         
-        let localBrandError = !itemDetails.brand || !brandRegex.test(itemDetails.brand)
-        let localConditionError = !itemDetails.condition|| !alphanumericRegex.test(itemDetails.condition)
-        let localSizeError = !itemDetails.size || !alphanumericRegex.test(itemDetails.size)
-        let localDescriptionError = !itemDetails.description || !alphanumericRegex.test(itemDetails.description)
-        let localPriceError = !itemDetails.price || !numericRegex.test(itemDetails.price)
-        let localLocationError = !itemDetails.location || !locationRegex.test(itemDetails.location)
-        let localPhoneError = !itemDetails.phone_number || itemDetails.phone_number.length != 10
+        let localBrandError = !itemDetails.brand || !brandRegex.test(itemDetails.brand);
+        let localConditionError = !itemDetails.condition|| !alphanumericRegex.test(itemDetails.condition);
+        let localSizeError = !itemDetails.size || !alphanumericRegex.test(itemDetails.size);
+        let localDescriptionError = !itemDetails.description || !alphanumericRegex.test(itemDetails.description);
+        let localPriceError = !itemDetails.price || !numericRegex.test(itemDetails.price);
+        let localLocationError = !itemDetails.location || !locationRegex.test(itemDetails.location);
+        let localPhoneError = !itemDetails.phone_number || itemDetails.phone_number.length != 10;
 
         setBrandError(localBrandError);
         setConditionError(localConditionError);

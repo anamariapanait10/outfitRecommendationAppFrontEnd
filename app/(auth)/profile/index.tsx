@@ -48,11 +48,13 @@ const Profile = () => {
         if (stats.wardrobeUsage.worn_clothes_percentage.error != undefined) {
           setWardrobeUsageError(stats.wardrobeUsage.worn_clothes_percentage.error);
         } else {
+          setWardrobeUsageError("");
           setClothPercentage(Math.round(stats.wardrobeUsage.worn_clothes_percentage * 100) / 100);
         }
         if(stats.wardrobeUsage.worn_outfits_percentage.error != undefined) {
           setOutfitUsageError(stats.wardrobeUsage.worn_outfits_percentage.error);
         } else {
+          setOutfitUsageError("");
           setOutfitPercentage(stats.wardrobeUsage.worn_outfits_percentage);
           setWornOutfits(stats.wardrobeUsage.worn_outfits);
           setTotalOutfits(stats.wardrobeUsage.total_outfits);

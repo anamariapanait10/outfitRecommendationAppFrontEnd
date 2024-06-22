@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "outfitRecommendationApp",
+    "name": "Smart Wardrobe",
     "slug": "outfitRecommendationApp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/logo.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -20,20 +20,34 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#ffffff"
+      },
+      "package": "ro.outfit_recommendation",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyCeMRddWFnX5BtBg9iagQ-ppTp6ozxws-A"
+        }
       }
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/logo.png"
     },
     "plugins": [
       "expo-router"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "14541166-97df-42ef-baaa-0f7b4cde5c48"
+      }
     }
   }
 }
