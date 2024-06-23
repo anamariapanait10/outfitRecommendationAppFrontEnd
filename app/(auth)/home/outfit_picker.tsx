@@ -151,33 +151,37 @@ const OutfitPicker = () => {
       setFilteredFootwears(footwears);
       setBodywears(bodywears)
       setFilteredBodywears(bodywears);
+
+      setTopwearIndex(Math.floor(topwears.length / 2));
+      setBottomwearIndex(Math.floor(bottomwears.length / 2));
+      setFootwearIndex(Math.floor(footwears.length / 2));
+      setBodywearIndex(Math.floor(bodywears.length / 2));
+
       setLoading(false);
     };
     
     useEffect(() => { // apelat cand se deschide pagina
+      console.log('jegue');
       fetchClothesData();
-      setFilteredTopwears(filterClothes(topwears));
-      setFilteredBottomwears(filterClothes(bottomwears));
-      setFilteredFootwears(filterClothes(footwears));
-      setFilteredBodywears(filterClothes(bodywears));
     }, []);
 
     useEffect(() => { // apelat cand se schimba filtrele
-      setFilteredTopwears(filterClothes(topwears));
-      setFilteredBottomwears(filterClothes(bottomwears));
-      setFilteredFootwears(filterClothes(footwears));
-      setFilteredBodywears(filterClothes(bodywears));
+      let fT = filterClothes(topwears);
+      let fB = filterClothes(bottomwears);
+      let fF = filterClothes(footwears);
+      let fBo = filterClothes(bodywears);
 
-      carouselGoToIndex(topwearCarouselRef, Math.floor(filteredTopwears.length / 2));
-      carouselGoToIndex(bottomwearCarouselRef, Math.floor(filteredBottomwears.length / 2));
-      carouselGoToIndex(footwearCarouselRef, Math.floor(filteredFootwears.length / 2));
-      carouselGoToIndex(bodywearCarouselRef, Math.floor(filteredBodywears.length / 2));
+      setFilteredTopwears(fT);
+      setFilteredBottomwears(fB);
+      setFilteredFootwears(fF);
+      setFilteredBodywears(fBo);
+
+      setTopwearIndex(Math.floor(fT.length / 2));
+      setBottomwearIndex(Math.floor(fB.length / 2));
+      setFootwearIndex(Math.floor(fF.length / 2));
+      setBodywearIndex(Math.floor(fBo.length / 2));
 
     }, [filters]);
-
-    const carouselGoToIndex = (carouselRef, index) => {
-      // carouselRef.current.snapToItem(index);
-    };
 
     const openCalendar = () => {
       setIsCalendarVisible(true);
@@ -266,7 +270,7 @@ const OutfitPicker = () => {
           (!filters.season || item.seasons.toLowerCase().includes(filters.season.toLowerCase())) &&
           (!filters.material || item.material.toLowerCase() === filters.material.toLowerCase()) &&
           (!filters.pattern|| item.pattern.toLowerCase() === filters.pattern.toLowerCase()) &&
-          (!filters.color || item.color.toLowerCase() === filters.color.toLowerCase());
+          (!filters.color || item.color.toLowerCase().split(",").includes(filters.color.toLowerCase()));
       });
     };
     const applyFilters = () => {
@@ -524,7 +528,7 @@ const OutfitPicker = () => {
               question="An outfit is already scheduled for this date. Proceeding will overwrite it. Do you want to continue?"
               button="Yes/No"
             />
-          {!loading && <View style={styles.outfitContainer}>
+          {<View style={styles.outfitContainer}>
             {isOnePieceEnabled ? (
               <>
                 {filteredBodywears.length > 0 ? (

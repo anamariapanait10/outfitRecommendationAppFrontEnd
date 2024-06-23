@@ -44,6 +44,7 @@ const Profile = () => {
           setStatsData("empty");
           return;
         }
+        console.log(stats.clothingSeasonDistribution);
         setStatsData(stats);
         if (stats.wardrobeUsage.worn_clothes_percentage.error != undefined) {
           setWardrobeUsageError(stats.wardrobeUsage.worn_clothes_percentage.error);

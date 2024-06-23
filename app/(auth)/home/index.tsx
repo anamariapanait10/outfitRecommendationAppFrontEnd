@@ -237,7 +237,7 @@ const Home = () => {
             <View style={{paddingHorizontal: 20, marginTop: 70}}>
               <Text style={styles.noOutfitText}>{recommendationError}</Text>
               <TouchableOpacity style={[styles.wearAnotherOutfitButton, {marginTop: 130}]} onPress={() => router.push({pathname: '/(auth)/home/outfit_picker'})}>
-                <Text style={styles.wearOutfitButtonText}>Try Another Outfits</Text>
+                <Text style={styles.wearOutfitButtonText}>Try Another Outfit</Text>
               </TouchableOpacity>
             </View>
           )}
