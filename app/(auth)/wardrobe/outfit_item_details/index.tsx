@@ -5,7 +5,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ClothingItem } from '../../../../components/cloth_card';
 import { DataStorageSingleton } from '../../../../constants/data_storage_singleton';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import ClothInfoTable from '../../../../components/ClothInfoTable';
 import Colors from '../../../../constants/Colors';
 import { useAuth } from '@clerk/clerk-expo';
@@ -15,7 +15,6 @@ const OutfitItemDetailsScreen = () => {
   const { id } = useLocalSearchParams();
   const placeholderImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/B8AAwAB/QL8T0LgAAAABJRU5ErkJggg==";
   const [ cloth, setCloth ] = useState(new ClothingItem(0, 0, "", "", "", "", "", "", "", "", placeholderImage));
-  const isFocused = useIsFocused();
   const { isLoaded, userId, getToken } = useAuth();
   const [deleteAlertVisible, setDeleteAlertVisible] = useState(false);
 
@@ -56,15 +55,13 @@ const OutfitItemDetailsScreen = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      if (isFocused) {
-        onNavigateToPage();
-      }
+      onNavigateToPage();
 
       return () => {
         setCloth(new ClothingItem(0, 0, "", "", "", "", "", "", "", "", placeholderImage));
       };
      
-    }, [isFocused])
+    }, [])
   );
 
   return (

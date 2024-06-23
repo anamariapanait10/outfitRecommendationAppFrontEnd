@@ -49,6 +49,9 @@ const EditClothingItemForm = () => {
         setDescription(clothingItem.description);
         setSelectedCategory(clothingItem.category);
         setSelectedSubCategory(clothingItem.subCategory);
+        if(clothingItem.color.includes("[")) {
+          clothingItem.color = clothingItem.color.replaceAll("[", "").replaceAll("]", "").replaceAll("\'", "").replaceAll(" ", "");
+        }
         setSelectedColor(clothingItem.color.split(","));
         setSelectedMaterial(clothingItem.material);
         setSelectedPattern(clothingItem.pattern);
@@ -61,6 +64,7 @@ const EditClothingItemForm = () => {
         setTemperature(parseFloat(clothingItem.itemprobability.temperatureSliderValue));
         setWeather(parseFloat(clothingItem.itemprobability.weatherSliderValue));
         setPreference(parseFloat(clothingItem.itemprobability.preference));
+        
       }
     }
   }, [id]);
@@ -141,6 +145,7 @@ const EditClothingItemForm = () => {
         return;
       }
       try {
+        setLoading(true);
         const token = await getToken();
         const requestBody = JSON.stringify({
           category: selectedCategory,
@@ -176,10 +181,12 @@ const EditClothingItemForm = () => {
         }
 
         const json = await response.json();
-        DataStorageSingleton.getInstance().fetchClothesData(await getToken(), userId, isLoaded);
+        await DataStorageSingleton.getInstance().fetchClothesData(await getToken(), userId, isLoaded);
         router.back();
       } catch (error) {
         console.error("Error making PUT request:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -206,6 +213,7 @@ const EditClothingItemForm = () => {
     }
 
     makePutRequest();
+
   };
 
   const categories = ['Topwear', 'Bottomwear', 'Footwear', 'Bodywear', 'Headwear', 'Accessories'];

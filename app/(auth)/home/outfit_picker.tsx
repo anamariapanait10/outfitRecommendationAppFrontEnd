@@ -269,7 +269,7 @@ const OutfitPicker = () => {
         return (!filters.occasion || item.occasions.toLowerCase().split(",").includes(filters.occasion.toLowerCase())) &&
           (!filters.season || item.seasons.toLowerCase().includes(filters.season.toLowerCase())) &&
           (!filters.material || item.material.toLowerCase() === filters.material.toLowerCase()) &&
-          (!filters.pattern|| item.pattern.toLowerCase() === filters.pattern.toLowerCase()) &&
+          (!filters.pattern || item.pattern.toLowerCase() === filters.pattern.toLowerCase()) &&
           (!filters.color || item.color.toLowerCase().split(",").includes(filters.color.toLowerCase()));
       });
     };

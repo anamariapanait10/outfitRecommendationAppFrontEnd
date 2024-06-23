@@ -8,11 +8,11 @@ const categories = [
     { name: 'Bottomwear', image: require('../assets/images/bottomwear_icon2.png') },
     { name: 'Footwear', image: require('../assets/images/footwear_icon2.png') },
     { name: 'Bodywear', image: require('../assets/images/bodywear_icon.png') },
+    { name: 'Headwear', image: require('../assets/images/headwear_icon.png') },
     { name: 'Accessories', image: require('../assets/images/accessories_icon.png') },
 ];
 
 const FilterBar = ({ onFilterChange }) => {
-    // const categories = ['All', 'Topwear', 'Bottomwear', 'Footwear', 'Bodywear', 'Accessories'];
     return (
         <ScrollView  
             horizontal

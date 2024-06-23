@@ -104,6 +104,31 @@ const Profile = () => {
 
   }
 
+  const colorMap = {
+    white: '#FFFFFF',
+    beige: '#F5F5DC',
+    turquoise: '#40E0D0',
+    black: '#000000',
+    blue: '#0000FF',
+    purple: '#800080',
+    brown: '#A52A2A',
+    'dark-green': '#006400',
+    'light-green': '#90EE90',
+    orange: '#FFA500',
+    'light-blue': '#ADD8E6',
+    'light-gray': '#D3D3D3',
+    'dark-red': '#cc0000',
+    'dark-yellow': '#cccc00',
+    'dark-gray': '#505050',
+    pink: '#ff80ff',
+    'dark-blue': '#00008B',
+    gray: '#808080',
+    green: '#008000',
+    yellow: '#FFFF00',
+    red: '#FF0000',
+    'light-pink': '#ffccff'
+};
+
   return (
     <ScrollView>
       {user && (
@@ -169,7 +194,7 @@ const Profile = () => {
               <View style={{justifyContent: 'flex-start'}}>
               {statsData?.topColors != undefined && Object.entries(statsData?.topColors).map(([key, value], index) => (
                 <View style={styles.colorRow} key={index}>
-                  <View style={[styles.colorCircle, { backgroundColor: key }]} />
+                  <View style={[styles.colorCircle, { backgroundColor: colorMap[key] }]} />
                   <Text style={styles.colorText}>{key}: {value} item{value > 1 ? 's':''}</Text>
                 </View>
               ))}
