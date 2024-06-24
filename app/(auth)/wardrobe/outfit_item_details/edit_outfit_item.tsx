@@ -146,12 +146,13 @@ const EditClothingItemForm = () => {
       }
       try {
         setLoading(true);
+
         const token = await getToken();
         const requestBody = JSON.stringify({
           category: selectedCategory,
           subCategory: selectedSubCategory,
           description: description || "",
-          color: selectedColor,
+          color: selectedColor.toString().replaceAll("[", "").replaceAll("]", "").replaceAll("\'", "").replaceAll(" ", ""),
           image: image,
           pattern: selectedPattern,
           material: selectedMaterial,

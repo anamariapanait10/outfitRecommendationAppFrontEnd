@@ -161,7 +161,6 @@ const OutfitPicker = () => {
     };
     
     useEffect(() => { // apelat cand se deschide pagina
-      console.log('jegue');
       fetchClothesData();
     }, []);
 
