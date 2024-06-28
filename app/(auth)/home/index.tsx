@@ -180,7 +180,7 @@ const Home = () => {
         <View style={styles.recommendedOutfitContainer}> 
           <Text style={styles.recommendedOutfitTitle}>Recommendations for today based on weather and temperature ({weather}, {temperature})</Text>
           {(clothes && recommendationError === '') ? (
-            <View style={{ height: 320, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ height: 360, justifyContent: 'center', alignItems: 'center' }}>
               {loading ? (
                 <ActivityIndicator size="large" color="#0000ff" style={{width: '100%', height: 249}}/>
               ) : (
@@ -253,7 +253,7 @@ const Home = () => {
         />
       </View>
       <View style={styles.switchContainer}>
-        <Text style={styles.switchLabel}>       Casual / Formal Outfits</Text>
+        <Text style={styles.switchLabel}>      Casual / Formal Outfits</Text>
         <Switch
           value={isFormal}
           onValueChange={() => setIsFormal(!isFormal)}

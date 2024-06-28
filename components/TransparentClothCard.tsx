@@ -29,13 +29,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     image: {
-        height: 80,
-        width: 80,
+        height: 90,
+        width: 90,
         borderRadius: 5,
     },
     longImage: {
-        height: 160,
-        width: 80,
+        height: 180,
+        width: 90,
         borderRadius: 5,
     }
 });
