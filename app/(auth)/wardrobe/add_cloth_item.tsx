@@ -141,6 +141,7 @@ const ClothingItemForm = () => {
   };
 
   const handleSubmit = () => {
+    setLoading(true);
     const makePostRequest = async () => {
       if (!userId || !isLoaded) {
         console.log("No authenticated user found.");
@@ -186,6 +187,7 @@ const ClothingItemForm = () => {
         // console.log("POST request response:", json);
         DataStorageSingleton.getInstance().fetchClothesData(await getToken(), userId, isLoaded);
         // router.replace({pathname: '/(auth)/wardrobe'})
+        setLoading(false);
         router.back();
       } catch (error) {
         console.error("Error making POST request:", error);

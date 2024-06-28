@@ -124,6 +124,7 @@ const UploadMarketplaceItem = () => {
   };
 
     const handleSubmit = () => {
+      setLoading(true);
         const makePostRequest = async () => {
             if (!userId || !isLoaded) {
               console.log("No authenticated user found.");
@@ -168,6 +169,7 @@ const UploadMarketplaceItem = () => {
               const json = await response.json();
               await DataStorageSingleton.getInstance().fetchClothesData(await getToken(), userId, isLoaded);
               // router.replace({pathname: '/(auth)/marketplace'})
+              setLoading(false);
               router.back();
             } catch (error) {
               console.error("Error making POST request:", error);

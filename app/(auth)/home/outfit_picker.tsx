@@ -169,7 +169,7 @@ const OutfitPicker = () => {
       let fB = filterClothes(bottomwears);
       let fF = filterClothes(footwears);
       let fBo = filterClothes(bodywears);
-
+      
       setFilteredTopwears(fT);
       setFilteredBottomwears(fB);
       setFilteredFootwears(fF);
@@ -192,9 +192,9 @@ const OutfitPicker = () => {
     const replaceOutfit = async () => {
       let clothes = [];
       if (isOnePieceEnabled) {
-        clothes = [bodywears[bodywearIndex], footwears[footwearIndex]];
+        clothes = [filteredBodywears[bodywearIndex], filteredFootwears[footwearIndex]];
       } else {
-        clothes = [topwears[topwearIndex], bottomwears[bottomwearIndex], footwears[footwearIndex]];
+        clothes = [filteredTopwears[topwearIndex], filteredBottomwears[bottomwearIndex], filteredFootwears[footwearIndex]];
       }
       await DataStorageSingleton.getInstance().deleteOutfit(date, await getToken(), userId, isLoaded);
       DataStorageSingleton.getInstance().wearOutfit(clothes, date, await getToken(), userId, isLoaded);
@@ -204,9 +204,9 @@ const OutfitPicker = () => {
     const handleSaveOutfit = async () => {
       let clothes = [];
       if (isOnePieceEnabled) {
-        clothes = [bodywears[bodywearIndex], footwears[footwearIndex]];
+        clothes = [filteredBodywears[bodywearIndex], filteredFootwears[footwearIndex]];
       } else {
-        clothes = [topwears[topwearIndex], bottomwears[bottomwearIndex], footwears[footwearIndex]];
+        clothes = [filteredTopwears[topwearIndex], filteredBottomwears[bottomwearIndex], filteredFootwears[footwearIndex]];
       }
       let currentYearMonth = date.split('-').slice(0, 2).join('-');
       await DataStorageSingleton.getInstance().fetchOutfitsForMonth(currentYearMonth, await getToken(), userId, isLoaded);
@@ -254,9 +254,9 @@ const OutfitPicker = () => {
     const askAiExpert = async () => {
       setLoading(true);
       if (isOnePieceEnabled) {
-        await DataStorageSingleton.getInstance().askAiExpert(null, null, footwears[footwearIndex], bodywears[bodywearIndex], dropdownValue, await getToken(), userId, isLoaded);
+        await DataStorageSingleton.getInstance().askAiExpert(null, null, filteredFootwears[footwearIndex], filteredBodywears[bodywearIndex], dropdownValue, await getToken(), userId, isLoaded);
       } else {
-        await DataStorageSingleton.getInstance().askAiExpert(topwears[topwearIndex], bottomwears[bottomwearIndex], footwears[footwearIndex], null, dropdownValue, await getToken(), userId, isLoaded);
+        await DataStorageSingleton.getInstance().askAiExpert(filteredTopwears[topwearIndex], filteredBottomwears[bottomwearIndex], filteredFootwears[footwearIndex], null, dropdownValue, await getToken(), userId, isLoaded);
       }
       setExpertResponse(DataStorageSingleton.getInstance().lastAIExpertResponse);
       setLoading(false);
@@ -277,11 +277,6 @@ const OutfitPicker = () => {
       setIsFilterModalVisible(false);
     }
     const resetFilters = () => {
-      setFilters({'occasion': '', 'season': '', 'material': '', 'pattern': '', 'color': '', one_piece: false});
-      setFilteredTopwears(topwears);
-      setFilteredBottomwears(bottomwears);
-      setFilteredFootwears(footwears);
-      setFilteredBodywears(bodywears);
       setOccasionValue("");
       setSeasonValue("");
       setMaterialValue("");
@@ -289,6 +284,7 @@ const OutfitPicker = () => {
       setColorValue("");
       setIsFilterModalVisible(false);
       setIsOnePieceEnabled(false);
+      setFilters({'occasion': '', 'season': '', 'material': '', 'pattern': '', 'color': '', one_piece: false});
     }
 
     return (
@@ -307,14 +303,14 @@ const OutfitPicker = () => {
                   <Text style={{fontSize: 25}}>AI Expert's Decision:</Text>
                   {isOnePieceEnabled ? (
                     <>
-                      {renderOutfitItem(bodywears[bodywearIndex], true)}
-                      {renderOutfitItem(footwears[footwearIndex])}
+                      {renderOutfitItem(filteredBodywears[bodywearIndex], true)}
+                      {renderOutfitItem(filteredFootwears[footwearIndex])}
                     </>
                   ) : (
                     <>
-                      {renderOutfitItem(topwears[topwearIndex])}
-                      {renderOutfitItem(bottomwears[bottomwearIndex])}
-                      {renderOutfitItem(footwears[footwearIndex])}
+                      {renderOutfitItem(filteredTopwears[topwearIndex])}
+                      {renderOutfitItem(filteredBottomwears[bottomwearIndex])}
+                      {renderOutfitItem(filteredFootwears[footwearIndex])}
                     </>
                   )}
                   <Text style={{fontSize: 16, textAlign: 'center', backgroundColor: Colors.light_purple, borderRadius: 15, padding: 5, margin: 5}}>

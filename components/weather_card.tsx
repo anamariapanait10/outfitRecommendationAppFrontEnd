@@ -38,7 +38,7 @@ const WeatherDiv = React.forwardRef((props, ref) => {
               marginRight: 15, }, styles.weatherContainer]}>
             <Text style={{fontSize: 13}}>{item.title}</Text>
             <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-              <Image source={{ uri: "http://openweathermap.org/img/w/" + item.icon + ".png" }} style={styles.weatherImage} />
+              <Image source={{ uri: "https://openweathermap.org/img/w/" + item.icon + ".png" }} style={styles.weatherImage} />
               <Text>{item.text}</Text>
             </View>
           </View>
