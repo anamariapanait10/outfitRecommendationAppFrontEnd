@@ -1,5 +1,8 @@
 import React from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import { View, Image, StyleSheet, Dimensions } from 'react-native';
+
+
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 export class TransparentClothingItem {
     image: string;
@@ -29,8 +32,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     image: {
-        height: 90,
-        width: 90,
+        height: screenHeight * 0.12,
+        width: screenHeight * 0.12,
         borderRadius: 5,
     },
     longImage: {

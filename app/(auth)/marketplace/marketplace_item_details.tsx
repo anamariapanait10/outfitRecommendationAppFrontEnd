@@ -22,6 +22,7 @@ export class MarketplaceItem {
     postedDate: string;
     price: number;
     location: string;
+    username;
     phone_number: string;
 
     constructor(
@@ -37,6 +38,7 @@ export class MarketplaceItem {
         postedDate: string = '',
         price: number = 0,
         location: string = '',
+        username: string = '',
         phone_number: string = ''
     ) {
         this.id = id;
@@ -51,6 +53,7 @@ export class MarketplaceItem {
         this.postedDate = postedDate;
         this.price = price;
         this.location = location;
+        this.username = username;
         this.phone_number = phone_number;
     }
 }

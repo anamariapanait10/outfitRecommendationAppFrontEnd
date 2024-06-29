@@ -85,6 +85,15 @@ const MarketplaceItemDetailsTable = (item: MarketplaceItem) => {
       <DataTable.Row>
         <DataTable.Cell>
             <View style={styles.cellIconLayout}>
+                <MaterialIcons name="person" size={20} style={styles.icon} />
+                <Text style={styles.boldText}>Sold By</Text>
+            </View>
+        </DataTable.Cell>
+        <DataTable.Cell>{item?.username}</DataTable.Cell>
+      </DataTable.Row>
+      <DataTable.Row>
+        <DataTable.Cell>
+            <View style={styles.cellIconLayout}>
                 <MaterialIcons name="phone" size={20} style={styles.icon} />
                 <Text style={styles.boldText}>Phone</Text>
             </View>

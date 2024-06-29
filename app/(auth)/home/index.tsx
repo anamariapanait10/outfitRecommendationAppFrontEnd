@@ -180,16 +180,16 @@ const Home = () => {
         <View style={styles.recommendedOutfitContainer}> 
           <Text style={styles.recommendedOutfitTitle}>Recommendations for today based on weather and temperature ({weather}, {temperature})</Text>
           {(clothes && recommendationError === '') ? (
-            <View style={{ height: 360, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ height: '79%', justifyContent: 'center', alignItems: 'center'}}>
               {loading ? (
-                <ActivityIndicator size="large" color="#0000ff" style={{width: '100%', height: 249}}/>
+                <ActivityIndicator size="large" color="#0000ff" style={{flex: 1}}/>
               ) : (
               <Carousel
                 data={clothes}
                 renderItem={({ item }) => (
                   <View>
                     <FlatList
-                      style={{ width: '100%' }}
+                      style={{ width: '100%', overflow: 'visible'}}
                       data={item}
                       renderItem={({ item }) => <TransparentClothCard {...item} />}
                       keyExtractor={(item) => item.id.toString()}
@@ -293,9 +293,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    marginTop: 10,
+    marginTop: 5,
     width: Dimensions.get('window').width - 50,
-    height: '66%',
+    height: '68%',
   },
   recommendedOutfitTitle: {
     paddingHorizontal: 20,
@@ -399,9 +399,10 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     flexDirection: 'row',
-    marginTop: 10,
+    // marginTop: 10,
     justifyContent: 'space-between',
     width: '100%',
+    // backgroundColor: 'red'
   },
   switchContainer: {
     flexDirection: 'row',
