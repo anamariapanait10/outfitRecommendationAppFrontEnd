@@ -67,6 +67,7 @@ const Home = () => {
     }
     setWeather(weatherString);
     setTemperature(temperatureString.toLowerCase());
+    console.log("is one piece: " + isOnePiece);
     let err = await DataStorageSingleton.getInstance().fetchRecommendations(await getToken(), userId?.toString(), isLoaded, weatherString, temperatureString, isOnePiece.toString(), isFormal.toString());
     if(err.error !== undefined){
       setRecommendationError(err.error);
@@ -82,13 +83,15 @@ const Home = () => {
   };
 
   useEffect(() => {
+    console.log("useEffect");
     fetchClothesData();
   }, [isOnePiece, isFormal]);
 
   useFocusEffect(
     React.useCallback(() => {
+      console.log("useFocusEffect");
       fetchClothesData();
-    }, [isOnePiece, isFormal])
+    }, [])
   );
 
   const wearOutfit = async () => {
