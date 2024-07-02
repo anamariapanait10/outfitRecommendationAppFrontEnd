@@ -83,14 +83,16 @@ const Home = () => {
   };
 
   useEffect(() => {
-    console.log("useEffect");
     fetchClothesData();
   }, [isOnePiece, isFormal]);
 
   useFocusEffect(
     React.useCallback(() => {
-      console.log("useFocusEffect");
       fetchClothesData();
+      return () => {
+        setIsOnePiece(false);
+        setIsFormal(false);
+      };
     }, [])
   );
 
